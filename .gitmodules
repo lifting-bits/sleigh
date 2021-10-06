@@ -1,0 +1,3 @@
+[submodule "ghidra"]
+	path = ghidra
+	url = git@github.com:NationalSecurityAgency/ghidra.git
