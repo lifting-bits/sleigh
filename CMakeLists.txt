@@ -41,16 +41,38 @@ endif()
 
 install(
   TARGETS sleigh
+  EXPORT sleighTargets
   RUNTIME DESTINATION "${install_folder}/bin"
   )
 
 install(
   TARGETS libsleigh
-  RUNTIME DESTINATION "${install_folder}/lib"
+  EXPORT sleighTargets
+  LIBRARY DESTINATION "${install_folder}/lib"
   )
 
 install(
   DIRECTORY "${SLEIGH_SOURCE_DIR}/"
-  DESTINATION "${install_folder}/include/sleigh"
+  INCLUDES DESTINATION "${install_folder}/include/sleigh"
   FILES_MATCHING PATTERN "*.hh"
+  )
+
+set(sleigh_cmake_config
+  "${CMAKE_CURRENT_BINARY_DIR}/sleighConfig.cmake"
+  )
+
+configure_file(
+  "${PROJECT_SOURCE_DIR}/cmake/sleighConfig.cmake.in"
+  "${sleigh_cmake_config}"
+  @ONLY
+  )
+
+install(
+  FILES "${sleigh_cmake_config}"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
+  )
+
+install(
+  EXPORT sleighTargets
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
   )
