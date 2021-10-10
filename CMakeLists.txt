@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.18)
 
 project(sleigh
   LANGUAGES CXX C
-  DESCRIPTION "A machine language translation and dissassembly engine")
+  DESCRIPTION "A machine language translation and disassembly engine")
 
 set(CMAKE_CXX_STANDARD 11)
 

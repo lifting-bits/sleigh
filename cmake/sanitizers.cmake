@@ -5,8 +5,8 @@ function( enable_sanitizers project_name )
     option(ENABLE_COVERAGE "Enable coverage reporting for gcc/clang" FALSE)
 
     if(ENABLE_COVERAGE)
-      target_compile_options( eqsat_project_options INTERFACE --coverage -O0 -g)
-      target_link_libraries( eqsat_project_options INTERFACE --coverage)
+      target_compile_options( sleigh_project_options INTERFACE --coverage -O0 -g)
+      target_link_libraries( sleigh_project_options INTERFACE --coverage)
     endif()
 
     set(SANITIZERS "")
