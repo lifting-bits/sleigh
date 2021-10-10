@@ -7,7 +7,7 @@
 #   SLEIGH_EXECUTABLE   - the `sleigh` executable
 
 get_filename_component(SLEIGH_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-set(SLEIGH_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+set(SLEIGH_INCLUDE_DIRS "@CMAKE_INSTALL_FULL_INCLUDEDIR@")
 
 if(NOT TARGET sleigh)
   include("${CMAKE_CURRENT_LIST_DIR}/sleighTargets.cmake")

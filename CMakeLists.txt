@@ -54,7 +54,7 @@ install(
 install(
   DIRECTORY "${SLEIGH_SOURCE_DIR}/"
   INCLUDES DESTINATION "${install_folder}/include/sleigh"
-  FILES_MATCHING PATTERN "*.hh"
+  FILES_MATCHING PATTERN "*.h*"
   )
 
 set(sleigh_cmake_config
