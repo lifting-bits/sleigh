@@ -1,0 +1,153 @@
+name: Linux
+
+on:
+  push:
+    branches:
+      - '*'
+
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        build_type: [RelWithDebInfo, Debug]
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Generate cache key
+      id: cache_key
+      run: echo ::set-output name=VALUE::build_${{ matrix.os }}_type-${{ matrix.build_type }}
+
+    - name: Update the cache (ccache)
+      uses: actions/cache@v1.0.3
+      with:
+        path: ccache
+        key: ${{ steps.cache_key.outputs.VALUE }}_ccache
+
+    - name: Create the cache
+      run: mkdir -p ccache
+
+    - name: Synchronize the submodules
+      run: git submodule sync --recursive
+
+    - name: Update the submodules
+      run: git submodule update --init --recursive
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get install -y \
+          ccache \
+          ninja-build \
+          libiberty-dev \
+          binutils-dev \
+          clang \
+          rpm \
+          elfutils \
+          doxygen \
+          xdot \
+          graphviz
+
+    - name: Install CMake
+      id: cmake_installer
+      run: |
+        sudo snap install --classic cmake
+
+    - name: Configure the project
+      run: |
+        export CCACHE_DIR="$(realpath ccache)"
+
+        cmake \
+          -S . \
+          -B build \
+          -G Ninja \
+          -DCMAKE_C_COMPILER=clang \
+          -DCMAKE_CXX_COMPILER=clang++ \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DSLEIGH_ENABLE_TESTS=ON \
+          -DSLEIGH_ENABLE_EXAMPLES=ON \
+          -DSLEIGH_ENABLE_PACKAGING=ON
+
+    - name: Build the project
+      run: |
+        export CCACHE_DIR="$(realpath ccache)"
+
+        cmake \
+          --build build \
+          -v
+
+    - name: Run the tests
+      run: |
+        ( cd build && ctest -V )
+
+    - name: Run the example
+      run: |
+        cmake \
+          --build build \
+          --target sleighexample_runner
+
+    - name: Run the install target
+      run: |
+        mkdir install
+        export DESTDIR="$(realpath install)"
+
+        cmake \
+          --build build \
+          --target install
+
+    - name: Create the packages
+      run: |
+        cmake \
+          --build build \
+          --target package
+
+    - name: Test the DEB package
+      run: |
+        sudo dpkg -i build/*.deb
+
+        cmake \
+          -S tests/find_package \
+          -B find_package_build
+
+        cmake \
+          --build find_package_build
+
+    - name: Locate the packages (RelWithDebInfo only)
+      if: matrix.build_type == 'RelWithDebInfo'
+      id: package_locations
+      run: |
+        echo ::set-output name=DEB_PACKAGE_PATH::$(ls build/*.deb)
+        echo ::set-output name=DEB_PACKAGE_NAME::$(cd build && ls *.deb)
+
+        echo ::set-output name=RPM_PACKAGE_PATH::$(ls build/*.rpm)
+        echo ::set-output name=RPM_PACKAGE_NAME::$(cd build && ls *.rpm)
+
+        echo ::set-output name=TGZ_PACKAGE_PATH::$(ls build/*.tar.gz)
+        echo ::set-output name=TGZ_PACKAGE_NAME::$(cd build && ls *.tar.gz)
+
+    - name: Upload the DEB package artifact (RelWithDebInfo only)
+      if: matrix.build_type == 'RelWithDebInfo'
+      uses: actions/upload-artifact@v1
+      with:
+        name: ${{ steps.package_locations.outputs.DEB_PACKAGE_NAME }}
+        path: ${{ steps.package_locations.outputs.DEB_PACKAGE_PATH }}
+
+    - name: Upload the RPM package artifact (RelWithDebInfo only)
+      if: matrix.build_type == 'RelWithDebInfo'
+      uses: actions/upload-artifact@v1
+      with:
+        name: ${{ steps.package_locations.outputs.RPM_PACKAGE_NAME }}
+        path: ${{ steps.package_locations.outputs.RPM_PACKAGE_PATH }}
+
+    - name: Upload the TGZ package artifact (RelWithDebInfo only)
+      if: matrix.build_type == 'RelWithDebInfo'
+      uses: actions/upload-artifact@v1
+      with:
+        name: ${{ steps.package_locations.outputs.TGZ_PACKAGE_NAME }}
+        path: ${{ steps.package_locations.outputs.TGZ_PACKAGE_PATH }}
