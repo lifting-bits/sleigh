@@ -19,13 +19,13 @@ This repository provides a CMake build of SLEIGH so that it can be built and pac
 ## Installation
 
 ```sh
-# Clone SLEIGH repository
+# Clone the SLEIGH repository
 git clone https://github.com/lifting-bits/sleigh.git
 
 # Update the Ghidra submodule
 git submodule update --init --recursive
 
-# Create build directory
+# Create a build directory
 mkdir build
 cd build
 
@@ -45,11 +45,17 @@ cmake --build . --target install
 
 ## Packaging
 
-The CMake configuration also supports building RPM or DEB packages for SLEIGH. If the `SLEIGH_ENABLE_PACKAGING` option is set, the build will create an RPM package if it finds `rpm` in the `PATH` or a DEB package if it finds `dpkg` in the `PATH`.
+The CMake configuration also supports building packages for SLEIGH. If the `SLEIGH_ENABLE_PACKAGING` option is set, the build will create a tarball containing the SLEIGH installation. Additionally, the build will create an RPM package if it finds `rpm` in the `PATH` and/or a DEB package if it finds `dpkg` in the `PATH`.
 ```sh
 cmake \
     -DSLEIGH_ENABLE_PACKAGING=ON \
-    -DCMAKE_INSTALL_PREFIX="<path where SLEIGH will install>"
+    -DCMAKE_INSTALL_PREFIX="<path where SLEIGH will install>" \
     -G Ninja \
     ..
+
+# Build SLEIGH
+cmake --build .
+
+# Package SLEIGH
+cmake --build . --target package
 ```
