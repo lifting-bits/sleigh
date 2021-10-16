@@ -16,11 +16,11 @@ This repository provides a CMake-based build project for SLEIGH so that it can b
 
 | Name | Version | Linux Package to Install | macOS Homebrew Package to Install |
 | ---- | ------- | ------------------------ | --------------------------------- |
-| [Git](https://git-scm.com/) | Latest | git | Already installed |
+| [Git](https://git-scm.com/) | Latest | git | N/A |
 | [Ninja](https://ninja-build.org/) | Latest | ninja-build | ninja |
 | [CMake](https://cmake.org/) | 3.21+ | cmake | cmake |
 | [Binutils](https://www.gnu.org/software/binutils/) | Latest | binutils and binutils-dev | binutils |
-| [Zlib](https://zlib.net/) | Latest | zlib | Already installed |
+| [Zlib](https://zlib.net/) | Latest | zlib | N/A |
 | [Iberty](https://gcc.gnu.org/onlinedocs/libiberty/) | Latest | libiberty-dev | binutils |
 | [Doxygen](https://www.doxygen.nl/) | Latest | doxygen | doxygen |
 | [GraphViz](https://graphviz.org/) | Latest | graphviz | graphviz |
@@ -75,9 +75,17 @@ cmake --build . --target package
 
 ## macOS
 
+### Installing Git and Zlib
+
+The easiest way to install Git and Zlib is by installing the Xcode Command Line Developer Tools:
+
+```sh
+xcode-select --install
+```
+
 ### Installing Iberty
 
-Most of SLEIGH's dependencies can be installed via the [Homebrew package manager](https://brew.sh/) on macOS. The only exception is Iberty which doesn't have a dedicated Homebrew package. Instead, we can edit the `binutils` package to include an Iberty installation.
+Most of SLEIGH's remaining dependencies can be installed via the [Homebrew package manager](https://brew.sh/) on macOS. The only exception is Iberty which doesn't have a dedicated Homebrew package. Instead, we can edit the `binutils` package to include an Iberty installation.
 
 Firstly, we need to edit the Binutils installation script:
 
