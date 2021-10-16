@@ -1,4 +1,4 @@
-# SLEIGH
+# SLEIGH Library
 
 [SLEIGH](https://ghidra.re/courses/languages/html/sleigh.html) is a language used to describe the semantics of instruction sets of general-purpose microprocessors, with enough detail to facilitate the reverse engineering of software compiled for these architectures. It was part of the [GHIDRA reverse engineering platform](https://github.com/NationalSecurityAgency/ghidra), and underpins two of its major components: its disassembly and decompilation engines.
 
@@ -28,11 +28,11 @@ This repository provides a CMake-based build project for SLEIGH so that it can b
 ## Build and Install the SLEIGH Library
 
 ```sh
-# Clone the SLEIGH repository
+# Clone this repository (CMake project for SLEIGH)
 git clone https://github.com/lifting-bits/sleigh.git
 cd sleigh
 
-# Update the Ghidra submodule
+# Update the GHIDRA submodule
 git submodule update --init --recursive --progress
 
 # Create a build directory
