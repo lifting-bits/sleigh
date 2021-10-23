@@ -1,5 +1,10 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-copy"
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 #include <loadimage.hh>
 #include <sleigh.hh>
+#pragma GCC diagnostic pop
 
 #include <iostream>
 #include <string>

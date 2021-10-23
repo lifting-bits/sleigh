@@ -10,13 +10,19 @@ add_executable(sleigh-lift
   src/main.cpp
 )
 
-target_link_libraries(sleigh-lift PRIVATE
-  sla
-  decomp
+target_compile_options(sleigh-lift PRIVATE
+  -Wall
+  -Werror
+  -Wextra
 )
 
 target_include_directories(sleigh-lift PRIVATE
   "${library_root}"
+)
+
+target_link_libraries(sleigh-lift PRIVATE
+  sla
+  decomp
 )
 
 if(SLEIGH_ENABLE_INSTALL)
