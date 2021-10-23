@@ -1,5 +1,5 @@
-#include <sleigh/loadimage.hh>
-#include <sleigh/sleigh.hh>
+#include <loadimage.hh>
+#include <sleigh.hh>
 
 #include <iostream>
 #include <string>

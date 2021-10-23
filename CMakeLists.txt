@@ -828,7 +828,7 @@ if(SLEIGH_ENABLE_INSTALL)
 
         DESTINATION
           "${CMAKE_INSTALL_BINDIR}"
-    
+
         PERMISSIONS
           OWNER_READ OWNER_WRITE OWNER_EXECUTE
           GROUP_READ GROUP_EXECUTE
@@ -844,3 +844,5 @@ if(SLEIGH_ENABLE_INSTALL)
     FILE "${PROJECT_NAME}Config.cmake"
   )
 endif()
+
+add_subdirectory(tools)
