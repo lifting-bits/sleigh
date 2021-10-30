@@ -17,10 +17,10 @@ static void PrintUsage(void) {
 
 class InMemoryLoadImage : public LoadImage {
 public:
-  explicit InMemoryLoadImage(unsigned long base_addr)
+  explicit InMemoryLoadImage(uint64_t base_addr)
       : LoadImage("nofile"), base_addr(base_addr) {}
 
-  void SetImageBuffer(std::vector<unsigned char> &&buf) {
+  void SetImageBuffer(std::vector<char> &&buf) {
     assert(image_buffer.empty());
     image_buffer = std::move(buf);
   }
@@ -28,10 +28,13 @@ public:
   void loadFill(unsigned char *ptr, int size, const Address &addr) override {
     uint8_t start = addr.getOffset();
     for (int i = 0; i < size; ++i) {
-      const int64_t offset = (start + i) - base_addr;
-      ptr[i] = (offset >= 0 && offset < image_buffer.size())
-                   ? image_buffer[offset]
-                   : 0;
+      uint64_t offset = start + i;
+      if (offset >= base_addr) {
+        offset -= base_addr;
+        ptr[i] = offset < image_buffer.size() ? image_buffer[i] : 0;
+      } else {
+        ptr[i] = 0;
+      }
     }
   }
 
@@ -39,13 +42,13 @@ public:
   void adjustVma(long) override {}
 
 private:
-  unsigned long base_addr;
-  std::vector<unsigned char> image_buffer;
+  const uint64_t base_addr;
+  std::vector<char> image_buffer;
 };
 
-static std::vector<unsigned char>
-ParseBytes(const std::string &bytes, unsigned long addr, uint64_t addr_size) {
-  std::vector<unsigned char> buffer;
+static std::vector<char> ParseBytes(const std::string &bytes, uint64_t addr,
+                                    uint64_t addr_size) {
+  std::vector<char> buffer;
   for (size_t i = 0; i < bytes.size(); i += 2) {
     const char nibbles[] = {bytes[i], bytes[i + 1], '\0'};
     char *parsed_to = nullptr;
@@ -70,7 +73,7 @@ ParseBytes(const std::string &bytes, unsigned long addr, uint64_t addr_size) {
                 << "in a 64-bit overflow.";
       exit(EXIT_FAILURE);
     }
-    buffer.push_back(static_cast<unsigned char>(byte_val));
+    buffer.push_back(static_cast<char>(byte_val));
   }
   return buffer;
 }
@@ -84,7 +87,7 @@ public:
   }
 };
 
-static void PrintAssembly(Sleigh &engine, unsigned long addr, size_t len) {
+static void PrintAssembly(Sleigh &engine, uint64_t addr, size_t len) {
   AssemblyPrinter asm_emit;
   Address cur_addr(engine.getDefaultCodeSpace(), addr),
       last_addr(engine.getDefaultCodeSpace(), addr + len);
@@ -102,8 +105,8 @@ static void PrintVarData(std::ostream &s, VarnodeData &data) {
 
 class PcodePrinter : public PcodeEmit {
 public:
-  void dump(const Address &addr, OpCode op, VarnodeData *outvar,
-            VarnodeData *vars, int32_t isize) override {
+  void dump(const Address &, OpCode op, VarnodeData *outvar, VarnodeData *vars,
+            int32_t isize) override {
     if (outvar) {
       PrintVarData(std::cout, *outvar);
       std::cout << " = ";
@@ -117,7 +120,7 @@ public:
   }
 };
 
-static void PrintPcode(Sleigh &engine, unsigned long addr, size_t len) {
+static void PrintPcode(Sleigh &engine, uint64_t addr, size_t len) {
   PcodePrinter pcode_emit;
   Address cur_addr(engine.getDefaultCodeSpace(), addr),
       last_addr(engine.getDefaultCodeSpace(), addr + len);
@@ -133,7 +136,6 @@ int main(int argc, char *argv[]) {
     return -1;
   }
   // Parse arguments
-  const char *prog_name = argv[0];
   const std::string action = argv[1];
   const char *spec_file_path = argv[2];
   const std::string bytes = argv[3];
@@ -143,7 +145,7 @@ int main(int argc, char *argv[]) {
     return -1;
   }
   // Get the address as an integer.
-  unsigned long addr = 0;
+  uint64_t addr = 0;
   if (addr_str) {
     try {
       addr = std::stoul(addr_str);
@@ -168,7 +170,7 @@ int main(int argc, char *argv[]) {
   // initialization.
   //
   // Ensure that we don't start disassembling until we've set the image buffer.
-  std::vector<unsigned char> image_buffer =
+  std::vector<char> image_buffer =
       ParseBytes(bytes, addr, engine.getDefaultSize());
   const size_t len = image_buffer.size();
   load_image.SetImageBuffer(std::move(image_buffer));
