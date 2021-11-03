@@ -6,6 +6,7 @@
 #include <sleigh.hh>
 #pragma GCC diagnostic pop
 
+#include <cassert>
 #include <iostream>
 #include <string>
 
