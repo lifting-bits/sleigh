@@ -10,11 +10,20 @@ add_executable(sleigh-lift
   src/main.cpp
 )
 
-target_compile_options(sleigh-lift PRIVATE
-  -Wall
-  -Werror
-  -Wextra
-)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if(MSVC)
+    target_compile_options(sleigh-lift PRIVATE
+      /W4
+      /WX
+    )
+  else()
+    target_compile_options(sleigh-lift PRIVATE
+      -Wall
+      -Werror
+      -Wextra
+    )
+  endif()
+endif()
 
 target_include_directories(sleigh-lift PRIVATE
   "${library_root}"
