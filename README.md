@@ -19,9 +19,6 @@ This repository provides a CMake-based build project for SLEIGH so that it can b
 | [Git](https://git-scm.com/) | Latest | git | N/A |
 | [Ninja](https://ninja-build.org/) | Latest | ninja-build | ninja |
 | [CMake](https://cmake.org/) | 3.21+ | cmake | cmake |
-| [Binutils](https://www.gnu.org/software/binutils/) | Latest | binutils and binutils-dev | binutils |
-| [Zlib](https://zlib.net/) | Latest | zlib | N/A |
-| [Iberty](https://gcc.gnu.org/onlinedocs/libiberty/) | Latest | libiberty-dev | binutils |
 | [Doxygen](https://www.doxygen.nl/) | Latest | doxygen | doxygen |
 | [GraphViz](https://graphviz.org/) | Latest | graphviz | graphviz |
 
@@ -71,66 +68,6 @@ cmake --build .
 
 # Package SLEIGH
 cmake --build . --target package
-```
-
-## macOS
-
-### Installing Git and Zlib
-
-The easiest way to install Git and Zlib is by installing the Xcode Command Line Developer Tools:
-
-```sh
-xcode-select --install
-```
-
-### Installing Iberty
-
-Most of SLEIGH's remaining dependencies can be installed via the [Homebrew package manager](https://brew.sh/) on macOS. The only exception is Iberty which doesn't have a dedicated Homebrew package. Instead, we can edit the `binutils` package to include an Iberty installation.
-
-Firstly, we need to edit the Binutils installation script:
-
-```sh
-brew edit binutils
-```
-
-The command above will open the installation script with the editor specified by `EDITOR`. We need to add the `--enable-install-libiberty` flag to the `configure` invocation:
-
-```ruby
-system "./configure", "--disable-debug",
-                      "--disable-dependency-tracking",
-                      "--enable-deterministic-archives",
-                      "--prefix=#{prefix}",
-                      "--infodir=#{info}",
-                      "--mandir=#{man}",
-                      "--disable-werror",
-                      "--enable-interwork",
-                      "--enable-multilib",
-                      "--enable-64-bit-bfd",
-                      "--enable-gold",
-                      "--enable-plugins",
-                      "--enable-targets=all",
-                      "--with-system-zlib",
-                      "--disable-nls",
-                      "--enable-install-libiberty"
-```
-
-Now reinstall Binutils:
-
-```sh
-brew reinstall -s binutils
-```
-
-### Configuring with Binutils
-
-By default, the Homebrew Binutils installation won't be visible to CMake during the configure step. We can fix this by pointing the `CMAKE_PREFIX_PATH` option at the Binutils installation like so:
-
-```sh
-cmake \
-    -DSLEIGH_ENABLE_INSTALL=ON \
-    -DCMAKE_INSTALL_PREFIX="<path where SLEIGH will install>" \
-    -DCMAKE_PREFIX_PATH=/opt/homebrew/opt/binutils/ \
-    -G Ninja \
-    ..
 ```
 
 ## License
