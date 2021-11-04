@@ -20,7 +20,7 @@
 
 static void PrintUsage(void) {
   std::cerr
-      << "Usage: sleigh-lift <action> <spec_file> <bytes> <address:optional>"
+      << "Usage: sleigh-lift [action] [sla_file] [bytes] [address:OPTIONAL]"
       << std::endl;
 }
 
@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
   }
   // Parse arguments
   const std::string action = argv[1];
-  const char *spec_file_path = argv[2];
+  const char *sla_file_path = argv[2];
   const std::string bytes = argv[3];
   const char *addr_str = argc == 5 ? argv[4] : nullptr;
   if (bytes.size() % 2 != 0) {
@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
   ContextInternal ctx;
   Sleigh engine(&load_image, &ctx);
   DocumentStorage storage;
-  Element *root = storage.openDocument(spec_file_path)->getRoot();
+  Element *root = storage.openDocument(sla_file_path)->getRoot();
   storage.registerTag(root);
   engine.initialize(storage);
   // In order to parse and validate the byte string properly, we need to get the
