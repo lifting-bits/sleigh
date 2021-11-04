@@ -21,7 +21,7 @@ public:
   explicit InMemoryLoadImage(uint64_t base_addr)
       : LoadImage("nofile"), base_addr(base_addr) {}
 
-  void SetImageBuffer(std::vector<char> &&buf) {
+  void SetImageBuffer(std::string &&buf) {
     assert(image_buffer.empty());
     image_buffer = std::move(buf);
   }
@@ -44,12 +44,12 @@ public:
 
 private:
   const uint64_t base_addr;
-  std::vector<char> image_buffer;
+  std::string image_buffer;
 };
 
-static std::vector<char> ParseHexBytes(const std::string &bytes, uint64_t addr,
-                                       uint64_t addr_size) {
-  std::vector<char> buffer;
+static std::string ParseHexBytes(std::string_view bytes, uint64_t addr,
+                                 uint64_t addr_size) {
+  std::string buffer;
   for (size_t i = 0; i < bytes.size(); i += 2) {
     const char nibbles[] = {bytes[i], bytes[i + 1], '\0'};
     char *parsed_to = nullptr;
@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
   // initialization.
   //
   // Ensure that we don't start disassembling until we've set the image buffer.
-  std::vector<char> image_buffer =
+  std::string image_buffer =
       ParseHexBytes(bytes, addr, engine.getDefaultSize());
   const size_t len = image_buffer.size();
   load_image.SetImageBuffer(std::move(image_buffer));
