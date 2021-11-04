@@ -47,8 +47,8 @@ private:
   std::vector<char> image_buffer;
 };
 
-static std::vector<char> ParseBytes(const std::string &bytes, uint64_t addr,
-                                    uint64_t addr_size) {
+static std::vector<char> ParseHexBytes(const std::string &bytes, uint64_t addr,
+                                       uint64_t addr_size) {
   std::vector<char> buffer;
   for (size_t i = 0; i < bytes.size(); i += 2) {
     const char nibbles[] = {bytes[i], bytes[i + 1], '\0'};
@@ -172,7 +172,7 @@ int main(int argc, char *argv[]) {
   //
   // Ensure that we don't start disassembling until we've set the image buffer.
   std::vector<char> image_buffer =
-      ParseBytes(bytes, addr, engine.getDefaultSize());
+      ParseHexBytes(bytes, addr, engine.getDefaultSize());
   const size_t len = image_buffer.size();
   load_image.SetImageBuffer(std::move(image_buffer));
   if (action == "disassemble") {
