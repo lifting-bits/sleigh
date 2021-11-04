@@ -81,14 +81,14 @@ sleigh-lift [action] [sla_file] [bytes] [address:OPTIONAL]
 For example, to disassemble the following byte string:
 
 ```sh
-$ sleigh-lift disassemble <PATH_TO_SLEIGH_INSTALL>/share/sleigh/Processors/x86/data/languages/x86-64.sla 4881ecc00f0000
+$ sleigh-lift disassemble <path where SLEIGH is installed>/share/sleigh/Processors/x86/data/languages/x86-64.sla 4881ecc00f0000
 0x00000000: SUB RSP,0xfc0
 ```
 
 And to lift it to p-code:
 
 ```sh
-$ sleigh-lift pcode <PATH_TO_SLEIGH_INSTALL>/share/sleigh/Processors/x86/data/languages/x86-64.sla 4881ecc00f0000
+$ sleigh-lift pcode <path where SLEIGH is installed>/share/sleigh/Processors/x86/data/languages/x86-64.sla 4881ecc00f0000
 (register,0x200,1) = INT_LESS (register,0x20,8) (const,0xfc0,8)
 (register,0x20b,1) = INT_SBORROW (register,0x20,8) (const,0xfc0,8)
 (register,0x20,8) = INT_SUB (register,0x20,8) (const,0xfc0,8)
