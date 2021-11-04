@@ -96,15 +96,12 @@ set(sleigh_deccore_source_list
 )
 
 set(sleigh_extra_source_list
-  "${library_root}/bfd_arch.cc"
   "${library_root}/callgraph.cc"
-  "${library_root}/codedata.cc"
   "${library_root}/ifacedecomp.cc"
   "${library_root}/ifaceterm.cc"
   "${library_root}/inject_sleigh.cc"
   "${library_root}/interface.cc"
   "${library_root}/libdecomp.cc"
-  "${library_root}/loadimage_bfd.cc"
   "${library_root}/loadimage_xml.cc"
   "${library_root}/raw_arch.cc"
   "${library_root}/rulecompile.cc"
@@ -145,71 +142,6 @@ set(sleigh_slacomp_source_list
   "${library_root}/slgh_compile.cc"
   "${library_root}/slghparse.cc"
   "${library_root}/slghscan.cc"
-)
-
-#
-# Locate the BFD library and its dependencies
-#
-
-# BFD
-find_path(bfd_include_path NAMES "bfd.h")
-if(NOT bfd_include_path)
-  message(SEND_ERROR "Failed to locate the bfd header file. Try to install the binutils development package")
-endif()
-
-find_library(bfd_library_path
-  NAMES
-    "libbfd.a"
-    "libbfd.so"
-)
-
-if(NOT bfd_library_path)
-  message(SEND_ERROR "Failed to locate the bfd library. Try to install the binutils development package")
-endif()
-
-add_library(thirdparty_bfd UNKNOWN IMPORTED GLOBAL)
-set_target_properties(thirdparty_bfd PROPERTIES
-  IMPORTED_LOCATION
-    "${bfd_library_path}"
-
-  INTERFACE_INCLUDE_DIRECTORIES
-    "${bfd_include_path}"
-)
-
-target_link_libraries(thirdparty_bfd INTERFACE
-  ${CMAKE_DL_LIBS}
-)
-
-target_compile_definitions(thirdparty_bfd INTERFACE
-  PACKAGE=\"sleigh\"
-  PACKAGE_VERSION=\"${PROJECT_VERSION}\"
-)
-
-# ZLIB
-find_package(ZLIB REQUIRED)
-target_link_libraries(thirdparty_bfd INTERFACE
-  ZLIB::ZLIB
-)
-
-# iberty
-find_library(iberty_library_path
-  NAMES
-    "libiberty.a"
-    "libiberty.so"
-)
-
-if(NOT iberty_library_path)
-  message(SEND_ERROR "Failed to locate the iberty library. Try to install the libiberty development package")
-endif()
-
-add_library(thirdparty_iberty UNKNOWN IMPORTED GLOBAL)
-set_target_properties(thirdparty_iberty PROPERTIES
-  IMPORTED_LOCATION
-    "${iberty_library_path}"
-)
-
-target_link_libraries(thirdparty_bfd INTERFACE
-  thirdparty_iberty
 )
 
 #
@@ -297,7 +229,6 @@ target_compile_definitions(decomp_opt PRIVATE
 
 target_link_libraries(decomp_opt PRIVATE
   sleigh_settings
-  $<BUILD_INTERFACE:thirdparty_bfd>
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -327,7 +258,6 @@ if(SLEIGH_ENABLE_TESTS)
 
   target_link_libraries(ghidra_test_dbg PRIVATE
     sleigh_settings
-    $<BUILD_INTERFACE:thirdparty_bfd>
   )
 
   target_compile_definitions(ghidra_test_dbg PRIVATE
@@ -437,7 +367,6 @@ add_library(decomp
 
 target_link_libraries(decomp PUBLIC
   sleigh_settings
-  $<BUILD_INTERFACE:thirdparty_bfd>
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
