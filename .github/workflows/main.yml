@@ -1,4 +1,4 @@
-name: Linux
+name: Build
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         build_type: [RelWithDebInfo, Debug]
 
     steps:
@@ -40,21 +40,30 @@ jobs:
     - name: Update the submodules
       run: git submodule update --init --recursive
 
-    - name: Install system dependencies
+    - name: Install Linux system dependencies
+      if: runner.os == 'Linux'
       run: |
         sudo apt-get install -y \
           ccache \
           ninja-build \
-          libiberty-dev \
-          binutils-dev \
           clang \
           rpm \
-          elfutils \
           doxygen \
           xdot \
           graphviz
 
+    - name: Install macOS system dependencies
+      if: runner.os == 'macOS'
+      run: |
+        brew install \
+          ccache \
+          ninja \
+          cmake \
+          doxygen \
+          graphviz
+
     - name: Install CMake
+      if: runner.os == 'Linux'
       id: cmake_installer
       run: |
         sudo snap install --classic cmake
@@ -108,6 +117,7 @@ jobs:
           --target package
 
     - name: Test the DEB package
+      if: runner.os == 'Linux'
       run: |
         sudo dpkg -i build/*.deb
 
@@ -132,14 +142,14 @@ jobs:
         echo ::set-output name=TGZ_PACKAGE_NAME::$(cd build && ls *.tar.gz)
 
     - name: Upload the DEB package artifact (RelWithDebInfo only)
-      if: matrix.build_type == 'RelWithDebInfo'
+      if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux'
       uses: actions/upload-artifact@v1
       with:
         name: ${{ steps.package_locations.outputs.DEB_PACKAGE_NAME }}
         path: ${{ steps.package_locations.outputs.DEB_PACKAGE_PATH }}
 
     - name: Upload the RPM package artifact (RelWithDebInfo only)
-      if: matrix.build_type == 'RelWithDebInfo'
+      if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux'
       uses: actions/upload-artifact@v1
       with:
         name: ${{ steps.package_locations.outputs.RPM_PACKAGE_NAME }}
