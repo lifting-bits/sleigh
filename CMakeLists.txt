@@ -696,6 +696,7 @@ if(SLEIGH_ENABLE_INSTALL)
     "${library_root}/translate.hh"
     "${library_root}/types.h"
     "${library_root}/xml.hh"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/libsleigh.hh"
   )
 
   install(

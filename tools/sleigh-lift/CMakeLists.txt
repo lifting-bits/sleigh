@@ -27,6 +27,7 @@ endif()
 
 target_include_directories(sleigh-lift PRIVATE
   "${library_root}"
+  "${PROJECT_SOURCE_DIR}/include"
 )
 
 target_link_libraries(sleigh-lift PRIVATE

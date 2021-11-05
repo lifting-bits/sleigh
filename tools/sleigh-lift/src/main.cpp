@@ -6,13 +6,7 @@
   the LICENSE file found in the root directory of this source tree.
 */
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-copy"
-#pragma GCC diagnostic ignored "-Wsign-compare"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#include <loadimage.hh>
-#include <sleigh.hh>
-#pragma GCC diagnostic pop
+#include <libsleigh.hh>
 
 #include <cassert>
 #include <iostream>
