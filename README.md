@@ -70,6 +70,38 @@ cmake --build .
 cmake --build . --target package
 ```
 
+## API Usage
+
+An example program called `sleigh-lift` has been included to demonstrate how to use the SLEIGH API. It takes a hexadecimal string of bytes and either disassembles it or lifts it to p-code. The program can be invoked like so, where the `action` argument must be either `disassemble` or `pcode`:
+
+```sh
+sleigh-lift [action] [sla_file] [bytes] [address:OPTIONAL]
+```
+
+For example, to disassemble the following byte string:
+
+```sh
+$ sleigh-lift disassemble <path where SLEIGH is installed>/share/sleigh/Processors/x86/data/languages/x86-64.sla 4881ecc00f0000
+0x00000000: SUB RSP,0xfc0
+```
+
+And to lift it to p-code:
+
+```sh
+$ sleigh-lift pcode <path where SLEIGH is installed>/share/sleigh/Processors/x86/data/languages/x86-64.sla 4881ecc00f0000
+(register,0x200,1) = INT_LESS (register,0x20,8) (const,0xfc0,8)
+(register,0x20b,1) = INT_SBORROW (register,0x20,8) (const,0xfc0,8)
+(register,0x20,8) = INT_SUB (register,0x20,8) (const,0xfc0,8)
+(register,0x207,1) = INT_SLESS (register,0x20,8) (const,0x0,8)
+(register,0x206,1) = INT_EQUAL (register,0x20,8) (const,0x0,8)
+(unique,0x12c00,8) = INT_AND (register,0x20,8) (const,0xff,8)
+(unique,0x12c80,1) = POPCOUNT (unique,0x12c00,8)
+(unique,0x12d00,1) = INT_AND (unique,0x12c80,1) (const,0x1,1)
+(register,0x202,1) = INT_EQUAL (unique,0x12d00,1) (const,0x0,1)
+```
+
+The `SLEIGH_ENABLE_EXAMPLES` option must be set during the configuration step in order to build `sleigh-lift`.
+
 ## License
 
 See the LICENSE file in the top directory of this repo.
