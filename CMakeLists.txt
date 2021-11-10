@@ -7,7 +7,14 @@
 #
 
 cmake_minimum_required(VERSION 3.21.0)
-project("sleigh" VERSION 10.0.4.0)
+
+# Sets "library_root" variable for decompiler cpp root directory
+# Use "ghidrasource_SOURCE_DIR" variable for Ghidra repo root
+include(src/setup-ghidra-source.cmake)
+
+project("sleigh"
+  VERSION "${SLEIGH_GHIDRA_VERSION}"
+)
 
 include("cmake/options.cmake")
 
@@ -21,12 +28,6 @@ if(SLEIGH_ENABLE_PACKAGING)
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(WARNING "sleigh: Packaging a Debug version")
   endif()
-endif()
-
-# Make sure the submodule has been initialized correctly
-set(library_root "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Features/Decompiler/src/decompile/cpp")
-if(NOT EXISTS "${library_root}/sleigh.hh")
-  message(FATAL_ERROR "The ghidra submodule has not been initialized")
 endif()
 
 set(sleigh_core_source_list
@@ -222,6 +223,11 @@ add_executable(decomp_opt
 
   "${library_root}/consolemain.cc"
 )
+if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+  target_sources(decomp_opt PRIVATE
+    "${library_root}/testfunction.cc"
+  )
+endif()
 
 target_compile_definitions(decomp_opt PRIVATE
   __TERMINAL__
@@ -255,6 +261,12 @@ if(SLEIGH_ENABLE_TESTS)
     "${library_root}/test.cc"
     "${library_root}/../unittests/testfloatemu.cc"
   )
+  if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+    target_sources(ghidra_test_dbg PRIVATE
+      "${library_root}/../unittests/testtypes.cc"
+      "${library_root}/../unittests/testcirclerange.cc"
+    )
+  endif()
 
   target_link_libraries(ghidra_test_dbg PRIVATE
     sleigh_settings
@@ -268,9 +280,14 @@ if(SLEIGH_ENABLE_TESTS)
     "${library_root}"
   )
 
+  set(extra_test_args "")
+  if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+    # We compile the sla files in our build directory
+    set(extra_test_args -sleighpath "${CMAKE_CURRENT_BINARY_DIR}")
+  endif()
   add_test(
     NAME ghidra_test_dbg
-    COMMAND ghidra_test_dbg
+    COMMAND ghidra_test_dbg ${extra_test_args} unittests
   )
 endif()
 
@@ -283,6 +300,13 @@ add_executable(ghidra_opt
   ${sleigh_deccore_source_list}
   ${sleigh_ghidra_source_list}
 )
+if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+  target_sources(ghidra_opt PRIVATE
+    $<$<CONFIG:DEBUG>:
+      "${library_root}/testfunction.cc"
+    >
+  )
+endif()
 
 target_link_libraries(ghidra_opt PRIVATE
   sleigh_settings
@@ -424,127 +448,19 @@ endif()
 #
 # Spec files
 #
+if(NOT "${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+  include(spec-files-list/spec_files_stable.cmake)
+else()
+  include(spec-files-list/spec_files_HEAD.cmake)
+endif()
 
-set(spec_file_list
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/6502/data/languages/6502.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/68000/data/languages/68020.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/68000/data/languages/68030.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/68000/data/languages/68040.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/68000/data/languages/coldfire.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/6805/data/languages/6805.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/6805/data/languages/6809.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/8048/data/languages/8048.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/8051/data/languages/80251.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/8051/data/languages/80390.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/8051/data/languages/8051.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/8051/data/languages/mx51.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/8085/data/languages/8085.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/AARCH64/data/languages/AARCH64BE.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/AARCH64/data/languages/AARCH64.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM4_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM4_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM4t_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM4t_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM5_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM5_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM5t_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM5t_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM6_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM6_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM7_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM7_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM8_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/ARM/data/languages/ARM8_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Atmel/data/languages/avr32a.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Atmel/data/languages/avr8eind.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Atmel/data/languages/avr8e.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Atmel/data/languages/avr8.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Atmel/data/languages/avr8xmega.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/CP1600/data/languages/CP1600.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/CR16/data/languages/CR16B.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/CR16/data/languages/CR16C.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Dalvik/data/languages/Dalvik.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/DATA/data/languages/data-be-64.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/DATA/data/languages/data-le-64.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/HCS08/data/languages/HC05.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/HCS08/data/languages/HC08.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/HCS08/data/languages/HCS08.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/HCS12/data/languages/HCS12.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/JVM/data/languages/JVM.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/M8C/data/languages/m8c.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/MCS96/data/languages/MCS96.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/MIPS/data/languages/mips32be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/MIPS/data/languages/mips32le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/MIPS/data/languages/mips32R6be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/MIPS/data/languages/mips32R6le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/MIPS/data/languages/mips64be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/MIPS/data/languages/mips64le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PA-RISC/data/languages/pa-risc32be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PIC/data/languages/dsPIC30F.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PIC/data/languages/dsPIC33C.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PIC/data/languages/dsPIC33E.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PIC/data/languages/dsPIC33F.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PIC/data/languages/pic12c5xx.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PIC/data/languages/pic16c5x.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PIC/data/languages/pic16f.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PIC/data/languages/pic16.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PIC/data/languages/pic17c7xx.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PIC/data/languages/pic18.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PIC/data/languages/PIC24E.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PIC/data/languages/PIC24F.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PIC/data/languages/PIC24H.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_32_4xx_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_32_4xx_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_32_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_32_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_32_quicciii_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_32_quicciii_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_64_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_64_isa_altivec_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_64_isa_altivec_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_64_isa_altivec_vle_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_64_isa_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_64_isa_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_64_isa_vle_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/PowerPC/data/languages/ppc_64_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/RISCV/data/languages/riscv.ilp32d.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/RISCV/data/languages/riscv.lp64d.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Sparc/data/languages/SparcV9_32.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Sparc/data/languages/SparcV9_64.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/SuperH4/data/languages/SuperH4_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/SuperH4/data/languages/SuperH4_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/SuperH/data/languages/sh-1.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/SuperH/data/languages/sh-2a.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/SuperH/data/languages/sh-2.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/TI_MSP430/data/languages/TI_MSP430.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/TI_MSP430/data/languages/TI_MSP430X.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Toy/data/languages/toy64_be_harvard.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Toy/data/languages/toy64_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Toy/data/languages/toy64_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Toy/data/languages/toy_be_posStack.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Toy/data/languages/toy_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Toy/data/languages/toy_builder_be_align2.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Toy/data/languages/toy_builder_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Toy/data/languages/toy_builder_le_align2.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Toy/data/languages/toy_builder_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Toy/data/languages/toy_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Toy/data/languages/toy_wsz_be.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Toy/data/languages/toy_wsz_le.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/tricore/data/languages/tricore.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/V850/data/languages/V850.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/x86/data/languages/x86-64.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/x86/data/languages/x86.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Z80/data/languages/z180.slaspec"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors/Z80/data/languages/z80.slaspec"
-)
-
-set(sla_spec_output "${CMAKE_CURRENT_BINARY_DIR}/Processors")
+set(sla_spec_output "${CMAKE_CURRENT_BINARY_DIR}/Ghidra/Processors")
 
 add_custom_command(
   OUTPUT "${sla_spec_output}"
   DEPENDS ${spec_file_list}
   COMMAND "${CMAKE_COMMAND}" -E rm -rf "${sla_spec_output}"
-  COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/src/Ghidra/Processors" "${sla_spec_output}"
+  COMMAND "${CMAKE_COMMAND}" -E copy_directory "${ghidrasource_SOURCE_DIR}/Ghidra/Processors" "${sla_spec_output}"
   COMMENT "sleigh: Copying the spec files"
   VERBATIM
 )
@@ -588,7 +504,7 @@ if(SLEIGH_ENABLE_EXAMPLES)
 
   add_custom_target(sleighexample_runner
     "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/specfiles"
-    COMMAND "${CMAKE_COMMAND}" -E create_symlink "${CMAKE_CURRENT_BINARY_DIR}/Processors/x86/data/languages/x86.sla" "${CMAKE_CURRENT_BINARY_DIR}/specfiles/x86.sla"
+    COMMAND "${CMAKE_COMMAND}" -E create_symlink "${CMAKE_CURRENT_BINARY_DIR}/Ghidra/Processors/x86/data/languages/x86.sla" "${CMAKE_CURRENT_BINARY_DIR}/specfiles/x86.sla"
     COMMAND sleighexample disassemble
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
   )
@@ -696,7 +612,7 @@ if(SLEIGH_ENABLE_INSTALL)
     "${library_root}/translate.hh"
     "${library_root}/types.h"
     "${library_root}/xml.hh"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/libsleigh.hh"
+    "${PROJECT_SOURCE_DIR}/include/libsleigh.hh"
   )
 
   install(

@@ -7,11 +7,9 @@
 #
 
 set(PACKAGE_VERSION 1)
-
-string(REPLACE "." ";" SLEIGH_VERSION_COMPONENTS "${PROJECT_VERSION}")
-list(GET SLEIGH_VERSION_COMPONENTS 0 CPACK_PACKAGE_VERSION_MAJOR)
-list(GET SLEIGH_VERSION_COMPONENTS 1 CPACK_PACKAGE_VERSION_MINOR)
-list(GET SLEIGH_VERSION_COMPONENTS 2 CPACK_PACKAGE_VERSION_PATCH)
+if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+  set(PACKAGE_VERSION "DEV.${ghidra_short_commit}")
+endif()
 
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SLEIGH was designed for the GHIDRA reverse engineering platform and is used to describe microprocessors with enough detail to facilitate two major components of GHIDRA, the disassembly and decompilation engines.")
 set(CPACK_PACKAGE_NAME "sleigh")

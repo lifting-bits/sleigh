@@ -1,2 +1,6 @@
 build
 .vscode
+
+# FetchContent Ghidra source directories
+/src/ghidra*
+/src/cmake_fc_*
