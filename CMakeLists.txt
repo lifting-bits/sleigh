@@ -151,6 +151,7 @@ set(sleigh_slacomp_source_list
 #
 
 add_library(sleigh_settings INTERFACE)
+add_library(sleigh::sleigh_settings ALIAS sleigh_settings)
 target_compile_features(sleigh_settings INTERFACE
   cxx_std_17
 )
@@ -224,6 +225,7 @@ add_executable(decomp_opt
 
   "${library_root}/consolemain.cc"
 )
+add_executable(sleigh::decomp_opt ALIAS decomp_opt)
 if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
   target_sources(decomp_opt PRIVATE
     "${library_root}/testfunction.cc"
@@ -301,6 +303,7 @@ add_executable(ghidra_opt
   ${sleigh_deccore_source_list}
   ${sleigh_ghidra_source_list}
 )
+add_executable(sleigh::ghidra_opt ALIAS ghidra_opt)
 if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
   target_sources(ghidra_opt PRIVATE
     $<$<CONFIG:DEBUG>:
@@ -339,6 +342,7 @@ add_executable(sleigh_opt
   ${sleigh_source_list}
   ${sleigh_slacomp_source_list}
 )
+add_executable(sleigh::sleigh_opt ALIAS sleigh_opt)
 
 target_link_libraries(sleigh_opt PRIVATE
   sleigh_settings
@@ -364,6 +368,7 @@ add_library(sla
   "${library_root}/emulate.cc"
   "${library_root}/opbehavior.cc"
 )
+add_library(sleigh::sla ALIAS sla)
 
 target_link_libraries(sla PUBLIC
   sleigh_settings
@@ -389,6 +394,7 @@ add_library(decomp
   ${sleigh_extra_source_list}
   ${sleigh_source_list}
 )
+add_library(sleigh::decomp ALIAS decomp)
 
 target_link_libraries(decomp PUBLIC
   sleigh_settings

@@ -9,6 +9,7 @@
 add_executable(sleigh-lift
   src/main.cpp
 )
+add_executable(sleigh::sleigh-lift ALIAS sleigh-lift)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   if(MSVC)
