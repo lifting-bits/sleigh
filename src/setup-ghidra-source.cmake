@@ -44,19 +44,11 @@ include(FetchContent)
 # Verbose fetch content updates
 set(FETCHCONTENT_QUIET OFF)
 
-# Reuse the checkout for multiple build directories
-# See https://stackoverflow.com/a/56330645
-# Needs to include the generator because it's part of the build, which only
-# certain generators understand
-get_filename_component(fc_base "./src/cmake_fc_${CMAKE_GENERATOR}_ghidra_${SLEIGH_GHIDRA_RELEASE_TYPE}" REALPATH BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-set(FETCHCONTENT_BASE_DIR "${fc_base}")
-
 # Write out source directory with identifiable version info
 FetchContent_Declare(GhidraSource
   GIT_REPOSITORY https://github.com/NationalSecurityAgency/ghidra
   GIT_TAG "${SLEIGH_GHIDRA_COMMIT}"
   GIT_PROGRESS TRUE
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/ghidra_${SLEIGH_GHIDRA_RELEASE_TYPE}_${SLEIGH_GHIDRA_VERSION}_${ghidra_short_commit}"
   ${ghidra_patches}
 )
 FetchContent_MakeAvailable(GhidraSource)

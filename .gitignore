@@ -3,4 +3,4 @@ build
 
 # FetchContent Ghidra source directories
 /src/ghidra*
-/src/cmake_fc_*
+cmake_fc_*
