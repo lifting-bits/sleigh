@@ -152,8 +152,14 @@ set(sleigh_slacomp_source_list
 
 add_library(sleigh_settings INTERFACE)
 add_library(sleigh::sleigh_settings ALIAS sleigh_settings)
+
 target_compile_features(sleigh_settings INTERFACE
   cxx_std_17
+)
+
+target_include_directories(
+  sleigh_settings ${warning_guard}
+  INTERFACE $<BUILD_INTERFACE:${library_root}>
 )
 
 set_target_properties(sleigh_settings PROPERTIES
@@ -567,10 +573,10 @@ if(SLEIGH_ENABLE_INSTALL)
       "${CMAKE_INSTALL_LIBDIR}"
 
     INCLUDES DESTINATION
-      include
+      ${CMAKE_INSTALL_INCLUDEDIR}/sleigh
 
     PUBLIC_HEADER DESTINATION
-      "${CMAKE_INSTALL_INCLUDEDIR}/sleigh"
+      ${CMAKE_INSTALL_INCLUDEDIR}/sleigh
 
     PERMISSIONS
       OWNER_READ OWNER_WRITE OWNER_EXECUTE
@@ -627,7 +633,11 @@ if(SLEIGH_ENABLE_INSTALL)
       ${public_include_header_list}
 
     DESTINATION
-      "${CMAKE_INSTALL_INCLUDEDIR}/sleigh"
+      ${CMAKE_INSTALL_INCLUDEDIR}/sleigh
+  )
+  target_include_directories(
+    sleigh_settings ${warning_guard}
+    INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/sleigh>
   )
 
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")

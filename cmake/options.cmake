@@ -30,3 +30,22 @@ endif()
 if(SLEIGH_ENABLE_INSTALL)
   set(SLEIGH_ENABLE_DOCUMENTATION true CACHE BOOL "Set to true to enable the documentation (forced)" FORCE)
 endif()
+
+
+# ---- Warning guard ----
+
+# target_include_directories with the SYSTEM modifier will request the compiler
+# to omit warnings from the provided paths, if the compiler supports that
+# This is to provide a user experience similar to find_package when
+# add_subdirectory or FetchContent is used to consume this project
+set(warning_guard "")
+if(NOT PROJECT_IS_TOP_LEVEL)
+  option(SLEIGH_INCLUDES_WITH_SYSTEM
+    "Use SYSTEM modifier for sleigh's includes, disabling warnings"
+    ON
+  )
+  mark_as_advanced(SLEIGH_INCLUDES_WITH_SYSTEM)
+  if(SLEIGH_INCLUDES_WITH_SYSTEM)
+    set(warning_guard SYSTEM)
+  endif()
+endif()
