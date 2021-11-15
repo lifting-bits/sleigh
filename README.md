@@ -46,6 +46,12 @@ cmake --build build -j
 cmake --install build --prefix <path where SLEIGH will install>
 ```
 
+### Note on Ghidra source code
+
+The Ghidra source code is not actually included in this git repo, and by default, CMake will automatically pull a stable version for you.
+
+Please see [`src/README.md`](./src/README.md) for more information on how to customize which Ghidra source code commit will be used/compiled.
+
 ## Packaging
 
 The CMake configuration also supports building packages for SLEIGH. If the `SLEIGH_ENABLE_PACKAGING` option is set during the configuration step, the build step will generate a tarball containing the SLEIGH installation. Additionally, the build will create an RPM package if it finds `rpm` in the `PATH` and/or a DEB package if it finds `dpkg` in the `PATH`.
