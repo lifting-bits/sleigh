@@ -30,16 +30,18 @@ jobs:
 
     - name: Generate cache key
       id: cache_key
-      run: echo ::set-output name=VALUE::build_${{ matrix.os }}_type-${{ matrix.build_type }}
+      run: echo ::set-output name=VALUE::build_${{ matrix.os }}_type-${{ matrix.build_type }}-${{ matrix.release }}
 
     - name: Update the cache (ccache)
       uses: actions/cache@v1.0.3
       with:
-        path: ccache
+        path: "${{ github.workspace }}/ccache"
         key: ${{ steps.cache_key.outputs.VALUE }}_ccache
 
     - name: Create the cache
-      run: mkdir -p ccache
+      run: |
+        mkdir "${{ github.workspace }}/ccache"
+        echo "CCACHE_DIR=${{ github.workspace }}/ccache" >> $GITHUB_ENV
 
     - name: Install Linux system dependencies
       if: runner.os == 'Linux'
@@ -71,14 +73,14 @@ jobs:
 
     - name: Configure the project
       run: |
-        export CCACHE_DIR="$(realpath ccache)"
-
         cmake \
           -S . \
           -B build \
           -G Ninja \
           -DCMAKE_C_COMPILER=clang \
           -DCMAKE_CXX_COMPILER=clang++ \
+          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+          -DCMAKE_C_COMPILER_LAUNCHER=ccache \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           -DSLEIGH_GHIDRA_RELEASE_TYPE=${{ matrix.release }} \
           -DSLEIGH_ENABLE_TESTS=ON \
@@ -105,12 +107,8 @@ jobs:
 
     - name: Run the install target
       run: |
-        mkdir install
-        export DESTDIR="$(realpath install)"
-
-        cmake \
-          --build build \
-          --target install
+        cmake --install build \
+          --prefix install
 
     - name: Create the packages
       run: |
