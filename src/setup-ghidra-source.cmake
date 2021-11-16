@@ -2,7 +2,7 @@
 
 # Set up Ghidra repo human-readable version settings
 set(SLEIGH_GHIDRA_RELEASE_TYPE "stable" CACHE
-  STRING "Ghidra release type to use. Make sure SLEIGH_GHIDRA_COMMIT is the correct corresponding commit. 'HEAD' is used for active development purposes."
+  STRING "Ghidra release type to use. 'HEAD' is used for active development purposes."
 )
 # This is just helper for CMake UIs. CMake does not enforce that the value matches one of those listed.
 set_property(CACHE SLEIGH_GHIDRA_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
@@ -27,17 +27,9 @@ if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL HEAD)
   )
 endif()
 
-# For use in the CMake `project` command to set version
-set(SLEIGH_GHIDRA_VERSION "${ghidra_version}" CACHE
-  STRING "Numeric Ghidra version corresponding to SLEIGH_GHIDRA_RELEASE_TYPE and SLEIGH_GHIDRA_COMMIT. This is used during packaging"
-)
-
-set(SLEIGH_GHIDRA_COMMIT "${ghidra_git_tag}" CACHE
-  STRING "Ghidra repo commit to use/checkout. Ensure this correct with respect to SLEIGH_GHIDRA_VERSION and SLEIGH_GHIDRA_RELEASE_TYPE."
-)
 string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 
-message(STATUS "Using Ghidra version ${SLEIGH_GHIDRA_VERSION} at commit ${ghidra_short_commit}")
+message(STATUS "Using Ghidra version ${ghidra_version} at commit ${ghidra_short_commit}")
 
 include(FetchContent)
 
@@ -47,7 +39,7 @@ set(FETCHCONTENT_QUIET OFF)
 # Write out source directory with identifiable version info
 FetchContent_Declare(GhidraSource
   GIT_REPOSITORY https://github.com/NationalSecurityAgency/ghidra
-  GIT_TAG "${SLEIGH_GHIDRA_COMMIT}"
+  GIT_TAG ${ghidra_git_tag}
   GIT_PROGRESS TRUE
   ${ghidra_patches}
 )

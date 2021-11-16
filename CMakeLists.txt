@@ -9,11 +9,12 @@
 cmake_minimum_required(VERSION 3.21.0)
 
 # Sets "library_root" variable for decompiler cpp root directory
+# Sets "ghidra_version" for numeric version number
 # Use "ghidrasource_SOURCE_DIR" variable for Ghidra repo root
 include(src/setup-ghidra-source.cmake)
 
 project("sleigh"
-  VERSION "${SLEIGH_GHIDRA_VERSION}"
+  VERSION "${ghidra_version}"
 )
 
 include("cmake/options.cmake")
