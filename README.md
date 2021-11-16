@@ -21,7 +21,11 @@ This repository provides a CMake-based build project for SLEIGH so that it can b
 | [Git](https://git-scm.com/) | Latest | git | N/A |
 | [CMake](https://cmake.org/) | 3.21+ | cmake | cmake |
 
+**NOTE**: This CMake project pulls the Ghidra source code from the internet during configuration. See the [note on Ghidra source code section](#note-on-ghidra-source-code) for more details.
+
 ### Optional
+
+For building documentation during installation and packaging:
 
 | Name | Version | Linux Package to Install | macOS Homebrew Package to Install |
 | ---- | ------- | ------------------------ | --------------------------------- |
@@ -48,9 +52,9 @@ cmake --install build --prefix <path where SLEIGH will install>
 
 ### Note on Ghidra source code
 
-The Ghidra source code is not actually included in this git repo, and by default, CMake will automatically pull a stable version for you.
+The Ghidra source code is not actually included in this git repo, and by default, CMake will automatically pull a stable version from the internet for you.
 
-Please see [`src/README.md`](./src/README.md) for more information on how to customize which Ghidra source code commit will be used/compiled.
+Please see [`src/README.md`](./src/README.md) for more information on how to customize which Ghidra source code commit will be used/compiled, including specifying your own local copy of the Ghidra source.
 
 ## Packaging
 
