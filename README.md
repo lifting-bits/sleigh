@@ -103,7 +103,7 @@ $ sleigh-lift pcode <path where SLEIGH is installed>/share/sleigh/Processors/x86
 (register,0x202,1) = INT_EQUAL (unique,0x12d00,1) (const,0x0,1)
 ```
 
-The `SLEIGH_ENABLE_EXAMPLES` option must be set to `TRUE` during the configuration step in order to build `sleigh-lift`.
+The `SLEIGH_ENABLE_EXAMPLES` option must be set to `ON` during the configuration step in order to build `sleigh-lift`.
 
 ## License
 
