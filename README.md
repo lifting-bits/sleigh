@@ -14,11 +14,21 @@ This repository provides a CMake-based build project for SLEIGH so that it can b
 
 ## Dependencies and Prerequisites
 
+### Required
+
 | Name | Version | Linux Package to Install | macOS Homebrew Package to Install |
 | ---- | ------- | ------------------------ | --------------------------------- |
 | [Git](https://git-scm.com/) | Latest | git | N/A |
-| [Ninja](https://ninja-build.org/) | Latest | ninja-build | ninja |
 | [CMake](https://cmake.org/) | 3.21+ | cmake | cmake |
+
+**NOTE**: This CMake project pulls the Ghidra source code from the internet during configuration. See the [note on Ghidra source code section](#note-on-ghidra-source-code) for more details.
+
+### Optional
+
+For building documentation during installation and packaging:
+
+| Name | Version | Linux Package to Install | macOS Homebrew Package to Install |
+| ---- | ------- | ------------------------ | --------------------------------- |
 | [Doxygen](https://www.doxygen.nl/) | Latest | doxygen | doxygen |
 | [GraphViz](https://graphviz.org/) | Latest | graphviz | graphviz |
 
@@ -29,26 +39,22 @@ This repository provides a CMake-based build project for SLEIGH so that it can b
 git clone https://github.com/lifting-bits/sleigh.git
 cd sleigh
 
-# Update the GHIDRA submodule
-git submodule update --init --recursive --progress
-
-# Create a build directory
-mkdir build
-cd build
-
 # Configure CMake
-cmake \
-    -DSLEIGH_ENABLE_INSTALL=ON \
-    -DCMAKE_INSTALL_PREFIX="<path where SLEIGH will install>" \
-    -G Ninja \
-    ..
+cmake -B build -S . \
+    -DSLEIGH_ENABLE_INSTALL=ON    
 
 # Build SLEIGH
-cmake --build .
+cmake --build build -j
 
 # Install SLEIGH
-cmake --build . --target install
+cmake --install build --prefix <path where SLEIGH will install>
 ```
+
+### Note on Ghidra source code
+
+The Ghidra source code is not actually included in this git repo, and by default, CMake will automatically pull a stable version from the internet for you.
+
+Please see [`src/README.md`](./src/README.md) for more information on how to customize which Ghidra source code commit will be used/compiled, including specifying your own local copy of the Ghidra source.
 
 ## Packaging
 
@@ -57,17 +63,14 @@ The CMake configuration also supports building packages for SLEIGH. If the `SLEI
 For example:
 
 ```sh
-cmake \
-    -DSLEIGH_ENABLE_PACKAGING=ON \
-    -DCMAKE_INSTALL_PREFIX="<path where SLEIGH will install>" \
-    -G Ninja \
-    ..
+cmake -B build -S . \
+    -DSLEIGH_ENABLE_PACKAGING=ON
 
 # Build SLEIGH
-cmake --build .
+cmake --build build -j
 
 # Package SLEIGH
-cmake --build . --target package
+cmake --build build --target package
 ```
 
 ## API Usage
@@ -100,7 +103,7 @@ $ sleigh-lift pcode <path where SLEIGH is installed>/share/sleigh/Processors/x86
 (register,0x202,1) = INT_EQUAL (unique,0x12d00,1) (const,0x0,1)
 ```
 
-The `SLEIGH_ENABLE_EXAMPLES` option must be set during the configuration step in order to build `sleigh-lift`.
+The `SLEIGH_ENABLE_EXAMPLES` option must be set to `ON` during the configuration step in order to build `sleigh-lift`.
 
 ## License
 
