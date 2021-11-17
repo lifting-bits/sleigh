@@ -32,8 +32,8 @@ target_include_directories(sleigh-lift PRIVATE
 )
 
 target_link_libraries(sleigh-lift PRIVATE
-  sla
-  decomp
+  sleigh::sla
+  sleigh::decomp
 )
 
 if(SLEIGH_ENABLE_INSTALL)

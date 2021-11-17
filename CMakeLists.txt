@@ -237,7 +237,7 @@ target_compile_definitions(decomp_opt PRIVATE
 )
 
 target_link_libraries(decomp_opt PRIVATE
-  sleigh_settings
+  sleigh::sleigh_settings
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -272,7 +272,7 @@ if(SLEIGH_ENABLE_TESTS)
   endif()
 
   target_link_libraries(ghidra_test_dbg PRIVATE
-    sleigh_settings
+    sleigh::sleigh_settings
   )
 
   target_compile_definitions(ghidra_test_dbg PRIVATE
@@ -313,7 +313,7 @@ if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
 endif()
 
 target_link_libraries(ghidra_opt PRIVATE
-  sleigh_settings
+  sleigh::sleigh_settings
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -345,7 +345,7 @@ add_executable(sleigh_opt
 add_executable(sleigh::sleigh_opt ALIAS sleigh_opt)
 
 target_link_libraries(sleigh_opt PRIVATE
-  sleigh_settings
+  sleigh::sleigh_settings
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -371,7 +371,7 @@ add_library(sla
 add_library(sleigh::sla ALIAS sla)
 
 target_link_libraries(sla PUBLIC
-  sleigh_settings
+  sleigh::sleigh_settings
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -397,7 +397,7 @@ add_library(decomp
 add_library(sleigh::decomp ALIAS decomp)
 
 target_link_libraries(decomp PUBLIC
-  sleigh_settings
+  sleigh::sleigh_settings
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
