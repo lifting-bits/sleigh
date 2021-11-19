@@ -42,7 +42,7 @@ if(SLEIGH_ENABLE_INSTALL)
       sleigh-lift
 
     EXPORT
-      "${PROJECT_NAME}"
+      "sleigh"
 
     DESTINATION
       "${CMAKE_INSTALL_BINDIR}"
