@@ -503,44 +503,82 @@ endif()
 #
 # Spec files
 #
+# Sets 'spec_file_list' variable
 if(NOT "${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
   include(spec-files-list/spec_files_stable.cmake)
 else()
   include(spec-files-list/spec_files_HEAD.cmake)
 endif()
 
-set(sla_spec_output "${CMAKE_CURRENT_BINARY_DIR}/Ghidra/Processors")
+# This prefix should match the Ghidra repo to where the sla spec files are located
+set(spec_files_dir_prefix Ghidra/Processors)
+# This is the root directory where all individual processor spec file directories will be created
+set(spec_files_build_dir "${CMAKE_CURRENT_BINARY_DIR}/specfiles")
+# This is where we will be copying the generated artifacts for each processor
+set(spec_files_root_dir "${spec_files_build_dir}/${spec_files_dir_prefix}")
+set(spec_files_build_log_dir ${CMAKE_CURRENT_BINARY_DIR}/spec_build_logs)
 
 add_custom_command(
-  OUTPUT "${sla_spec_output}"
-  DEPENDS ${spec_file_list}
-  COMMAND "${CMAKE_COMMAND}" -E rm -rf "${sla_spec_output}"
-  COMMAND "${CMAKE_COMMAND}" -E copy_directory "${ghidrasource_SOURCE_DIR}/Ghidra/Processors" "${sla_spec_output}"
-  COMMENT "sleigh: Copying the spec files"
-  VERBATIM
+  OUTPUT ${spec_files_build_log_dir}
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${spec_files_build_log_dir}
 )
 
-add_custom_target(sla_spec_output_builder ALL DEPENDS
-  "${sla_spec_output}"
-)
+# Start processing all `.slaspec` files individually
+set(spec_targets)
+set(spec_files)
+# Example: '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages/mx51.slaspec'
+foreach(spec_file ${spec_file_list})
+  # Get 'mx51'
+  cmake_path(GET spec_file STEM LAST_ONLY spec_name)
+  # Get '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages'
+  cmake_path(GET spec_file PARENT_PATH spec_dir)
+  # Get '8051/data/languages'
+  cmake_path(RELATIVE_PATH spec_dir
+    BASE_DIRECTORY "${ghidrasource_SOURCE_DIR}/${spec_files_dir_prefix}"
+    OUTPUT_VARIABLE spec_proc_dir
+  )
 
-set(sla_spec_build_log "${sla_spec_output}/build.log")
+  set(spec_build_log "${spec_files_build_log_dir}/${spec_name}_build.log")
+  # Combine back again for the build directory output like
+  # '<build_prefix>/Ghidra/Processors/8051/data/languages'
+  set(spec_out_dir "${spec_files_root_dir}/${spec_proc_dir}")
+  # '<build_prefix>/Ghidra/Processors/8051/data/languages/mx51.sla'
+  set(spec_out "${spec_out_dir}/${spec_name}.sla")
 
-add_custom_command(
-  OUTPUT "${sla_spec_build_log}"
-  DEPENDS ${spec_file_list}
-  COMMAND sleigh_opt -a "${sla_spec_output}" > "${sla_spec_build_log}" 2>&1
-  WORKING_DIRECTORY "${sla_spec_output}"
-  COMMENT "sleigh: Compiling the spec files (${sla_spec_build_log})"
-  VERBATIM
-)
+  # Copy all other files from the slaspec source directory:
+  # '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages'
+  # TODO: This only copies the directory once, so you will need to remove the whole directory if you update any of
+  #  the other files, like '*.cspec' or '*.ldef' files
+  # CMake only guarantees update monitoring for file listed explicitly
+  add_custom_command(
+    OUTPUT "${spec_out_dir}"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${spec_dir}" "${spec_out_dir}"
+  )
 
-add_custom_target(sleigh_specs ALL DEPENDS
-  "${sla_spec_build_log}"
-)
+  # Compile the sla file
+  add_custom_command(
+    OUTPUT "${spec_out}"
+    DEPENDS "${spec_file}" "${spec_out_dir}" "${spec_files_build_log_dir}"
+    COMMAND "$<TARGET_FILE:sleigh::sleigh_opt>" ${spec_file} "${spec_out}" > ${spec_build_log} 2>&1
+    WORKING_DIRECTORY "${spec_dir}"
+    COMMENT "sleigh: Compiling the ${spec_name} spec file (${spec_build_log})"
+    BYPRODUCTS ${spec_build_log}
+    VERBATIM
+  )
 
-add_dependencies(sleigh_specs
-  sla_spec_output_builder
+  string(REPLACE "." "_" spec_target_name ${spec_name})
+  set(spec_target "sleigh_spec_${spec_target_name}")
+  add_custom_target(${spec_target}
+    DEPENDS ${spec_out}
+  )
+
+  list(APPEND spec_targets ${spec_target})
+  list(APPEND spec_files ${spec_out})
+endforeach()
+
+# All of the sla spec targets are combined into this one
+add_custom_target(sleigh_all_sla_specs ALL DEPENDS
+  ${spec_targets}
 )
 
 #
@@ -559,14 +597,14 @@ if(SLEIGH_ENABLE_EXAMPLES)
 
   add_custom_target(sleighexample_runner
     "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/specfiles"
-    COMMAND "${CMAKE_COMMAND}" -E create_symlink "${CMAKE_CURRENT_BINARY_DIR}/Ghidra/Processors/x86/data/languages/x86.sla" "${CMAKE_CURRENT_BINARY_DIR}/specfiles/x86.sla"
+    COMMAND "${CMAKE_COMMAND}" -E create_symlink "${spec_files_root_dir}/x86/data/languages/x86.sla" "${CMAKE_CURRENT_BINARY_DIR}/specfiles/x86.sla"
     COMMAND sleighexample disassemble
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
   )
 
   add_dependencies(
     sleighexample_runner
-    sleigh_specs
+    sleigh_spec_x86
   )
 endif()
 
@@ -634,15 +672,16 @@ if(SLEIGH_ENABLE_INSTALL)
       WORLD_READ WORLD_EXECUTE
   )
 
+  # Install the compiled sla files found in 'Ghidra' top-level directory
   install(
     DIRECTORY
-      "${sla_spec_output}"
+      "${spec_files_build_dir}"
 
     DESTINATION
-      "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}"
+      "${CMAKE_INSTALL_DATADIR}/sleigh"
   )
 
-  set(CMAKE_INSTALL_DOCDIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME}")
+  set(CMAKE_INSTALL_DOCDIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/sleigh")
 
   install(
     DIRECTORY
