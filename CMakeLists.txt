@@ -620,7 +620,7 @@ if(SLEIGH_ENABLE_INSTALL)
       sleigh_settings
 
     EXPORT
-      "${PROJECT_NAME}"
+      sleigh
   )
 
   install(
@@ -630,7 +630,7 @@ if(SLEIGH_ENABLE_INSTALL)
       sleigh_opt
 
     EXPORT
-      "${PROJECT_NAME}"
+      sleigh
 
     DESTINATION
       "${CMAKE_INSTALL_BINDIR}"
@@ -655,7 +655,7 @@ if(SLEIGH_ENABLE_INSTALL)
       decomp
 
     EXPORT
-      "${PROJECT_NAME}"
+      sleigh
 
     LIBRARY DESTINATION
       "${CMAKE_INSTALL_LIBDIR}"
@@ -752,10 +752,10 @@ if(SLEIGH_ENABLE_INSTALL)
   endif()
 
   install(
-    EXPORT "${PROJECT_NAME}"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
-    NAMESPACE "${PROJECT_NAME}::"
-    FILE "${PROJECT_NAME}Config.cmake"
+    EXPORT sleigh
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
+    NAMESPACE sleigh::
+    FILE sleighConfig.cmake
   )
 endif()
 
