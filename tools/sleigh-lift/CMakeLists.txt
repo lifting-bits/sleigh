@@ -9,6 +9,7 @@
 add_executable(sleigh-lift
   src/main.cpp
 )
+add_executable(sleigh::sleigh-lift ALIAS sleigh-lift)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   if(MSVC)
@@ -31,8 +32,8 @@ target_include_directories(sleigh-lift PRIVATE
 )
 
 target_link_libraries(sleigh-lift PRIVATE
-  sla
-  decomp
+  sleigh::sla
+  sleigh::decomp
 )
 
 if(SLEIGH_ENABLE_INSTALL)
