@@ -124,7 +124,7 @@ jobs:
           -B find_package_build
 
         cmake \
-          --build find_package_build
+          --build find_package_build --verbose
 
     - name: Locate the packages (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo'
