@@ -413,43 +413,18 @@ endif()
 if(SLEIGH_ENABLE_DOCUMENTATION)
   message(STATUS "sleigh: Documentation has been enabled")
 
-  find_package(Doxygen COMPONENTS dot)
-  if(DOXYGEN_FOUND)
-    set(working_directory "${CMAKE_CURRENT_BINARY_DIR}/doxygen_src")
+  find_package(Doxygen REQUIRED COMPONENTS dot)
 
-    add_custom_command(
-      OUTPUT "${working_directory}"
-      COMMAND "${CMAKE_COMMAND}" -E make_directory "${working_directory}"
-      COMMENT "sleigh: Generating the Doxygen working directory"
-      VERBATIM
-    )
-
-    add_custom_target(sleigh_doxygen_cwd_builder
-      DEPENDS "${working_directory}"
-    )
-
-    set(documentation_output "${CMAKE_CURRENT_BINARY_DIR}/doc/html")
-
-    add_custom_command(
-      OUTPUT "${documentation_output}"
-      COMMAND Doxygen::doxygen "${library_root}/Doxyfile"
-      COMMENT "sleigh: Generating the Doxygen documentation"
-      WORKING_DIRECTORY "${working_directory}"
-      VERBATIM
-    )
-
-    add_custom_target(sleigh_documentation ALL
-      DEPENDS "${documentation_output}"
-    )
-
-    add_dependencies(
-      sleigh_documentation
-      sleigh_doxygen_cwd_builder
-    )
-
-  else()
-    message(FATAL_ERROR "sleigh: Doxygen was not found")
-  endif()
+  set(documentation_output "${CMAKE_CURRENT_BINARY_DIR}/doc")
+  # Always run this target because we have no source file tracking for incremental builds
+  add_custom_target(sleigh_documentation
+    COMMAND "${CMAKE_COMMAND}" -E rm -rf "${library_root}/../doc" "${documentation_output}"
+    COMMAND Doxygen::doxygen Doxyfile
+    COMMAND "${CMAKE_COMMAND}" -E copy_directory "${library_root}/../doc" "${documentation_output}"
+    COMMENT "sleigh: Generating the Doxygen documentation"
+    WORKING_DIRECTORY "${library_root}"
+    VERBATIM
+  )
 endif()
 
 #
@@ -588,9 +563,16 @@ if(SLEIGH_ENABLE_INSTALL)
 
   set(CMAKE_INSTALL_DOCDIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME}")
 
+  # Always build docs during install
+  install(CODE
+    "execute_process(
+      COMMAND \"${CMAKE_COMMAND}\" --build \"${CMAKE_BINARY_DIR}\" --target sleigh_documentation
+      COMMAND_ECHO STDOUT
+    )"
+  )
   install(
     DIRECTORY
-      "${documentation_output}"
+      "${documentation_output}/html/"
 
     DESTINATION
       "${CMAKE_INSTALL_DOCDIR}"
