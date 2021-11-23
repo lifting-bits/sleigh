@@ -553,8 +553,8 @@ if(SLEIGH_ENABLE_EXAMPLES)
   )
 
   target_link_libraries(sleighexample PRIVATE
-    sla
-    decomp
+    sleigh::sla
+    sleigh::decomp
   )
 
   add_custom_target(sleighexample_runner
