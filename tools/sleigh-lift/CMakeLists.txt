@@ -26,11 +26,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   endif()
 endif()
 
-target_include_directories(sleigh-lift PRIVATE
-  "${library_root}"
-  "${PROJECT_SOURCE_DIR}/include"
-)
-
 target_link_libraries(sleigh-lift PRIVATE
   sleigh::sla
   sleigh::decomp

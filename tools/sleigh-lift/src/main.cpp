@@ -6,7 +6,7 @@
   the LICENSE file found in the root directory of this source tree.
 */
 
-#include <libsleigh.hh>
+#include <sleigh/libsleigh.hh>
 
 #include <cassert>
 #include <iostream>

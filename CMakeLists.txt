@@ -31,6 +31,39 @@ if(SLEIGH_ENABLE_PACKAGING)
   endif()
 endif()
 
+set(public_include_header_list
+  "${PROJECT_SOURCE_DIR}/include/libsleigh.hh"
+  "${library_root}/address.hh"
+  "${library_root}/context.hh"
+  "${library_root}/emulate.hh"
+  "${library_root}/error.hh"
+  "${library_root}/float.hh"
+  "${library_root}/globalcontext.hh"
+  "${library_root}/loadimage.hh"
+  "${library_root}/memstate.hh"
+  "${library_root}/opbehavior.hh"
+  "${library_root}/opcodes.hh"
+  "${library_root}/partmap.hh"
+  "${library_root}/pcoderaw.hh"
+  "${library_root}/semantics.hh"
+  "${library_root}/sleigh.hh"
+  "${library_root}/sleighbase.hh"
+  "${library_root}/slghpatexpress.hh"
+  "${library_root}/slghpattern.hh"
+  "${library_root}/slghsymbol.hh"
+  "${library_root}/space.hh"
+  "${library_root}/translate.hh"
+  "${library_root}/types.h"
+  "${library_root}/xml.hh"
+)
+set(public_headers_dir ${CMAKE_CURRENT_BINARY_DIR}/include)
+file(MAKE_DIRECTORY "${public_headers_dir}/sleigh")
+# Copy the public headers into our build directory so that we can control the layout.
+# Ideally, we want to let people '#include <sleigh/{header}>' without installing sleigh
+foreach(public_header ${public_include_header_list})
+  configure_file("${public_header}" "${public_headers_dir}/sleigh" COPYONLY)
+endforeach()
+
 set(sleigh_core_source_list
   "${library_root}/xml.cc"
   "${library_root}/space.cc"
@@ -157,11 +190,6 @@ target_compile_features(sleigh_settings INTERFACE
   cxx_std_17
 )
 
-target_include_directories(
-  sleigh_settings ${warning_guard}
-  INTERFACE $<BUILD_INTERFACE:${library_root}>
-)
-
 set_target_properties(sleigh_settings PROPERTIES
   INTERFACE_POSITION_INDEPENDENT_CODE ON
 )
@@ -245,6 +273,7 @@ target_compile_definitions(decomp_opt PRIVATE
 target_link_libraries(decomp_opt PRIVATE
   sleigh::sleigh_settings
 )
+target_include_directories(decomp_opt PRIVATE $<BUILD_INTERFACE:${library_root}>)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_compile_definitions(decomp_opt PRIVATE
@@ -280,13 +309,10 @@ if(SLEIGH_ENABLE_TESTS)
   target_link_libraries(ghidra_test_dbg PRIVATE
     sleigh::sleigh_settings
   )
+  target_include_directories(ghidra_test_dbg PRIVATE $<BUILD_INTERFACE:${library_root}>)
 
   target_compile_definitions(ghidra_test_dbg PRIVATE
     __TERMINAL__
-  )
-
-  target_include_directories(ghidra_test_dbg PRIVATE
-    "${library_root}"
   )
 
   set(extra_test_args "")
@@ -321,6 +347,7 @@ endif()
 target_link_libraries(ghidra_opt PRIVATE
   sleigh::sleigh_settings
 )
+target_include_directories(ghidra_opt PRIVATE $<BUILD_INTERFACE:${library_root}>)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_sources(ghidra_opt PRIVATE
@@ -353,6 +380,7 @@ add_executable(sleigh::sleigh_opt ALIAS sleigh_opt)
 target_link_libraries(sleigh_opt PRIVATE
   sleigh::sleigh_settings
 )
+target_include_directories(sleigh_opt PRIVATE $<BUILD_INTERFACE:${library_root}>)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_target_properties(sleigh_opt PROPERTIES
@@ -379,6 +407,13 @@ add_library(sleigh::sla ALIAS sla)
 target_link_libraries(sla PUBLIC
   sleigh::sleigh_settings
 )
+# Private include search path '#include "..."
+target_include_directories(sla PRIVATE $<BUILD_INTERFACE:${library_root}>)
+# Public include search path in build directory
+target_include_directories(
+  sla SYSTEM
+  INTERFACE $<BUILD_INTERFACE:${public_headers_dir}>
+)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_compile_definitions(sla PRIVATE
@@ -404,6 +439,13 @@ add_library(sleigh::decomp ALIAS decomp)
 
 target_link_libraries(decomp PUBLIC
   sleigh::sleigh_settings
+)
+# Private include search path '#include "..."
+target_include_directories(decomp PRIVATE $<BUILD_INTERFACE:${library_root}>)
+# Public include search path in build directory
+target_include_directories(
+  decomp SYSTEM
+  INTERFACE $<BUILD_INTERFACE:${public_headers_dir}>
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -562,6 +604,14 @@ if(SLEIGH_ENABLE_INSTALL)
   )
 
   install(
+    FILES
+    ${public_include_header_list}
+
+    DESTINATION
+    ${CMAKE_INSTALL_INCLUDEDIR}/sleigh
+  )
+
+  install(
     TARGETS
       sla
       decomp
@@ -573,10 +623,10 @@ if(SLEIGH_ENABLE_INSTALL)
       "${CMAKE_INSTALL_LIBDIR}"
 
     INCLUDES DESTINATION
-      ${CMAKE_INSTALL_INCLUDEDIR}/sleigh
+      ${CMAKE_INSTALL_INCLUDEDIR}
 
     PUBLIC_HEADER DESTINATION
-      ${CMAKE_INSTALL_INCLUDEDIR}/sleigh
+      ${CMAKE_INSTALL_INCLUDEDIR}
 
     PERMISSIONS
       OWNER_READ OWNER_WRITE OWNER_EXECUTE
@@ -600,44 +650,6 @@ if(SLEIGH_ENABLE_INSTALL)
 
     DESTINATION
       "${CMAKE_INSTALL_DOCDIR}"
-  )
-
-  set(public_include_header_list
-    "${library_root}/address.hh"
-    "${library_root}/context.hh"
-    "${library_root}/emulate.hh"
-    "${library_root}/error.hh"
-    "${library_root}/float.hh"
-    "${library_root}/globalcontext.hh"
-    "${library_root}/loadimage.hh"
-    "${library_root}/memstate.hh"
-    "${library_root}/opbehavior.hh"
-    "${library_root}/opcodes.hh"
-    "${library_root}/partmap.hh"
-    "${library_root}/pcoderaw.hh"
-    "${library_root}/semantics.hh"
-    "${library_root}/sleighbase.hh"
-    "${library_root}/sleigh.hh"
-    "${library_root}/slghpatexpress.hh"
-    "${library_root}/slghpattern.hh"
-    "${library_root}/slghsymbol.hh"
-    "${library_root}/space.hh"
-    "${library_root}/translate.hh"
-    "${library_root}/types.h"
-    "${library_root}/xml.hh"
-    "${PROJECT_SOURCE_DIR}/include/libsleigh.hh"
-  )
-
-  install(
-    FILES
-      ${public_include_header_list}
-
-    DESTINATION
-      ${CMAKE_INSTALL_INCLUDEDIR}/sleigh
-  )
-  target_include_directories(
-    sleigh_settings ${warning_guard}
-    INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/sleigh>
   )
 
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
