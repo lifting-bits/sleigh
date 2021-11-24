@@ -152,7 +152,7 @@ def get_latest_commit(ghidra_repo_dir: PathString) -> str:
     )
 
 
-def update_head(ghidra_repo_dir: PathString) -> bool:
+def update_head(ghidra_repo_dir: PathString, ci: bool) -> bool:
     """Update to latest head and make changes to the CMake files"""
     tmpdirname = None
     if ghidra_repo_dir is None:
@@ -163,6 +163,9 @@ def update_head(ghidra_repo_dir: PathString) -> bool:
     latest_commit = get_latest_commit(ghidra_repo_dir)
     did_update_commit = update_head_commit(latest_commit)
     if did_update_commit:
+        if ci:
+            print(f"::set-output name=short_sha::{latest_commit[:9]}")
+            print("::set-output name=did_update::true")
         update_spec_files(ghidra_repo_dir, HEAD_SPEC_FILE)
         update_head_version_file(ghidra_repo_dir)
     else:
@@ -197,7 +200,12 @@ if __name__ == "__main__":
         type=dir_path,
         help="Use a specific Ghidra repo directory instead of downloading it from the internet",
     )
+    parser.add_argument(
+        "--ci",
+        action="store_true",
+        help="Output GitHub Actions commands for recording information in CI",
+    )
     args = parser.parse_args()
 
-    if not update_head(args.ghidra_repo):
+    if not update_head(args.ghidra_repo, args.ci):
         msg("No update required")
