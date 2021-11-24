@@ -30,18 +30,34 @@ jobs:
 
     - name: Generate cache key
       id: cache_key
-      run: echo ::set-output name=VALUE::build_${{ matrix.os }}_type-${{ matrix.build_type }}-${{ matrix.release }}
+      shell: cmake -P {0}
+      run: |
+        string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+        message("::set-output name=VALUE::build_${{ matrix.os }}_type-${{ matrix.build_type }}-${{ matrix.release }}")
+        message("::set-output name=timestamp::${current_date}")
 
     - name: Update the cache (ccache)
-      uses: actions/cache@v1.0.3
+      uses: actions/cache@v2
       with:
         path: "${{ github.workspace }}/ccache"
-        key: ${{ steps.cache_key.outputs.VALUE }}_ccache
+        key: ${{ steps.cache_key.outputs.VALUE }}_ccache_${{ steps.cache_key.outputs.timestamp }}
+        restore-keys: |
+          ${{ steps.cache_key.outputs.VALUE }}_ccache_
 
-    - name: Create the cache
+    - name: Setup ccache
+      shell: cmake -P {0}
       run: |
-        mkdir -p "${{ github.workspace }}/ccache"
-        echo "CCACHE_DIR=${{ github.workspace }}/ccache" >> $GITHUB_ENV
+        file(MAKE_DIRECTORY "${{ github.workspace }}/ccache")
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_BASEDIR=${{ github.workspace }}\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_DIR=${{ github.workspace }}/ccache\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESS=true\n")
+        # Trial and error to get all files in here
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESSLEVEL=10\n")
+        # This should be multiplied by the number of compilation jobs and be no
+        # larger than 5G, which is the cache max size
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_MAXSIZE=400M\n")
+        # Clear stats before every build
+        execute_process(COMMAND ccache -z)
 
     - name: Install Linux system dependencies
       if: runner.os == 'Linux'
@@ -159,3 +175,6 @@ jobs:
       with:
         name: ${{ steps.package_locations.outputs.TGZ_PACKAGE_NAME }}
         path: ${{ steps.package_locations.outputs.TGZ_PACKAGE_PATH }}
+
+    - name: ccache stats
+      run: ccache -s
