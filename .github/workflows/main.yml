@@ -28,6 +28,32 @@ jobs:
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
 
+    - name: Install Linux system dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get install -y \
+          clang \
+          rpm \
+          doxygen \
+          xdot \
+          graphviz
+
+        # Use Homebrew for latest build tool versions
+        brew install \
+          ccache \
+          cmake \
+          ninja
+
+    - name: Install macOS system dependencies
+      if: runner.os == 'macOS'
+      run: |
+        brew install \
+          ccache \
+          ninja \
+          cmake \
+          doxygen \
+          graphviz
+
     - name: Generate cache key
       id: cache_key
       shell: cmake -P {0}
@@ -58,34 +84,6 @@ jobs:
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_MAXSIZE=400M\n")
         # Clear stats before every build
         execute_process(COMMAND ccache -z)
-
-    - name: Install Linux system dependencies
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get install -y \
-          ccache \
-          ninja-build \
-          clang \
-          rpm \
-          doxygen \
-          xdot \
-          graphviz
-
-    - name: Install macOS system dependencies
-      if: runner.os == 'macOS'
-      run: |
-        brew install \
-          ccache \
-          ninja \
-          cmake \
-          doxygen \
-          graphviz
-
-    - name: Install CMake
-      if: runner.os == 'Linux'
-      id: cmake_installer
-      run: |
-        sudo snap install --classic cmake
 
     - name: Configure the project
       run: |
@@ -177,4 +175,4 @@ jobs:
         path: ${{ steps.package_locations.outputs.TGZ_PACKAGE_PATH }}
 
     - name: ccache stats
-      run: ccache -s
+      run: ccache -s --verbose
