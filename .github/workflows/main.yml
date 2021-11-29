@@ -28,6 +28,36 @@ jobs:
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
 
+    - name: Install Linux system dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get install -y \
+          clang \
+          rpm \
+          doxygen \
+          xdot \
+          graphviz
+
+        # Minimum supported CMake version testing
+        curl -L "https://github.com/Kitware/CMake/releases/download/v3.21.0/cmake-3.21.0-linux-$(uname -m).sh" -o /tmp/cmake-install.sh
+        mkdir -p "${HOME}/.local"
+        bash /tmp/cmake-install.sh --skip-license --exclude-subdir "--prefix=${HOME}/.local"
+
+        # Use Homebrew for latest build tool version for use in CI
+        brew install \
+          ccache \
+          ninja
+
+    - name: Install macOS system dependencies
+      if: runner.os == 'macOS'
+      run: |
+        brew install \
+          ccache \
+          ninja \
+          cmake \
+          doxygen \
+          graphviz
+
     - name: Generate cache key
       id: cache_key
       shell: cmake -P {0}
@@ -59,36 +89,9 @@ jobs:
         # Clear stats before every build
         execute_process(COMMAND ccache -z)
 
-    - name: Install Linux system dependencies
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get install -y \
-          ccache \
-          ninja-build \
-          clang \
-          rpm \
-          doxygen \
-          xdot \
-          graphviz
-
-    - name: Install macOS system dependencies
-      if: runner.os == 'macOS'
-      run: |
-        brew install \
-          ccache \
-          ninja \
-          cmake \
-          doxygen \
-          graphviz
-
-    - name: Install CMake
-      if: runner.os == 'Linux'
-      id: cmake_installer
-      run: |
-        sudo snap install --classic cmake
-
     - name: Configure the project
       run: |
+        cmake --version
         cmake \
           -S . \
           -B build \
@@ -177,4 +180,4 @@ jobs:
         path: ${{ steps.package_locations.outputs.TGZ_PACKAGE_PATH }}
 
     - name: ccache stats
-      run: ccache -s
+      run: ccache -s --verbose
