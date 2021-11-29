@@ -38,10 +38,14 @@ jobs:
           xdot \
           graphviz
 
-        # Use Homebrew for latest build tool versions
+        # Minimum supported CMake version testing
+        curl -L "https://github.com/Kitware/CMake/releases/download/v3.21.0/cmake-3.21.0-linux-$(uname -m).sh" -o /tmp/cmake-install.sh
+        mkdir -p "${HOME}/.local"
+        bash /tmp/cmake-install.sh --skip-license --exclude-subdir "--prefix=${HOME}/.local"
+
+        # Use Homebrew for latest build tool version for use in CI
         brew install \
           ccache \
-          cmake \
           ninja
 
     - name: Install macOS system dependencies
@@ -87,6 +91,7 @@ jobs:
 
     - name: Configure the project
       run: |
+        cmake --version
         cmake \
           -S . \
           -B build \
