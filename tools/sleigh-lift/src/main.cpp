@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
   }
   // Parse arguments
   const std::string action = argv[1];
-  const char *sla_file_path = argv[2];
+  const char *sla_file_name = argv[2];
   const std::string bytes = argv[3];
   const char *addr_str = argc == 5 ? argv[4] : nullptr;
   if (bytes.size() % 2 != 0) {
@@ -159,6 +159,12 @@ int main(int argc, char *argv[]) {
       std::cerr << "Address argument out of range: " << addr_str << std::endl;
       return EXIT_FAILURE;
     }
+  }
+  // Find SLA file path
+  const auto sla_file_path = sleigh::FindSpecFile(sla_file_name);
+  if (sla_file_path.empty()) {
+    std::cerr << "Could not find SLA file: " << sla_file_name << std::endl;
+    return EXIT_FAILURE;
   }
   // Put together SLEIGH components
   InMemoryLoadImage load_image(addr);
