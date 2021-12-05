@@ -1,0 +1,45 @@
+name: Update Ghidra Sleigh
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'
+
+  # Should only be manually run on default branch (master)
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-python@v2
+      with:
+        # Use oldest supported version for maximum script compatibility
+        python-version: '3.7'
+
+    - name: Run Update Script
+      id: head_update
+      run: |
+        # Sets some outputs. See next step
+        python3.7 scripts/update_ghidra_head.py --ci
+
+    # Need this to run further Actions on the newly created PR
+    # See here for more details https://github.com/peter-evans/create-pull-request/blob/28fa4848947e0faa7fa50647691d01477589d5e9/docs/concepts-guidelines.md#authenticating-with-github-app-generated-tokens
+    - uses: tibdex/github-app-token@v1
+      if: steps.head_update.outputs.did_update
+      id: generate-token
+      with:
+        app_id: ${{ secrets.APP_ID }}
+        private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
+    - name: Create PR
+      if: steps.head_update.outputs.did_update
+      uses: peter-evans/create-pull-request@v3
+      with:
+        title: Update Ghidra HEAD to commit ${{ steps.head_update.outputs.short_sha }}
+        commit-message: Bump Ghidra HEAD commit ${{ steps.head_update.outputs.short_sha }}
+        branch: cron/update-ghidra-${{ steps.head_update.outputs.short_sha }}
+        delete-branch: true
+        token: ${{ steps.generate-token.outputs.token }}
