@@ -56,6 +56,8 @@ set(public_include_header_list
   "${library_root}/types.h"
   "${library_root}/xml.hh"
 )
+# Create custom target so that IDEs know these files are part of the sources
+add_custom_target(sleigh_all_headers SOURCES ${public_include_header_list})
 set(public_headers_dir ${CMAKE_CURRENT_BINARY_DIR}/include)
 file(MAKE_DIRECTORY "${public_headers_dir}/sleigh")
 # Copy the public headers into our build directory so that we can control the layout.
