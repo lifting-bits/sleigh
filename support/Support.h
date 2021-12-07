@@ -9,12 +9,14 @@
 #pragma once
 
 #include <filesystem>
+#include <optional>
 #include <string>
 #include <vector>
 
 namespace sleigh {
 
-std::string FindSpecFile(std::string_view file_name,
-                         const std::vector<std::string> &search_paths = {});
+std::optional<std::filesystem::path>
+FindSpecFile(std::string_view file_name,
+             const std::vector<std::filesystem::path> &search_paths = {});
 
 } // namespace sleigh

@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
   }
   // Find SLA file path
   const auto sla_file_path = sleigh::FindSpecFile(sla_file_name);
-  if (sla_file_path.empty()) {
+  if (!sla_file_path) {
     std::cerr << "Could not find SLA file: " << sla_file_name << std::endl;
     return EXIT_FAILURE;
   }
@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
   ContextInternal ctx;
   Sleigh engine(&load_image, &ctx);
   DocumentStorage storage;
-  Element *root = storage.openDocument(sla_file_path)->getRoot();
+  Element *root = storage.openDocument(*sla_file_path)->getRoot();
   storage.registerTag(root);
   engine.initialize(storage);
   // In order to parse and validate the byte string properly, we need to get the

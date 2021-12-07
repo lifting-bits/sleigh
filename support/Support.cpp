@@ -12,19 +12,19 @@ static const char *gSearchPaths[] = {
     // Common install locations
     "/usr/local/share/sleigh", "/usr/share/sleigh", "/share/sleigh"};
 
-std::string FindSpecFileInSearchPath(std::string_view file_name,
-                                     std::string_view search_path) {
-  std::filesystem::path install_path(search_path);
-  install_path.append("Processors");
+std::optional<std::filesystem::path>
+FindSpecFileInSearchPath(std::string_view file_name,
+                         std::filesystem::path search_path) {
+  search_path.append("Processors");
   // Check whether a SLEIGH installation exists at this path
-  if (!std::filesystem::is_directory(install_path)) {
-    return "";
+  if (!std::filesystem::is_directory(search_path)) {
+    return {};
   }
   // Each directory under Processors/ represents a family of architectures
   //
   // Spec files should reside under:
   // <install_prefix>/Processors/<arch>/data/languages
-  std::filesystem::directory_iterator install_iter(install_path);
+  std::filesystem::directory_iterator install_iter(search_path);
   for (auto &dir_entry : install_iter) {
     if (!dir_entry.is_directory()) {
       continue;
@@ -35,31 +35,32 @@ std::string FindSpecFileInSearchPath(std::string_view file_name,
     if (!std::filesystem::exists(dir_path)) {
       continue;
     }
-    return dir_path.string();
+    return dir_path;
   }
-  return "";
+  return {};
 }
 
 } // namespace
 
-std::string FindSpecFile(std::string_view file_name,
-                         const std::vector<std::string> &search_paths) {
+std::optional<std::filesystem::path>
+FindSpecFile(std::string_view file_name,
+             const std::vector<std::filesystem::path> &search_paths) {
   // Try paths supplied by the caller first
   for (const auto &path : search_paths) {
     auto file_path = FindSpecFileInSearchPath(file_name, path);
-    if (!file_path.empty()) {
+    if (file_path) {
       return file_path;
     }
   }
   // Now try the default paths
   for (const auto *path : gSearchPaths) {
     auto file_path = FindSpecFileInSearchPath(file_name, path);
-    if (!file_path.empty()) {
+    if (file_path) {
       return file_path;
     }
   }
   // Cannot find the spec file
-  return "";
+  return {};
 }
 
 } // namespace sleigh
