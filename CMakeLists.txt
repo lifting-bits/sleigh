@@ -33,6 +33,7 @@ endif()
 
 set(public_include_header_list
   "${PROJECT_SOURCE_DIR}/include/libsleigh.hh"
+  "${PROJECT_SOURCE_DIR}/support/Support.h"
   "${library_root}/address.hh"
   "${library_root}/context.hh"
   "${library_root}/emulate.hh"
@@ -613,6 +614,9 @@ if(SLEIGH_ENABLE_EXAMPLES)
   )
 endif()
 
+# Add support library before configuring install targets
+add_subdirectory(support)
+
 #
 # Install targets
 #
@@ -658,6 +662,7 @@ if(SLEIGH_ENABLE_INSTALL)
     TARGETS
       sla
       decomp
+      support
 
     EXPORT
       sleigh
