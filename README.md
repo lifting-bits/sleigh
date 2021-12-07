@@ -105,6 +105,18 @@ $ sleigh-lift pcode x86-64.sla 4881ecc00f0000
 
 The `SLEIGH_ENABLE_EXAMPLES` option must be set to `ON` during the configuration step in order to build `sleigh-lift`.
 
+## Helpers
+
+This repository contains a helper that is not part of SLEIGH/GHIDRA, which can be found under `support/`. It has the following signature and can help the user find the location of a given spec file on the system:
+
+```c++
+std::optional<std::filesystem::path>
+FindSpecFile(std::string_view file_name,
+             const std::vector<std::filesystem::path> &search_paths = {});
+```
+
+The `sleigh::FindSpecFile` function will search the the paths provided by the user via the `search_paths` argument. If a spec file with the name `file_name` cannot be found, it will check the install/build directories that the CMake project was configured with as well as a set of common installation locations.
+
 ## License
 
 See the LICENSE file in the top directory of this repo.
