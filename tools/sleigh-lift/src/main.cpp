@@ -148,7 +148,7 @@ std::optional<LiftArgs> ParseArgs(int argc, char *argv[]) {
   }
 
   // Get positional args
-  size_t arg_index = 1;
+  int arg_index = 1;
   std::string action = argv[arg_index++];
   std::string sla_file_name = argv[arg_index++];
   std::string bytes = argv[arg_index++];
