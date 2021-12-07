@@ -191,10 +191,8 @@ target_compile_features(sleigh_settings INTERFACE
   cxx_std_17
 )
 
-target_compile_definitions(sleigh_settings INTERFACE
-  "SLEIGH_SPEC_INSTALL_DIR=\"${CMAKE_INSTALL_PREFIX}/share/sleigh/\""
-  "SLEIGH_SPEC_BUILD_DIR=\"${CMAKE_CURRENT_BINARY_DIR}/Ghidra\""
-)
+set(SLEIGH_SPEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/sleigh/")
+set(SLEIGH_SPEC_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/Ghidra/")
 
 set_target_properties(sleigh_settings PROPERTIES
   INTERFACE_POSITION_INDEPENDENT_CODE ON

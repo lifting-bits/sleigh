@@ -6,8 +6,15 @@
 # the LICENSE file found in the root directory of this source tree.
 #
 
+# Substitute the build and install directories into the support helpers
+configure_file(
+  "${CMAKE_CURRENT_LIST_DIR}/Support.cpp.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/Support.cpp"
+  @ONLY
+)
+
 set(sleigh_support_source_list
-  "${CMAKE_CURRENT_LIST_DIR}/Support.cpp"
+  "${CMAKE_CURRENT_BINARY_DIR}/Support.cpp"
 )
 
 add_library(support
@@ -19,3 +26,4 @@ add_library(sleigh::support ALIAS support)
 target_link_libraries(support PRIVATE
   sleigh::sleigh_settings
 )
+target_include_directories(support PRIVATE "${CMAKE_CURRENT_LIST_DIR}")

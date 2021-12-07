@@ -6,9 +6,9 @@ namespace {
 
 static const char *gSearchPaths[] = {
     // Derived from the installation
-    SLEIGH_SPEC_INSTALL_DIR "\0",
+    "@SLEIGH_SPEC_INSTALL_DIR@",
     // Derived from the build
-    SLEIGH_SPEC_BUILD_DIR "\0",
+    "@SLEIGH_SPEC_BUILD_DIR@",
     // Common install locations
     "/usr/local/share/sleigh", "/usr/share/sleigh", "/share/sleigh"};
 
