@@ -41,7 +41,7 @@ cd sleigh
 
 # Configure CMake
 cmake -B build -S . \
-    -DSLEIGH_ENABLE_INSTALL=ON    
+    -DSLEIGH_ENABLE_INSTALL=ON
 
 # Build SLEIGH
 cmake --build build -j
@@ -78,7 +78,7 @@ cmake --build build --target package
 An example program called `sleigh-lift` has been included to demonstrate how to use the SLEIGH API. It takes a hexadecimal string of bytes and either disassembles it or lifts it to p-code. The program can be invoked like so, where the `action` argument must be either `disassemble` or `pcode`:
 
 ```sh
-sleigh-lift [action] [sla_file] [bytes] [address:OPTIONAL]
+sleigh-lift [action] [sla_file] [bytes] [-a address] [-f sla_path]
 ```
 
 For example, to disassemble the following byte string:
