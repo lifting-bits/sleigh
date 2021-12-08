@@ -14,7 +14,7 @@ configure_file(
 )
 
 set(sleigh_support_source_list
-  "${CMAKE_CURRENT_BINARY_DIR}/Support.cpp"
+  Support.cpp
 )
 
 add_library(support
@@ -26,4 +26,4 @@ add_library(sleigh::support ALIAS support)
 target_link_libraries(support PUBLIC
   sleigh::sleigh_settings
 )
-target_include_directories(support PRIVATE "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>")
+target_include_directories(support PRIVATE "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>")
