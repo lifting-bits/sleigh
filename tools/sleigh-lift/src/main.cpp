@@ -204,10 +204,10 @@ int main(int argc, char *argv[]) {
   }
   const uint64_t addr = args->addr ? *args->addr : 0;
   // Find SLA file path
-  const auto sla_file_path = sleigh::FindSpecFile(
-      args->sla_file_name,
-      args->sla_path ? std::vector<std::filesystem::path>{*args->sla_path}
-                     : std::vector<std::filesystem::path>{});
+  const auto sla_file_path =
+      args->sla_path
+          ? sleigh::FindSpecFile(args->sla_file_name, {*args->sla_path})
+          : sleigh::FindSpecFile(args->sla_file_name);
   if (!sla_file_path) {
     std::cerr << "Could not find SLA file: " << args->sla_file_name
               << std::endl;

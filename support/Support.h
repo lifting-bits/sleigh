@@ -15,8 +15,11 @@
 
 namespace sleigh {
 
+extern const std::vector<std::filesystem::path> gDefaultSearchPaths;
+
 std::optional<std::filesystem::path>
 FindSpecFile(std::string_view file_name,
-             const std::vector<std::filesystem::path> &search_paths = {});
+             const std::vector<std::filesystem::path> &search_paths =
+                 gDefaultSearchPaths);
 
 } // namespace sleigh

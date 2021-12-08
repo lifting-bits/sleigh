@@ -112,10 +112,11 @@ This repository contains a helper that is not part of SLEIGH/GHIDRA, which can b
 ```c++
 std::optional<std::filesystem::path>
 FindSpecFile(std::string_view file_name,
-             const std::vector<std::filesystem::path> &search_paths = {});
+             const std::vector<std::filesystem::path> &search_paths =
+                 gDefaultSearchPaths);
 ```
 
-The `sleigh::FindSpecFile` function will search the the paths provided by the user via the `search_paths` argument. If a spec file with the name `file_name` cannot be found, it will check the install/build directories that the CMake project was configured with as well as a set of common installation locations.
+The `sleigh::FindSpecFile` function will search the the paths provided by the user via the `search_paths` argument for a spec file with the name `file_name`. The default argument for `search_paths` is `sleigh::gDefaultSearchPaths` which contains the install/build directories that the CMake project was configured with as well as a set of common installation locations.
 
 ## License
 

@@ -4,13 +4,8 @@ namespace sleigh {
 
 namespace {
 
-static const char *gSearchPaths[] = {
-    // Derived from the installation
-    "@SLEIGH_SPEC_INSTALL_DIR@",
-    // Derived from the build
-    "@SLEIGH_SPEC_BUILD_DIR@",
-    // Common install locations
-    "/usr/local/share/sleigh", "/usr/share/sleigh", "/share/sleigh"};
+const char *kSleighSpecInstallDir = "@SLEIGH_SPEC_INSTALL_DIR@";
+const char *kSleighSpecBuildDir = "@SLEIGH_SPEC_BUILD_DIR@";
 
 std::optional<std::filesystem::path>
 FindSpecFileInSearchPath(std::string_view file_name,
@@ -42,18 +37,19 @@ FindSpecFileInSearchPath(std::string_view file_name,
 
 } // namespace
 
+const std::vector<std::filesystem::path> gDefaultSearchPaths = {
+    // Derived from the installation
+    kSleighSpecInstallDir,
+    // Derived from the build
+    kSleighSpecBuildDir,
+    // Common install locations
+    "/usr/local/share/sleigh", "/usr/share/sleigh", "/share/sleigh"};
+
 std::optional<std::filesystem::path>
 FindSpecFile(std::string_view file_name,
              const std::vector<std::filesystem::path> &search_paths) {
-  // Try paths supplied by the caller first
+  // Search each path for spec files
   for (const auto &path : search_paths) {
-    auto file_path = FindSpecFileInSearchPath(file_name, path);
-    if (file_path) {
-      return file_path;
-    }
-  }
-  // Now try the default paths
-  for (const auto *path : gSearchPaths) {
     auto file_path = FindSpecFileInSearchPath(file_name, path);
     if (file_path) {
       return file_path;
