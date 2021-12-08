@@ -26,4 +26,4 @@ add_library(sleigh::support ALIAS support)
 target_link_libraries(support PUBLIC
   sleigh::sleigh_settings
 )
-target_include_directories(support PRIVATE $<BUILD_INTERFACE:"${CMAKE_CURRENT_LIST_DIR}>")
+target_include_directories(support PRIVATE "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>")
