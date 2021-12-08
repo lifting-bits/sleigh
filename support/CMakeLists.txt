@@ -6,10 +6,10 @@
 # the LICENSE file found in the root directory of this source tree.
 #
 
-# Substitute the build and install directories into the support helpers
+# Generate the build and install directories to use in the support helpers
 configure_file(
-  "${CMAKE_CURRENT_LIST_DIR}/Support.cpp.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/Support.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/SpecFilePaths.h.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/SpecFilePaths.h"
   @ONLY
 )
 

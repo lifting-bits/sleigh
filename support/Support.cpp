@@ -1,11 +1,10 @@
+#include "SpecFilePaths.h"
+
 #include "Support.h"
 
 namespace sleigh {
 
 namespace {
-
-const char *kSleighSpecInstallDir = "@SLEIGH_SPEC_INSTALL_DIR@";
-const char *kSleighSpecBuildDir = "@SLEIGH_SPEC_BUILD_DIR@";
 
 std::optional<std::filesystem::path>
 FindSpecFileInSearchPath(std::string_view file_name,
@@ -43,7 +42,8 @@ const std::vector<std::filesystem::path> gDefaultSearchPaths = {
     // Derived from the build
     kSleighSpecBuildDir,
     // Common install locations
-    "/usr/local/share/sleigh/specfiles", "/usr/share/sleigh/specfiles", "/share/sleigh/specfiles"};
+    "/usr/local/share/sleigh/specfiles", "/usr/share/sleigh/specfiles",
+    "/share/sleigh/specfiles"};
 
 std::optional<std::filesystem::path>
 FindSpecFile(std::string_view file_name,
