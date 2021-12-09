@@ -14,7 +14,7 @@
 
 static void PrintUsage(void) {
   std::cerr << "Usage: sleigh-lift [action] [sla_file] [bytes] [-a address] "
-               "[-f sla_path]"
+               "[-p root_sla_dir]"
             << std::endl;
 }
 
@@ -159,7 +159,7 @@ std::optional<LiftArgs> ParseArgs(int argc, char *argv[]) {
 
   // Get optional args
   std::optional<uint64_t> addr;
-  std::optional<std::string> sla_path;
+  std::optional<std::string> root_sla_dir;
   while (arg_index < argc) {
     const std::string flag = argv[arg_index++];
     if (arg_index == argc) {
@@ -181,19 +181,19 @@ std::optional<LiftArgs> ParseArgs(int argc, char *argv[]) {
         std::cerr << "Address argument out of range: " << addr_str << std::endl;
         return {};
       }
-    } else if (flag == "-f") {
-      if (sla_path) {
-        std::cerr << "-f flag provided multiple times" << std::endl;
+    } else if (flag == "-p") {
+      if (root_sla_dir) {
+        std::cerr << "-p flag provided multiple times" << std::endl;
         return {};
       }
-      sla_path = argv[arg_index++];
+      root_sla_dir = argv[arg_index++];
     } else {
       std::cerr << "Unrecognised optional flag: " << flag << std::endl;
       return {};
     }
   }
   return LiftArgs{std::move(action), std::move(sla_file_name), std::move(bytes),
-                  addr, std::move(sla_path)};
+                  addr, std::move(root_sla_dir)};
 }
 
 int main(int argc, char *argv[]) {
