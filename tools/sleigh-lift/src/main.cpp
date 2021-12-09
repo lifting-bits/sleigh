@@ -138,7 +138,7 @@ struct LiftArgs {
   const std::string sla_file_name;
   const std::string bytes;
   const std::optional<uint64_t> addr;
-  const std::optional<std::string> sla_path;
+  const std::optional<std::string> root_sla_dir;
 };
 
 std::optional<LiftArgs> ParseArgs(int argc, char *argv[]) {
@@ -205,8 +205,8 @@ int main(int argc, char *argv[]) {
   const uint64_t addr = args->addr ? *args->addr : 0;
   // Find SLA file path
   const auto sla_file_path =
-      args->sla_path
-          ? sleigh::FindSpecFile(args->sla_file_name, {*args->sla_path})
+      args->root_sla_dir
+          ? sleigh::FindSpecFile(args->sla_file_name, {*args->root_sla_dir})
           : sleigh::FindSpecFile(args->sla_file_name);
   if (!sla_file_path) {
     std::cerr << "Could not find SLA file: " << args->sla_file_name
