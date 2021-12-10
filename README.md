@@ -41,7 +41,7 @@ cd sleigh
 
 # Configure CMake
 cmake -B build -S . \
-    -DSLEIGH_ENABLE_INSTALL=ON    
+    -DSLEIGH_ENABLE_INSTALL=ON
 
 # Build SLEIGH
 cmake --build build -j
@@ -78,20 +78,20 @@ cmake --build build --target package
 An example program called `sleigh-lift` has been included to demonstrate how to use the SLEIGH API. It takes a hexadecimal string of bytes and either disassembles it or lifts it to p-code. The program can be invoked like so, where the `action` argument must be either `disassemble` or `pcode`:
 
 ```sh
-sleigh-lift [action] [sla_file] [bytes] [address:OPTIONAL]
+sleigh-lift [action] [sla_file] [bytes] [-a address] [-p root_sla_dir]
 ```
 
 For example, to disassemble the following byte string:
 
 ```sh
-$ sleigh-lift disassemble <path where SLEIGH is installed>/share/sleigh/Processors/x86/data/languages/x86-64.sla 4881ecc00f0000
+$ sleigh-lift disassemble x86-64.sla 4881ecc00f0000
 0x00000000: SUB RSP,0xfc0
 ```
 
 And to lift it to p-code:
 
 ```sh
-$ sleigh-lift pcode <path where SLEIGH is installed>/share/sleigh/Processors/x86/data/languages/x86-64.sla 4881ecc00f0000
+$ sleigh-lift pcode x86-64.sla 4881ecc00f0000
 (register,0x200,1) = INT_LESS (register,0x20,8) (const,0xfc0,8)
 (register,0x20b,1) = INT_SBORROW (register,0x20,8) (const,0xfc0,8)
 (register,0x20,8) = INT_SUB (register,0x20,8) (const,0xfc0,8)
@@ -104,6 +104,19 @@ $ sleigh-lift pcode <path where SLEIGH is installed>/share/sleigh/Processors/x86
 ```
 
 The `SLEIGH_ENABLE_EXAMPLES` option must be set to `ON` during the configuration step in order to build `sleigh-lift`.
+
+## Helpers
+
+This repository contains a helper that is not part of SLEIGH/GHIDRA, which can be found under `support/`. It has the following signature and can help the user find the location of a given spec file on the system:
+
+```c++
+std::optional<std::filesystem::path>
+FindSpecFile(std::string_view file_name,
+             const std::vector<std::filesystem::path> &search_paths =
+                 gDefaultSearchPaths);
+```
+
+The `sleigh::FindSpecFile` function will search the the paths provided by the user via the `search_paths` argument for a spec file with the name `file_name`. The default argument for `search_paths` is `sleigh::gDefaultSearchPaths` which contains the install/build directories that the CMake project was configured with as well as a set of common installation locations.
 
 ## License
 

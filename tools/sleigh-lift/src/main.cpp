@@ -13,9 +13,9 @@
 #include <string>
 
 static void PrintUsage(void) {
-  std::cerr
-      << "Usage: sleigh-lift [action] [sla_file] [bytes] [address:OPTIONAL]"
-      << std::endl;
+  std::cerr << "Usage: sleigh-lift [action] [sla_file] [bytes] [-a address] "
+               "[-p root_sla_dir]"
+            << std::endl;
 }
 
 class InMemoryLoadImage : public LoadImage {
@@ -133,39 +133,92 @@ static void PrintPcode(Sleigh &engine, uint64_t addr, size_t len) {
   }
 }
 
-int main(int argc, char *argv[]) {
-  if (argc < 4 || argc > 5) {
-    PrintUsage();
-    return -1;
+struct LiftArgs {
+  const std::string action;
+  const std::string sla_file_name;
+  const std::string bytes;
+  const std::optional<uint64_t> addr;
+  const std::optional<std::string> root_sla_dir;
+};
+
+std::optional<LiftArgs> ParseArgs(int argc, char *argv[]) {
+  // Too few args
+  if (argc < 4) {
+    return {};
   }
-  // Parse arguments
-  const std::string action = argv[1];
-  const char *sla_file_path = argv[2];
-  const std::string bytes = argv[3];
-  const char *addr_str = argc == 5 ? argv[4] : nullptr;
+
+  // Get positional args
+  int arg_index = 1;
+  std::string action = argv[arg_index++];
+  std::string sla_file_name = argv[arg_index++];
+  std::string bytes = argv[arg_index++];
   if (bytes.size() % 2 != 0) {
     std::cerr << "Must provide an even number of bytes: " << bytes << std::endl;
-    return -1;
+    return {};
   }
-  // Get the address as an integer.
-  uint64_t addr = 0;
-  if (addr_str) {
-    try {
-      addr = std::stoul(addr_str);
-    } catch (std::invalid_argument &ia) {
-      std::cerr << "Invalid address argument: " << addr_str << std::endl;
-      return EXIT_FAILURE;
-    } catch (std::out_of_range &oor) {
-      std::cerr << "Address argument out of range: " << addr_str << std::endl;
-      return EXIT_FAILURE;
+
+  // Get optional args
+  std::optional<uint64_t> addr;
+  std::optional<std::string> root_sla_dir;
+  while (arg_index < argc) {
+    const std::string flag = argv[arg_index++];
+    if (arg_index == argc) {
+      std::cerr << "Flag " << flag << " has no value" << std::endl;
+      return {};
     }
+    if (flag == "-a") {
+      if (addr) {
+        std::cerr << "-a flag provided multiple times" << std::endl;
+        return {};
+      }
+      const char *addr_str = argv[arg_index++];
+      try {
+        addr = std::stoul(addr_str);
+      } catch (const std::invalid_argument &ia) {
+        std::cerr << "Invalid address argument: " << addr_str << std::endl;
+        return {};
+      } catch (const std::out_of_range &oor) {
+        std::cerr << "Address argument out of range: " << addr_str << std::endl;
+        return {};
+      }
+    } else if (flag == "-p") {
+      if (root_sla_dir) {
+        std::cerr << "-p flag provided multiple times" << std::endl;
+        return {};
+      }
+      root_sla_dir = argv[arg_index++];
+    } else {
+      std::cerr << "Unrecognised optional flag: " << flag << std::endl;
+      return {};
+    }
+  }
+  return LiftArgs{std::move(action), std::move(sla_file_name), std::move(bytes),
+                  addr, std::move(root_sla_dir)};
+}
+
+int main(int argc, char *argv[]) {
+  const auto args = ParseArgs(argc, argv);
+  if (!args) {
+    PrintUsage();
+    return EXIT_FAILURE;
+  }
+  const uint64_t addr = args->addr ? *args->addr : 0;
+  // Find SLA file path
+  const auto sla_file_path =
+      args->root_sla_dir
+          ? sleigh::FindSpecFile(args->sla_file_name, {*args->root_sla_dir})
+          : sleigh::FindSpecFile(args->sla_file_name);
+  if (!sla_file_path) {
+    std::cerr << "Could not find SLA file: " << args->sla_file_name
+              << std::endl;
+    return EXIT_FAILURE;
   }
   // Put together SLEIGH components
   InMemoryLoadImage load_image(addr);
   ContextInternal ctx;
   Sleigh engine(&load_image, &ctx);
   DocumentStorage storage;
-  Element *root = storage.openDocument(sla_file_path)->getRoot();
+  Element *root = storage.openDocument(*sla_file_path)->getRoot();
   storage.registerTag(root);
   engine.initialize(storage);
   // In order to parse and validate the byte string properly, we need to get the
@@ -174,15 +227,15 @@ int main(int argc, char *argv[]) {
   //
   // Ensure that we don't start disassembling until we've set the image buffer.
   std::string image_buffer =
-      ParseHexBytes(bytes, addr, engine.getDefaultSize());
+      ParseHexBytes(args->bytes, addr, engine.getDefaultSize());
   const size_t len = image_buffer.size();
   load_image.SetImageBuffer(std::move(image_buffer));
-  if (action == "disassemble") {
+  if (args->action == "disassemble") {
     PrintAssembly(engine, addr, len);
-  } else if (action == "pcode") {
+  } else if (args->action == "pcode") {
     PrintPcode(engine, addr, len);
   } else {
-    std::cerr << "Invalid action: " << action << std::endl;
+    std::cerr << "Invalid action: " << args->action << std::endl;
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;

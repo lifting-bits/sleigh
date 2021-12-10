@@ -29,6 +29,7 @@ endif()
 target_link_libraries(sleigh-lift PRIVATE
   sleigh::sla
   sleigh::decomp
+  sleigh::support
 )
 
 if(SLEIGH_ENABLE_INSTALL)

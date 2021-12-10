@@ -6,6 +6,7 @@
   the LICENSE file found in the root directory of this source tree.
 */
 
+#pragma once
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 #pragma GCC diagnostic ignored "-Wsign-compare"
@@ -33,3 +34,5 @@
 #include "types.h"
 #include "xml.hh"
 #pragma GCC diagnostic pop
+
+#include "Support.h"
