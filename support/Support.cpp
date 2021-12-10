@@ -25,7 +25,7 @@ FindSpecFileInSearchPath(std::string_view file_name,
   // Each directory under Processors/ represents a family of architectures
   //
   // Spec files should reside under:
-  // <install_prefix>/Processors/<arch>/data/languages
+  // <root_sla_dir>/Ghidra/Processors/<arch>/data/languages
   std::filesystem::directory_iterator install_iter(search_path);
   for (auto &dir_entry : install_iter) {
     if (!dir_entry.is_directory()) {
