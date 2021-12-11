@@ -266,11 +266,6 @@ add_executable(decomp_opt
   "${library_root}/consolemain.cc"
 )
 add_executable(sleigh::decomp_opt ALIAS decomp_opt)
-if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
-  target_sources(decomp_opt PRIVATE
-    "${library_root}/testfunction.cc"
-  )
-endif()
 
 target_compile_definitions(decomp_opt PRIVATE
   __TERMINAL__
@@ -303,14 +298,11 @@ if(SLEIGH_ENABLE_TESTS)
     ${sleigh_extra_source_list}
 
     "${library_root}/test.cc"
+
+    "${library_root}/../unittests/testcirclerange.cc"
     "${library_root}/../unittests/testfloatemu.cc"
-  )
-  if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
-    target_sources(ghidra_test_dbg PRIVATE
-      "${library_root}/../unittests/testtypes.cc"
-      "${library_root}/../unittests/testcirclerange.cc"
+    "${library_root}/../unittests/testtypes.cc"
     )
-  endif()
 
   target_link_libraries(ghidra_test_dbg PRIVATE
     sleigh::sleigh_settings
@@ -321,14 +313,9 @@ if(SLEIGH_ENABLE_TESTS)
     __TERMINAL__
   )
 
-  set(extra_test_args "")
-  if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
-    # We compile the sla files in our build directory
-    set(extra_test_args -sleighpath "${CMAKE_CURRENT_BINARY_DIR}")
-  endif()
   add_test(
     NAME ghidra_test_dbg
-    COMMAND ghidra_test_dbg ${extra_test_args} unittests
+    COMMAND ghidra_test_dbg -sleighpath "${CMAKE_CURRENT_BINARY_DIR}" unittests
   )
 endif()
 
@@ -342,13 +329,6 @@ add_executable(ghidra_opt
   ${sleigh_ghidra_source_list}
 )
 add_executable(sleigh::ghidra_opt ALIAS ghidra_opt)
-if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
-  target_sources(ghidra_opt PRIVATE
-    $<$<CONFIG:DEBUG>:
-      "${library_root}/testfunction.cc"
-    >
-  )
-endif()
 
 target_link_libraries(ghidra_opt PRIVATE
   sleigh::sleigh_settings
@@ -361,6 +341,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     "${library_root}/ifacedecomp.cc"
     "${library_root}/ifaceterm.cc"
     "${library_root}/interface.cc"
+    "${library_root}/testfunction.cc"
   )
 
   target_compile_definitions(ghidra_opt PRIVATE

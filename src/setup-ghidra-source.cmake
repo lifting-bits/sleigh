@@ -10,10 +10,13 @@ set_property(CACHE SLEIGH_GHIDRA_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 # **** Setup pinned git info ****
 
 # Ghidra pinned stable version commit
-set(ghidra_version "10.0.4")
-set(ghidra_git_tag "5b07797cb859d8801ca3a1e08bda1321ca3ce002")
+set(ghidra_version "10.1")
+set(ghidra_git_tag "2fcf0d21bf360af68dd87e5d8ed270ea1e72554c")
 # pinned stable patches list
-set(ghidra_patches "")
+set(ghidra_patches
+  PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
+  "${CMAKE_CURRENT_SOURCE_DIR}/patches/stable/0001-Fix-arg-parsing-in-sleigh-C-test-runner.patch"
+)
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
 if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL HEAD)
@@ -25,7 +28,7 @@ if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL HEAD)
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_patches
     PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
-    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0001-Fix-arg-parsing-in-sleigh-C-test-runner.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/patches/stable/0001-Fix-arg-parsing-in-sleigh-C-test-runner.patch"
   )
 endif()
 
