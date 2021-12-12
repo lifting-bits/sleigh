@@ -6,7 +6,7 @@
 # the LICENSE file found in the root directory of this source tree.
 #
 
-set(PACKAGE_VERSION 3)
+set(PACKAGE_VERSION 1)
 if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
   set(PACKAGE_VERSION "DEV.${ghidra_short_commit}")
 endif()
