@@ -649,20 +649,22 @@ if(SLEIGH_ENABLE_INSTALL)
 
   set(CMAKE_INSTALL_DOCDIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/sleigh")
 
-  # Always build docs during install
-  install(CODE
-    "execute_process(
-      COMMAND \"${CMAKE_COMMAND}\" --build \"${CMAKE_BINARY_DIR}\" --target sleigh_documentation
-      COMMAND_ECHO STDOUT
-    )"
-  )
-  install(
-    DIRECTORY
-      "${documentation_output}/html/"
+  if(SLEIGH_ENABLE_DOCUMENTATION)
+    # Build docs during install
+    install(CODE
+      "execute_process(
+        COMMAND \"${CMAKE_COMMAND}\" --build \"${CMAKE_BINARY_DIR}\" --target sleigh_documentation
+        COMMAND_ECHO STDOUT
+      )"
+    )
+    install(
+      DIRECTORY
+        "${documentation_output}/html/"
 
-    DESTINATION
-      "${CMAKE_INSTALL_DOCDIR}"
-  )
+      DESTINATION
+        "${CMAKE_INSTALL_DOCDIR}"
+    )
+  endif(SLEIGH_ENABLE_DOCUMENTATION)
 
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(output_folder_path "${CMAKE_CURRENT_BINARY_DIR}/symlinks")
