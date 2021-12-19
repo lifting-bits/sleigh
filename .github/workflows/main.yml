@@ -104,7 +104,8 @@ jobs:
           -DSLEIGH_GHIDRA_RELEASE_TYPE=${{ matrix.release }} \
           -DSLEIGH_ENABLE_TESTS=ON \
           -DSLEIGH_ENABLE_EXAMPLES=ON \
-          -DSLEIGH_ENABLE_PACKAGING=ON
+          -DSLEIGH_ENABLE_PACKAGING=ON \
+          -DSLEIGH_ENABLE_DOCUMENTATION=ON
 
     - name: Build the project
       run: |
