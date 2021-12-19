@@ -25,7 +25,7 @@ This repository provides a CMake-based build project for SLEIGH so that it can b
 
 ### Optional
 
-For building documentation during installation and packaging:
+For building documentation:
 
 | Name | Version | Linux Package to Install | macOS Homebrew Package to Install |
 | ---- | ------- | ------------------------ | --------------------------------- |

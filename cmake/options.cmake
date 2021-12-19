@@ -27,10 +27,6 @@ if(SLEIGH_ENABLE_PACKAGING)
   set(SLEIGH_ENABLE_INSTALL true CACHE BOOL "Set to true to enable the install directives (forced)" FORCE)
 endif()
 
-if(SLEIGH_ENABLE_INSTALL)
-  set(SLEIGH_ENABLE_DOCUMENTATION true CACHE BOOL "Set to true to enable the documentation (forced)" FORCE)
-endif()
-
 
 # ---- Warning guard ----
 
