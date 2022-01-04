@@ -14,7 +14,7 @@
 
 static void PrintUsage(void) {
   std::cerr << "Usage: sleigh-lift [action] [sla_file] [bytes] [-a address] "
-               "[-p root_sla_dir]"
+               "[-p root_sla_dir] [-s pspec_file]"
             << std::endl;
 }
 
@@ -134,11 +134,9 @@ static void PrintPcode(Sleigh &engine, uint64_t addr, size_t len) {
 }
 
 struct LiftArgs {
-  const std::string action;
-  const std::string sla_file_name;
-  const std::string bytes;
+  const std::string action, sla_file_name, bytes;
   const std::optional<uint64_t> addr;
-  const std::optional<std::string> root_sla_dir;
+  const std::optional<std::string> root_sla_dir, pspec_file_name;
 };
 
 std::optional<LiftArgs> ParseArgs(int argc, char *argv[]) {
@@ -159,7 +157,7 @@ std::optional<LiftArgs> ParseArgs(int argc, char *argv[]) {
 
   // Get optional args
   std::optional<uint64_t> addr;
-  std::optional<std::string> root_sla_dir;
+  std::optional<std::string> root_sla_dir, pspec_file_name;
   while (arg_index < argc) {
     const std::string flag = argv[arg_index++];
     if (arg_index == argc) {
@@ -187,13 +185,20 @@ std::optional<LiftArgs> ParseArgs(int argc, char *argv[]) {
         return {};
       }
       root_sla_dir = argv[arg_index++];
+    } else if (flag == "-s") {
+      if (pspec_file_name) {
+        std::cerr << "-s flag provided multiple times" << std::endl;
+        return {};
+      }
+      pspec_file_name = argv[arg_index++];
     } else {
       std::cerr << "Unrecognised optional flag: " << flag << std::endl;
       return {};
     }
   }
-  return LiftArgs{std::move(action), std::move(sla_file_name), std::move(bytes),
-                  addr, std::move(root_sla_dir)};
+  return LiftArgs{std::move(action),       std::move(sla_file_name),
+                  std::move(bytes),        addr,
+                  std::move(root_sla_dir), std::move(pspec_file_name)};
 }
 
 int main(int argc, char *argv[]) {
@@ -220,7 +225,49 @@ int main(int argc, char *argv[]) {
   DocumentStorage storage;
   Element *root = storage.openDocument(*sla_file_path)->getRoot();
   storage.registerTag(root);
+  std::optional<std::filesystem::path> pspec_file_path;
+  if (args->pspec_file_name) {
+    // A PSPEC file was explicitly supplied
+    pspec_file_path = args->root_sla_dir
+                          ? sleigh::FindSpecFile(*args->pspec_file_name,
+                                                 {*args->root_sla_dir})
+                          : sleigh::FindSpecFile(*args->pspec_file_name);
+    if (!pspec_file_path) {
+      std::cerr << "Could not find PSPEC file: " << *args->pspec_file_name
+                << std::endl;
+      return EXIT_FAILURE;
+    }
+  } else {
+    // Otherwise, see if there's a PSPEC file named identically to the SLA file
+    pspec_file_path = *sla_file_path;
+    pspec_file_path->replace_extension(".pspec");
+    if (!std::filesystem::exists(*pspec_file_path)) {
+      // If a file with that extension doesn't exist, don't attempt to load it
+      pspec_file_path = {};
+    }
+  }
+  if (pspec_file_path) {
+    Element *pspec_root = storage.openDocument(*pspec_file_path)->getRoot();
+    storage.registerTag(pspec_root);
+  }
   engine.initialize(storage);
+  engine.allowContextSet(false);
+  // Now that context symbol names are loaded by the translator
+  // we can set the default context
+  // This imitates what is done in
+  //   void Architecture::parseProcessorConfig(DocumentStorage &store)
+  const Element *el = storage.getTag("processor_spec");
+  if (el) {
+    const List &list(el->getChildren());
+    for (List::const_iterator iter = list.begin(); iter != list.end(); ++iter) {
+      const string &elname((*iter)->getName());
+      if (elname == "context_data") {
+        ctx.restoreFromSpec(*iter, &engine);
+        break;
+      }
+    }
+  }
+  // ctx.setVariableDefault("longMode", 1);
   // In order to parse and validate the byte string properly, we need to get the
   // address size from SLEIGH. Therefore this needs to happen after
   // initialization.
