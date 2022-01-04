@@ -267,7 +267,6 @@ int main(int argc, char *argv[]) {
       }
     }
   }
-  // ctx.setVariableDefault("longMode", 1);
   // In order to parse and validate the byte string properly, we need to get the
   // address size from SLEIGH. Therefore this needs to happen after
   // initialization.
