@@ -29,7 +29,7 @@ public:
   }
 
   void loadFill(unsigned char *ptr, int size, const Address &addr) override {
-    uint8_t start = addr.getOffset();
+    uint64_t start = addr.getOffset();
     for (int i = 0; i < size; ++i) {
       uint64_t offset = start + i;
       if (offset >= base_addr) {
