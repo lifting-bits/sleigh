@@ -488,6 +488,7 @@ add_custom_command(
 # Start processing all `.slaspec` files individually
 set(spec_targets)
 set(spec_files)
+include(cmake/modules/sleighCompile.cmake)
 # Example: '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages/mx51.slaspec'
 foreach(spec_file ${spec_file_list})
   # Get 'mx51'
@@ -517,21 +518,15 @@ foreach(spec_file ${spec_file_list})
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${spec_dir}" "${spec_out_dir}"
   )
 
-  # Compile the sla file
-  add_custom_command(
-    OUTPUT "${spec_out}"
-    DEPENDS "${spec_file}" "${spec_out_dir}" "${spec_files_build_log_dir}"
-    COMMAND "$<TARGET_FILE:sleigh::sleigh_opt>" ${spec_file} "${spec_out}" > ${spec_build_log} 2>&1
-    WORKING_DIRECTORY "${spec_dir}"
-    COMMENT "sleigh: Compiling the ${spec_name} spec file (${spec_build_log})"
-    BYPRODUCTS ${spec_build_log}
-    VERBATIM
-  )
-
   string(REPLACE "." "_" spec_target_name ${spec_name})
   set(spec_target "sleigh_spec_${spec_target_name}")
-  add_custom_target(${spec_target}
-    DEPENDS ${spec_out}
+
+  # Compile the sla file
+  sleigh_compile(
+    TARGET "${spec_target}"
+    SLASPEC "${spec_file}"
+    LOG_FILE "${spec_build_log}"
+    OUT_FILE "${spec_out}"
   )
 
   list(APPEND spec_targets ${spec_target})
@@ -581,32 +576,6 @@ if(SLEIGH_ENABLE_INSTALL)
   include("GNUInstallDirs")
 
   install(
-    TARGETS
-      sleigh_settings
-
-    EXPORT
-      sleigh
-  )
-
-  install(
-    TARGETS
-      decomp_opt
-      ghidra_opt
-      sleigh_opt
-
-    EXPORT
-      sleigh
-
-    DESTINATION
-      "${CMAKE_INSTALL_BINDIR}"
-
-    PERMISSIONS
-      OWNER_READ OWNER_WRITE OWNER_EXECUTE
-      GROUP_READ GROUP_EXECUTE
-      WORLD_READ WORLD_EXECUTE
-  )
-
-  install(
     FILES
     ${public_include_header_list}
 
@@ -616,26 +585,21 @@ if(SLEIGH_ENABLE_INSTALL)
 
   install(
     TARGETS
+      sleigh_settings
+
       sla
       decomp
       support
 
-    EXPORT
-      sleigh
+      decomp_opt
+      ghidra_opt
+      sleigh_opt
 
-    LIBRARY DESTINATION
-      "${CMAKE_INSTALL_LIBDIR}"
+    EXPORT
+      sleighTargets
 
     INCLUDES DESTINATION
-      ${CMAKE_INSTALL_INCLUDEDIR}
-
-    PUBLIC_HEADER DESTINATION
-      ${CMAKE_INSTALL_INCLUDEDIR}
-
-    PERMISSIONS
-      OWNER_READ OWNER_WRITE OWNER_EXECUTE
-      GROUP_READ GROUP_EXECUTE
-      WORLD_READ WORLD_EXECUTE
+      "${CMAKE_INSTALL_INCLUDEDIR}"
   )
 
   # Install the compiled sla files found in 'Ghidra' top-level directory
@@ -727,10 +691,17 @@ if(SLEIGH_ENABLE_INSTALL)
   endif()
 
   install(
-    EXPORT sleigh
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
+    EXPORT sleighTargets
     NAMESPACE sleigh::
-    FILE sleighConfig.cmake
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
+  )
+  install(
+    FILES cmake/sleighConfig.cmake
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
+  )
+  install(
+    FILES cmake/modules/sleighCompile.cmake
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh/modules"
   )
 endif()
 
