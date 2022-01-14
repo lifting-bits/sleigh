@@ -193,9 +193,6 @@ target_compile_features(sleigh_settings INTERFACE
   cxx_std_17
 )
 
-set(SLEIGH_SPEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/sleigh/specfiles/")
-set(SLEIGH_SPEC_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/specfiles/")
-
 set_target_properties(sleigh_settings PROPERTIES
   INTERFACE_POSITION_INDEPENDENT_CODE ON
 )
@@ -565,6 +562,12 @@ if(SLEIGH_ENABLE_EXAMPLES)
   )
 endif()
 
+include("GNUInstallDirs")
+
+set(sleigh_INSTALL_SPECDIR "${CMAKE_INSTALL_DATADIR}/sleigh/specfiles")
+set(SLEIGH_SPEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${sleigh_INSTALL_SPECDIR}")
+set(SLEIGH_SPEC_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/specfiles/")
+
 # Add support library before configuring install targets
 add_subdirectory(support)
 
@@ -573,7 +576,6 @@ add_subdirectory(support)
 #
 
 if(SLEIGH_ENABLE_INSTALL)
-  include("GNUInstallDirs")
 
   install(
     FILES
@@ -695,8 +697,9 @@ if(SLEIGH_ENABLE_INSTALL)
     NAMESPACE sleigh::
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
   )
+  configure_file(cmake/sleighConfig.cmake.in sleighConfig.cmake @ONLY)
   install(
-    FILES cmake/sleighConfig.cmake
+    FILES ${PROJECT_BINARY_DIR}/sleighConfig.cmake
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
   )
   install(

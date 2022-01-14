@@ -1,4 +1,7 @@
 include("${CMAKE_CURRENT_LIST_DIR}/sleighTargets.cmake")
 
+# Path relative-root to reach installed specfiles directory
+set(sleigh_INSTALL_SPECDIR "@sleigh_INSTALL_SPECDIR@")
+
 # Helper modules exposed by default
 include("${CMAKE_CURRENT_LIST_DIR}/modules/sleighCompile.cmake")
