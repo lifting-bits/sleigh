@@ -488,6 +488,7 @@ add_custom_command(
 # Start processing all `.slaspec` files individually
 set(spec_targets)
 set(spec_files)
+set(spec_dirs)
 # Example: '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages/mx51.slaspec'
 foreach(spec_file ${spec_file_list})
   # Get 'mx51'
@@ -499,6 +500,9 @@ foreach(spec_file ${spec_file_list})
     BASE_DIRECTORY "${ghidrasource_SOURCE_DIR}/${spec_files_dir_prefix}"
     OUTPUT_VARIABLE spec_proc_dir
   )
+  # Get '8051'
+  cmake_path(GET spec_proc_dir PARENT_PATH proc_name)
+  cmake_path(GET proc_name PARENT_PATH proc_name)
 
   set(spec_build_log "${spec_files_build_log_dir}/${spec_name}_build.log")
   # Combine back again for the build directory output like
@@ -507,20 +511,13 @@ foreach(spec_file ${spec_file_list})
   # '<build_prefix>/Ghidra/Processors/8051/data/languages/mx51.sla'
   set(spec_out "${spec_out_dir}/${spec_name}.sla")
 
-  # Copy all other files from the slaspec source directory:
-  # '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages'
-  # TODO: This only copies the directory once, so you will need to remove the whole directory if you update any of
-  #  the other files, like '*.cspec' or '*.ldef' files
-  # CMake only guarantees update monitoring for file listed explicitly
-  add_custom_command(
-    OUTPUT "${spec_out_dir}"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "${spec_dir}" "${spec_out_dir}"
-  )
+  # Add relative spec processor directory for later processing
+  list(APPEND spec_dirs "${spec_proc_dir}")
 
   # Compile the sla file
   add_custom_command(
     OUTPUT "${spec_out}"
-    DEPENDS "${spec_file}" "${spec_out_dir}" "${spec_files_build_log_dir}"
+    DEPENDS "${spec_file}" "${spec_files_build_log_dir}"
     COMMAND "$<TARGET_FILE:sleigh::sleigh_opt>" ${spec_file} "${spec_out}" > ${spec_build_log} 2>&1
     WORKING_DIRECTORY "${spec_dir}"
     COMMENT "sleigh: Compiling the ${spec_name} spec file (${spec_build_log})"
@@ -533,9 +530,32 @@ foreach(spec_file ${spec_file_list})
   add_custom_target(${spec_target}
     DEPENDS ${spec_out}
   )
+  add_dependencies(${spec_target} sleigh_copy_${proc_name}_dir)
 
   list(APPEND spec_targets ${spec_target})
   list(APPEND spec_files ${spec_out})
+endforeach()
+
+# Copy and create specfile directories
+list(REMOVE_DUPLICATES spec_dirs)
+foreach(spec_dir ${spec_dirs})
+  set(spec_src_dir "${ghidrasource_SOURCE_DIR}/${spec_files_dir_prefix}/${spec_dir}")
+  set(spec_out_dir "${spec_files_root_dir}/${spec_dir}")
+  cmake_path(GET spec_dir PARENT_PATH proc_name)
+  cmake_path(GET proc_name PARENT_PATH proc_name)
+  # Copy all other files from the slaspec source directory:
+  # '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages'
+  # NOTE: This only copies the directory once, so you will need to remove the
+  # whole directory if you update any of the other files, like '*.cspec' or
+  # '*.ldef' files
+  # CMake only guarantees update monitoring for files listed explicitly
+  add_custom_command(
+    OUTPUT "${spec_out_dir}"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${spec_src_dir}" "${spec_out_dir}"
+  )
+  add_custom_target(sleigh_copy_${proc_name}_dir
+    DEPENDS "${spec_out_dir}"
+  )
 endforeach()
 
 # All of the sla spec targets are combined into this one
