@@ -46,5 +46,5 @@ function(sleigh_compile)
     VERBATIM
   )
 
-  add_custom_target(${spec_target} DEPENDS ${spec_out})
+  add_custom_target(${parsed_TARGET} DEPENDS ${spec_out})
 endfunction()
