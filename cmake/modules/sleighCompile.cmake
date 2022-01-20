@@ -34,9 +34,11 @@ function(sleigh_compile)
   get_filename_component(spec_out_dir "${spec_out}" DIRECTORY)
 
   # Compile the sla file
+  # NOTE: This doesn't have _all_ dependencies for the slaspec compilation due to the ability
+  #  to include other files from the spec file
   add_custom_command(
     OUTPUT "${spec_out}"
-    DEPENDS "${spec_file}"
+    MAIN_DEPENDENCY "${spec_file}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${spec_out_dir}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${spec_build_log_dir}"
     COMMAND "$<TARGET_FILE:sleigh::sleigh_opt>" ${spec_file} "${spec_out}" > ${spec_build_log} 2>&1
