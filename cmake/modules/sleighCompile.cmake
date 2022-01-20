@@ -32,10 +32,13 @@ function(sleigh_compile)
   get_filename_component(spec_build_log_dir "${parsed_LOG_FILE}" DIRECTORY)
   set(spec_out "${parsed_OUT_FILE}")
   get_filename_component(spec_out_dir "${spec_out}" DIRECTORY)
+
   # Compile the sla file
   add_custom_command(
     OUTPUT "${spec_out}"
-    DEPENDS "${spec_file}" "${spec_out_dir}" "${spec_build_log_dir}"
+    DEPENDS "${spec_file}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${spec_out_dir}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${spec_build_log_dir}"
     COMMAND "$<TARGET_FILE:sleigh::sleigh_opt>" ${spec_file} "${spec_out}" > ${spec_build_log} 2>&1
     WORKING_DIRECTORY "${spec_dir}"
     COMMENT "sleigh: Compiling the ${spec_name} spec file (logs written in ${spec_build_log})"
@@ -43,7 +46,5 @@ function(sleigh_compile)
     VERBATIM
   )
 
-  string(REPLACE ".." "_" spec_target_name ${spec_name})
-  set(spec_target "${parsed_TARGET}")
   add_custom_target(${spec_target} DEPENDS ${spec_out})
 endfunction()
