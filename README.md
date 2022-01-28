@@ -40,8 +40,7 @@ git clone https://github.com/lifting-bits/sleigh.git
 cd sleigh
 
 # Configure CMake
-cmake -B build -S . \
-    -DSLEIGH_ENABLE_INSTALL=ON
+cmake -B build -S .
 
 # Build SLEIGH
 cmake --build build -j
