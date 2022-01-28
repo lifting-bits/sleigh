@@ -582,12 +582,6 @@ if(SLEIGH_ENABLE_EXAMPLES)
   )
 endif()
 
-include("GNUInstallDirs")
-
-set(sleigh_INSTALL_SPECDIR "${CMAKE_INSTALL_DATADIR}/sleigh/specfiles")
-set(SLEIGH_SPEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${sleigh_INSTALL_SPECDIR}")
-set(SLEIGH_SPEC_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/specfiles/")
-
 # Add support library before configuring install targets
 add_subdirectory(support)
 
@@ -596,6 +590,7 @@ add_subdirectory(support)
 #
 
 if(SLEIGH_ENABLE_INSTALL)
+  include("GNUInstallDirs")
 
   install(
     FILES
@@ -723,16 +718,33 @@ if(SLEIGH_ENABLE_INSTALL)
     NAMESPACE sleigh::
     DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
   )
+
+  # Specfiles installation setup
+  set(
+    sleigh_INSTALL_DATADIR "${CMAKE_INSTALL_DATAROOTDIR}/sleigh"
+    CACHE PATH "sleigh data installation location relative to the install prefix"
+  )
+  mark_as_advanced(sleigh_INSTALL_DATADIR)
+
+  set(sleigh_INSTALL_SPECDIR "${sleigh_INSTALL_DATADIR}/specfiles"
+    CACHE PATH "sleigh specfile root destination relative to the install prefix"
+  )
+  mark_as_advanced(sleigh_INSTALL_SPECDIR)
+
   include(CMakePackageConfigHelpers)
+
   configure_package_config_file(cmake/sleighConfig.cmake.in
     ${PROJECT_BINARY_DIR}/sleighConfig.cmake
     INSTALL_DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO
     PATH_VARS sleigh_INSTALL_SPECDIR
   )
+
   install(
     FILES ${PROJECT_BINARY_DIR}/sleighConfig.cmake
     DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
   )
+
   install(
     FILES cmake/modules/sleighCompile.cmake
     DESTINATION "${sleigh_INSTALL_CMAKEDIR}/modules"
