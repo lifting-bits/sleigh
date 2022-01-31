@@ -34,7 +34,7 @@ public:
       uint64_t offset = start + i;
       if (offset >= base_addr) {
         offset -= base_addr;
-        ptr[i] = offset < image_buffer.size() ? image_buffer[i] : 0;
+        ptr[i] = offset < image_buffer.size() ? image_buffer[offset] : 0;
       } else {
         ptr[i] = 0;
       }
