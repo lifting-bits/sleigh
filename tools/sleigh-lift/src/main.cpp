@@ -19,12 +19,28 @@ static void PrintUsage(std::ostream &os) {
 }
 
 static void PrintVersion(void) {
-  std::cout << "GHIDRA Version: "
-            << "ghidra_version" << '\n'
-            << "GHIDRA Git Commit: "
-            << "ghidra_commit" << '\n'
-            << "sleigh-lift Git Commit: "
-            << "sleigh_commit" << std::endl;
+  std::cout << "sleigh-lift " << sleigh::GetGhidraVersion() << '\n';
+
+  // Print out the commit info for the underlying GHIDRA checkout
+  std::cout << "GHIDRA Version: " << sleigh::GetGhidraVersion() << '\n'
+            << "GHIDRA Commit Hash: " << sleigh::GetGhidraCommitHash() << '\n';
+
+  // Now print out the Git commit information
+  if (sleigh::HasVersionData()) {
+    std::cout << "Commit Hash: " << sleigh::GetCommitHash() << '\n'
+              << "Commit Date: " << sleigh::GetCommitDate() << '\n'
+              << "Last commit by: " << sleigh::GetAuthorName() << " ["
+              << sleigh::GetAuthorEmail() << "]\n"
+              << "Commit Subject: [" << sleigh::GetCommitSubject() << "]\n"
+              << '\n';
+    if (sleigh::HasUncommittedChanges()) {
+      std::cout << "Uncommitted changes were present during build.\n";
+    } else {
+      std::cout << "All changes were committed prior to building.\n";
+    }
+  } else {
+    std::cout << "No extended version information found!\n";
+  }
 }
 
 class InMemoryLoadImage : public LoadImage {

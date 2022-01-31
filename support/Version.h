@@ -28,4 +28,8 @@ std::string_view GetCommitSubject(void);
 
 std::string_view GetCommitBody(void);
 
+std::string_view GetGhidraVersion(void);
+
+std::string_view GetGhidraCommitHash(void);
+
 } // namespace sleigh
