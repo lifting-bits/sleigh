@@ -12,10 +12,19 @@
 #include <iostream>
 #include <string>
 
-static void PrintUsage(void) {
-  std::cerr << "Usage: sleigh-lift [action] [sla_file] [bytes] [-a address] "
-               "[-p root_sla_dir] [-s pspec_file]"
-            << std::endl;
+static void PrintUsage(std::ostream &os) {
+  os << "Usage: sleigh-lift [action] [sla_file] [bytes] [-a address] "
+        "[-p root_sla_dir] [-s pspec_file]"
+     << std::endl;
+}
+
+static void PrintVersion(void) {
+  std::cout << "GHIDRA Version: "
+            << "ghidra_version" << '\n'
+            << "GHIDRA Git Commit: "
+            << "ghidra_commit" << '\n'
+            << "sleigh-lift Git Commit: "
+            << "sleigh_commit" << std::endl;
 }
 
 class InMemoryLoadImage : public LoadImage {
@@ -202,9 +211,20 @@ std::optional<LiftArgs> ParseArgs(int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
+  // Check for `--help` or `--version`
+  if (argc == 2) {
+    const std::string cmd = argv[1];
+    if (cmd == "--help") {
+      PrintUsage(std::cout);
+      return EXIT_SUCCESS;
+    } else if (cmd == "--version") {
+      PrintVersion();
+      return EXIT_SUCCESS;
+    }
+  }
   const auto args = ParseArgs(argc, argv);
   if (!args) {
-    PrintUsage();
+    PrintUsage(std::cerr);
     return EXIT_FAILURE;
   }
   const uint64_t addr = args->addr ? *args->addr : 0;
