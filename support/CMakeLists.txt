@@ -11,13 +11,7 @@ configure_file(
   "${CMAKE_CURRENT_LIST_DIR}/SpecFilePaths.h.in"
   "${CMAKE_CURRENT_BINARY_DIR}/SpecFilePaths.h"
   @ONLY
-  )
-
-configure_file(
-  "${CMAKE_CURRENT_LIST_DIR}/GhidraVersion.cpp.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/GhidraVersion.cpp"
-  @ONLY
-  )
+)
 
 # Based on: https://github.com/andrew-hardin/cmake-git-version-tracking/blob/master/better-example/CMakeLists.txt
 # By Andrew Hardin
@@ -30,6 +24,13 @@ set(PRE_CONFIGURE_FILE "${CMAKE_CURRENT_LIST_DIR}/Version.cpp.in")
 set(POST_CONFIGURE_FILE "${CMAKE_CURRENT_BINARY_DIR}/Version.cpp")
 set(GIT_FAIL_IF_NONZERO_EXIT OFF)
 include("${PROJECT_SOURCE_DIR}/cmake/git_watcher.cmake")
+
+# Generate GHIDRA version helpers
+configure_file(
+  "${CMAKE_CURRENT_LIST_DIR}/GhidraVersion.cpp.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/GhidraVersion.cpp"
+  @ONLY
+)
 
 set(sleigh_support_source_list
   Support.cpp
