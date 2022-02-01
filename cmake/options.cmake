@@ -8,7 +8,6 @@
 
 option(SLEIGH_ENABLE_TESTS "Set to true to enable tests" ON)
 option(SLEIGH_ENABLE_EXAMPLES "Set to true to build examples" ON)
-option(SLEIGH_ENABLE_INSTALL "Set to true to enable the install directives")
 option(SLEIGH_ENABLE_DOCUMENTATION "Set to true to enable the documentation")
 option(SLEIGH_ENABLE_PACKAGING "Set to true to enable packaging")
 option(SLEIGH_ENABLE_SANITIZERS "Set to true to enable sanitizers")
@@ -22,11 +21,6 @@ option(SLEIGH_DFSVERIFY_DEBUG "Make sure that the block ordering algorithm produ
 # Additional internal settings
 option(SLEIGH_CPUI_STATISTICS "Turn on collection of cover and cast statistics")
 option(SLEIGH_CPUI_RULECOMPILE "Allow user defined dynamic rules")
-
-if(SLEIGH_ENABLE_PACKAGING)
-  set(SLEIGH_ENABLE_INSTALL true CACHE BOOL "Set to true to enable the install directives (forced)" FORCE)
-endif()
-
 
 # ---- Warning guard ----
 

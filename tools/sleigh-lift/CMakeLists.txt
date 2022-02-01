@@ -32,7 +32,7 @@ target_link_libraries(sleigh-lift PRIVATE
   sleigh::support
 )
 
-if(SLEIGH_ENABLE_INSTALL)
+if(NOT CMAKE_SKIP_INSTALL_RULES)
   install(
     TARGETS
       sleigh-lift

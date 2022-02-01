@@ -589,7 +589,7 @@ add_subdirectory(support)
 # Install targets
 #
 
-if(SLEIGH_ENABLE_INSTALL)
+if(NOT CMAKE_SKIP_INSTALL_RULES)
   include("GNUInstallDirs")
 
   install(
