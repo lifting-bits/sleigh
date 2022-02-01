@@ -20,7 +20,7 @@ jobs:
         release: [stable, HEAD]
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2.4.0
 
     - name: Setup Git User for Applying Patches
       # See this thread for more details https://github.community/t/github-actions-bot-email-address/17204/5
@@ -128,6 +128,13 @@ jobs:
         cmake --install build \
           --prefix install
 
+    - name: Test install directory
+      working-directory: tests/find_package
+      run: |
+        cmake -B build -S . -Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh
+        cmake --build build
+        ./build/sleigh_test
+
     - name: Create the packages
       run: |
         cmake \
@@ -161,21 +168,21 @@ jobs:
 
     - name: Upload the DEB package artifact (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux'
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2.3.1
       with:
         name: ${{ steps.package_locations.outputs.DEB_PACKAGE_NAME }}
         path: ${{ steps.package_locations.outputs.DEB_PACKAGE_PATH }}
 
     - name: Upload the RPM package artifact (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux'
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2.3.1
       with:
         name: ${{ steps.package_locations.outputs.RPM_PACKAGE_NAME }}
         path: ${{ steps.package_locations.outputs.RPM_PACKAGE_PATH }}
 
     - name: Upload the TGZ package artifact (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo'
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2.3.1
       with:
         name: ${{ steps.package_locations.outputs.TGZ_PACKAGE_NAME }}
         path: ${{ steps.package_locations.outputs.TGZ_PACKAGE_PATH }}

@@ -593,14 +593,6 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
   include("GNUInstallDirs")
 
   install(
-    FILES
-    ${public_include_header_list}
-
-    DESTINATION
-    ${CMAKE_INSTALL_INCLUDEDIR}/sleigh
-  )
-
-  install(
     TARGETS
       sleigh_settings
 
@@ -616,7 +608,15 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
       sleighTargets
 
     INCLUDES DESTINATION
-      "${CMAKE_INSTALL_INCLUDEDIR}"
+      ${CMAKE_INSTALL_INCLUDEDIR}
+  )
+
+  install(
+    FILES
+    ${public_include_header_list}
+
+    DESTINATION
+    ${CMAKE_INSTALL_INCLUDEDIR}/sleigh
   )
 
   # Install the compiled sla files found in 'Ghidra' top-level directory
@@ -721,7 +721,7 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
 
   # Specfiles installation setup
   set(
-    sleigh_INSTALL_DATADIR "${CMAKE_INSTALL_DATAROOTDIR}/sleigh"
+    sleigh_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/sleigh"
     CACHE PATH "sleigh data installation location relative to the install prefix"
   )
   mark_as_advanced(sleigh_INSTALL_DATADIR)
@@ -733,15 +733,16 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
 
   include(CMakePackageConfigHelpers)
 
-  configure_package_config_file(cmake/sleighConfig.cmake.in
-    ${PROJECT_BINARY_DIR}/sleighConfig.cmake
+  configure_package_config_file(cmake/install-config.cmake.in
+    ${PROJECT_BINARY_DIR}/install-config.cmake
     INSTALL_DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
     NO_CHECK_REQUIRED_COMPONENTS_MACRO
     PATH_VARS sleigh_INSTALL_SPECDIR
   )
 
   install(
-    FILES ${PROJECT_BINARY_DIR}/sleighConfig.cmake
+    FILES ${PROJECT_BINARY_DIR}/install-config.cmake
+    RENAME sleighConfig.cmake
     DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
   )
 
