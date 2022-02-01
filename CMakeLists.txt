@@ -605,7 +605,7 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
       sleigh_settings
 
     EXPORT
-      sleigh
+      sleighTargets
   )
 
   install(
@@ -615,7 +615,7 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
       sleigh_opt
 
     EXPORT
-      sleigh
+      sleighTargets
 
     DESTINATION
       "${CMAKE_INSTALL_BINDIR}"
@@ -641,7 +641,7 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
       support
 
     EXPORT
-      sleigh
+      sleighTargets
 
     LIBRARY DESTINATION
       "${CMAKE_INSTALL_LIBDIR}"
@@ -747,10 +747,15 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
   endif()
 
   install(
-    EXPORT sleigh
+    EXPORT sleighTargets
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
     NAMESPACE sleigh::
-    FILE sleighConfig.cmake
+  )
+
+  install(
+    FILES cmake/install-config.cmake
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
+    RENAME "sleighConfig.cmake"
   )
 endif()
 
