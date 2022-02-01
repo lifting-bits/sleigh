@@ -604,12 +604,10 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
     TARGETS
       sleigh_settings
 
-    EXPORT
-      sleighTargets
-  )
+      sla
+      decomp
+      support
 
-  install(
-    TARGETS
       decomp_opt
       ghidra_opt
       sleigh_opt
@@ -617,13 +615,8 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
     EXPORT
       sleighTargets
 
-    DESTINATION
-      "${CMAKE_INSTALL_BINDIR}"
-
-    PERMISSIONS
-      OWNER_READ OWNER_WRITE OWNER_EXECUTE
-      GROUP_READ GROUP_EXECUTE
-      WORLD_READ WORLD_EXECUTE
+    INCLUDES DESTINATION
+      ${CMAKE_INSTALL_INCLUDEDIR}
   )
 
   install(
@@ -632,30 +625,6 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
 
     DESTINATION
     ${CMAKE_INSTALL_INCLUDEDIR}/sleigh
-  )
-
-  install(
-    TARGETS
-      sla
-      decomp
-      support
-
-    EXPORT
-      sleighTargets
-
-    LIBRARY DESTINATION
-      "${CMAKE_INSTALL_LIBDIR}"
-
-    INCLUDES DESTINATION
-      ${CMAKE_INSTALL_INCLUDEDIR}
-
-    PUBLIC_HEADER DESTINATION
-      ${CMAKE_INSTALL_INCLUDEDIR}
-
-    PERMISSIONS
-      OWNER_READ OWNER_WRITE OWNER_EXECUTE
-      GROUP_READ GROUP_EXECUTE
-      WORLD_READ WORLD_EXECUTE
   )
 
   # Install the compiled sla files found in 'Ghidra' top-level directory
