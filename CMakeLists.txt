@@ -715,16 +715,43 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
     endforeach()
   endif()
 
+  set(
+    sleigh_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
+    CACHE PATH "CMake package config location relative to the install prefix"
+  )
+  mark_as_advanced(sleigh_INSTALL_CMAKEDIR)
+
   install(
     EXPORT sleighTargets
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
+    DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
     NAMESPACE sleigh::
   )
 
+  # Specfiles installation setup
+  set(
+    sleigh_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/sleigh"
+    CACHE PATH "sleigh data installation location relative to the install prefix"
+  )
+  mark_as_advanced(sleigh_INSTALL_DATADIR)
+
+  set(sleigh_INSTALL_SPECDIR "${sleigh_INSTALL_DATADIR}/specfiles"
+    CACHE PATH "sleigh specfile root destination relative to the install prefix"
+  )
+  mark_as_advanced(sleigh_INSTALL_SPECDIR)
+
+  include(CMakePackageConfigHelpers)
+
+  configure_package_config_file(cmake/install-config.cmake.in
+    ${PROJECT_BINARY_DIR}/install-config.cmake
+    INSTALL_DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO
+    PATH_VARS sleigh_INSTALL_SPECDIR
+  )
+
   install(
-    FILES cmake/install-config.cmake
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
-    RENAME "sleighConfig.cmake"
+    FILES ${PROJECT_BINARY_DIR}/install-config.cmake
+    RENAME sleighConfig.cmake
+    DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
   )
 endif()
 
