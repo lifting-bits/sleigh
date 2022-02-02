@@ -193,6 +193,9 @@ target_compile_features(sleigh_settings INTERFACE
   cxx_std_17
 )
 
+set(SLEIGH_SPEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/sleigh/specfiles/")
+set(SLEIGH_SPEC_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/specfiles/")
+
 set_target_properties(sleigh_settings PROPERTIES
   INTERFACE_POSITION_INDEPENDENT_CODE ON
 )
