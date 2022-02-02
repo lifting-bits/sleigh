@@ -3,6 +3,8 @@
 #
 # Released under the MIT License.
 # https://raw.githubusercontent.com/andrew-hardin/cmake-git-version-tracking/master/LICENSE
+#
+# Commit Hash: 98441f9dc056b8d3d4b4287b09e6a99775d70305
 
 
 # This file defines a target that monitors the state of a git repo.
