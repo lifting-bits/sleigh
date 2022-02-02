@@ -715,8 +715,8 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
 
   install(
     EXPORT sleighTargets
-    NAMESPACE sleigh::
     DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
+    NAMESPACE sleigh::
   )
 
   # Specfiles installation setup
