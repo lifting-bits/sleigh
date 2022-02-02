@@ -32,4 +32,6 @@ std::string_view GetGhidraVersion(void);
 
 std::string_view GetGhidraCommitHash(void);
 
+std::string_view GetGhidraReleaseType(void);
+
 } // namespace sleigh

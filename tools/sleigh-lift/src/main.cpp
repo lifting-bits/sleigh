@@ -23,7 +23,9 @@ static void PrintVersion(void) {
 
   // Print out the commit info for the underlying GHIDRA checkout
   std::cout << "GHIDRA Version: " << sleigh::GetGhidraVersion() << '\n'
-            << "GHIDRA Commit Hash: " << sleigh::GetGhidraCommitHash() << '\n';
+            << "GHIDRA Commit Hash: " << sleigh::GetGhidraCommitHash() << '\n'
+            << "GHIDRA Release Type: " << sleigh::GetGhidraReleaseType()
+            << '\n';
 
   // Now print out the Git commit information
   if (sleigh::HasVersionData()) {
