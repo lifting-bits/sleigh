@@ -34,6 +34,7 @@ endif()
 set(public_include_header_list
   "${PROJECT_SOURCE_DIR}/include/libsleigh.hh"
   "${PROJECT_SOURCE_DIR}/support/Support.h"
+  "${PROJECT_SOURCE_DIR}/support/Version.h"
   "${library_root}/address.hh"
   "${library_root}/context.hh"
   "${library_root}/emulate.hh"
