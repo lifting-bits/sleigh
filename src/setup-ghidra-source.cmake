@@ -10,8 +10,8 @@ set_property(CACHE SLEIGH_GHIDRA_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 # **** Setup pinned git info ****
 
 # Ghidra pinned stable version commit
-set(ghidra_version "10.1")
-set(ghidra_git_tag "2fcf0d21bf360af68dd87e5d8ed270ea1e72554c")
+set(ghidra_version "10.1.2")
+set(ghidra_git_tag "63bb30ac8bee0e3ff34c9812d751edcfdc70dbe4")
 # pinned stable patches list
 set(ghidra_patches
   PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
