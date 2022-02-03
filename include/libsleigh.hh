@@ -36,3 +36,4 @@
 #pragma GCC diagnostic pop
 
 #include "Support.h"
+#include "Version.h"
