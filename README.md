@@ -127,7 +127,7 @@ We also provide a CMake helper function [`sleigh_compile`](cmake/modules/sleighC
 
 Lastly, the installed compiled sleigh files can be located through the CMake variable `SLEIGH_INSTALL_SPECDIR`, which is an absolute path to the root directory for where the compiled sleigh files are located---you should manually inspect this to know what to expect.
 
-Referencing the [CMake config file](cmake/install-config.cmake.in) is also suggested for learning more.
+Referencing the [CMake config file](cmake/install-config.cmake.in) is also suggested for learning more about the exposed CMake variables and modules.
 
 ## License
 
