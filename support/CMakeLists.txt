@@ -13,11 +13,10 @@ configure_file(
   @ONLY
 )
 
-# Based on: https://github.com/andrew-hardin/cmake-git-version-tracking/blob/master/better-example/CMakeLists.txt
+# Based on: https://github.com/andrew-hardin/cmake-git-version-tracking/blob/98441f9dc056b8d3d4b4287b09e6a99775d70305/better-example/CMakeLists.txt
 # By Andrew Hardin
 # Released under the MIT License.
-# https://raw.githubusercontent.com/andrew-hardin/cmake-git-version-tracking/master/LICENSE
-# Commit Hash: 98441f9dc056b8d3d4b4287b09e6a99775d70305
+# https://raw.githubusercontent.com/andrew-hardin/cmake-git-version-tracking/98441f9dc056b8d3d4b4287b09e6a99775d70305/LICENSE
 #
 # Define the two required variables before including
 # the source code for watching a git repository.

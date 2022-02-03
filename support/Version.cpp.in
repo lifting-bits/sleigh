@@ -6,8 +6,7 @@
   the LICENSE file found in the root directory of this source tree.
 
   Based on:
-  https://github.com/andrew-hardin/cmake-git-version-tracking/blob/master/better-example/git.cc.in
-  Commit Hash: 98441f9dc056b8d3d4b4287b09e6a99775d70305
+  https://github.com/andrew-hardin/cmake-git-version-tracking/blob/98441f9dc056b8d3d4b4287b09e6a99775d70305/better-example/git.cc.in
   Which is (C) 2020 Andrew Hardin
 
   MIT License

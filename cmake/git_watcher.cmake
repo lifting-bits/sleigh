@@ -1,10 +1,8 @@
 # git_watcher.cmake
-# https://raw.githubusercontent.com/andrew-hardin/cmake-git-version-tracking/master/git_watcher.cmake
+# https://raw.githubusercontent.com/andrew-hardin/cmake-git-version-tracking/98441f9dc056b8d3d4b4287b09e6a99775d70305/git_watcher.cmake
 #
 # Released under the MIT License.
-# https://raw.githubusercontent.com/andrew-hardin/cmake-git-version-tracking/master/LICENSE
-#
-# Commit Hash: 98441f9dc056b8d3d4b4287b09e6a99775d70305
+# https://raw.githubusercontent.com/andrew-hardin/cmake-git-version-tracking/98441f9dc056b8d3d4b4287b09e6a99775d70305/LICENSE
 
 
 # This file defines a target that monitors the state of a git repo.
