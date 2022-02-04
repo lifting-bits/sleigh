@@ -2,9 +2,9 @@
 
 This project uses CMake's [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) module to set up the Ghidra source tree. This means we can apply [patches](../patches) that live only in this repo for small changes to features like packaging or running tests.
 
-By default, CMake pulls a stable version of Ghidra. You may use a more recent commit by specifying `-DSLEIGH_GHIDRA_RELEASE_TYPE=HEAD` during CMake configuration.
+By default, CMake pulls a stable version of Ghidra. You may use a more recent commit by specifying `-Dsleigh_GHIDRA_RELEASE_TYPE=HEAD` during CMake configuration.
 
-See the `SLEIGH_GHIDRA_*` CMake cache variable comments for more details on how to customize your Ghidra source checkout.
+See the `sleigh_GHIDRA_*` CMake cache variable comments for more details on how to customize your Ghidra source checkout.
 
 ## Advanced Usage Notes
 
@@ -18,7 +18,7 @@ This method is useful for developing new features on top of the latest commits i
 
 If you want to use your own Ghidra source checkout, then set the following during CMake configuration:
 
-* `-DSLEIGH_GHIDRA_RELEASE_TYPE=HEAD` if using commits on Ghidra's default branch (`master`) or any branch that may be incompatible with the current stable version.
+* `-Dsleigh_GHIDRA_RELEASE_TYPE=HEAD` if using commits on Ghidra's default branch (`master`) or any branch that may be incompatible with the current stable version.
 
 * `-DFETCHCONTENT_SOURCE_DIR_GHIDRASOURCE=<path to your own Ghidra source>`. Remember, no existing [patches](../patches/HEAD) will be applied to your own source directory.
 
@@ -26,13 +26,13 @@ If you want to use your own Ghidra source checkout, then set the following durin
 git clone https://github.com/NationalSecurityAgency/ghidra src/ghidra
 
 cmake -B build-dev-head -S . \
-  -DSLEIGH_GHIDRA_RELEASE_TYPE=HEAD \
+  -Dsleigh_GHIDRA_RELEASE_TYPE=HEAD \
   -DFETCHCONTENT_SOURCE_DIR_GHIDRASOURCE="$(pwd)/src/ghidra"
 ```
 
 ### Reusing Downloaded Ghidra Source
 
-If you want to share a single Ghidra source checkout/clone for multiple build directories, the [_FetchContent Base Directory_](https://cmake.org/cmake/help/latest/module/FetchContent.html#variable:FETCHCONTENT_BASE_DIR) (`FETCHCONTENT_BASE_DIR`) should encode the build generator name and be located outside of the build directory (the name would look something like `cmake_fc_ghidra_${SLEIGH_GHIDRA_RELEASE_TYPE}_${CMAKE_GENERATOR}`).
+If you want to share a single Ghidra source checkout/clone for multiple build directories, the [_FetchContent Base Directory_](https://cmake.org/cmake/help/latest/module/FetchContent.html#variable:FETCHCONTENT_BASE_DIR) (`FETCHCONTENT_BASE_DIR`) should encode the build generator name and be located outside of the build directory (the name would look something like `cmake_fc_ghidra_${sleigh_GHIDRA_RELEASE_TYPE}_${CMAKE_GENERATOR}`).
 
 Initially, this means that every new build generator used for building the project will have to re-download the ghidra source tree, but any subsequent run with an already-initialize generator should be faster and skip the download.
 
@@ -93,13 +93,13 @@ The above also works when using `HEAD` commit of Ghidra.
 ```bash
 $ cmake -B build-head-release -S . -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
-    -DSLEIGH_GHIDRA_RELEASE_TYPE=HEAD \
+    -Dsleigh_GHIDRA_RELEASE_TYPE=HEAD \
     -DFETCHCONTENT_BASE_DIR=./src/cmake_fc_ghidra_HEAD_Ninja
 ...
 
 $ cmake -B build-head-debug -S . -G Ninja \
     -DCMAKE_BUILD_TYPE=Debug \
-    -DSLEIGH_GHIDRA_RELEASE_TYPE=HEAD \
+    -Dsleigh_GHIDRA_RELEASE_TYPE=HEAD \
     -DFETCHCONTENT_BASE_DIR=./src/cmake_fc_ghidra_HEAD_Ninja
 ...
 ```

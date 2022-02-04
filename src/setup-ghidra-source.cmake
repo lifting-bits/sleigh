@@ -1,11 +1,11 @@
 # ---- Setup Ghidra Source code ----
 
 # Set up Ghidra repo human-readable version settings
-set(SLEIGH_GHIDRA_RELEASE_TYPE "stable" CACHE
+set(sleigh_GHIDRA_RELEASE_TYPE "stable" CACHE
   STRING "Ghidra release type to use. 'HEAD' is used for active development purposes."
 )
 # This is just helper for CMake UIs. CMake does not enforce that the value matches one of those listed.
-set_property(CACHE SLEIGH_GHIDRA_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
+set_property(CACHE sleigh_GHIDRA_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 
 # **** Setup pinned git info ****
 
@@ -19,7 +19,7 @@ set(ghidra_patches
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
-if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL HEAD)
+if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL HEAD)
   # TODO: Try to remember to look at Ghidra/application.properties
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "10.2")

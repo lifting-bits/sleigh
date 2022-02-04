@@ -57,13 +57,13 @@ Please see [`src/README.md`](./src/README.md) for more information on how to cus
 
 ## Packaging
 
-The CMake configuration also supports building packages for SLEIGH. If the `SLEIGH_ENABLE_PACKAGING` option is set during the configuration step, the build step will generate a tarball containing the SLEIGH installation. Additionally, the build will create an RPM package if it finds `rpm` in the `PATH` and/or a DEB package if it finds `dpkg` in the `PATH`.
+The CMake configuration also supports building packages for SLEIGH. If the `sleigh_ENABLE_PACKAGING` option is set during the configuration step, the build step will generate a tarball containing the SLEIGH installation. Additionally, the build will create an RPM package if it finds `rpm` in the `PATH` and/or a DEB package if it finds `dpkg` in the `PATH`.
 
 For example:
 
 ```sh
 cmake -B build -S . \
-    -DSLEIGH_ENABLE_PACKAGING=ON
+    -Dsleigh_ENABLE_PACKAGING=ON
 
 # Build SLEIGH
 cmake --build build -j
@@ -102,7 +102,7 @@ $ sleigh-lift pcode x86-64.sla 4881ecc00f0000
 (register,0x202,1) = INT_EQUAL (unique,0x12d00,1) (const,0x0,1)
 ```
 
-The `SLEIGH_ENABLE_EXAMPLES` option must be set to `ON` during the configuration step in order to build `sleigh-lift`.
+The `sleigh_ENABLE_EXAMPLES` option must be set to `ON` during the configuration step in order to build `sleigh-lift`.
 
 ## Helpers
 
