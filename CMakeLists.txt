@@ -490,6 +490,7 @@ add_custom_command(
 set(spec_targets)
 set(spec_files)
 set(spec_dirs)
+include(cmake/modules/sleighCompile.cmake)
 # Example: '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages/mx51.slaspec'
 foreach(spec_file ${spec_file_list})
   # Get 'mx51'
@@ -515,21 +516,15 @@ foreach(spec_file ${spec_file_list})
   # Add relative spec processor directory for later processing
   list(APPEND spec_dirs "${spec_proc_dir}")
 
-  # Compile the sla file
-  add_custom_command(
-    OUTPUT "${spec_out}"
-    DEPENDS "${spec_file}" "${spec_files_build_log_dir}"
-    COMMAND "$<TARGET_FILE:sleigh::sleigh_opt>" ${spec_file} "${spec_out}" > ${spec_build_log} 2>&1
-    WORKING_DIRECTORY "${spec_dir}"
-    COMMENT "sleigh: Compiling the ${spec_name} spec file (${spec_build_log})"
-    BYPRODUCTS ${spec_build_log}
-    VERBATIM
-  )
-
   string(REPLACE "." "_" spec_target_name ${spec_name})
   set(spec_target "sleigh_spec_${spec_target_name}")
-  add_custom_target(${spec_target}
-    DEPENDS ${spec_out}
+
+  # Compile the sla file
+  sleigh_compile(
+    TARGET "${spec_target}"
+    SLASPEC "${spec_file}"
+    LOG_FILE "${spec_build_log}"
+    OUT_FILE "${spec_out}"
   )
   add_dependencies(${spec_target} sleigh_copy_${proc_name}_dir)
 
@@ -753,6 +748,11 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
     FILES ${PROJECT_BINARY_DIR}/install-config.cmake
     RENAME sleighConfig.cmake
     DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
+  )
+
+  install(
+    FILES cmake/modules/sleighCompile.cmake
+    DESTINATION "${sleigh_INSTALL_CMAKEDIR}/modules"
   )
 endif()
 
