@@ -117,6 +117,18 @@ FindSpecFile(std::string_view file_name,
 
 The `sleigh::FindSpecFile` function will search the the paths provided by the user via the `search_paths` argument for a spec file with the name `file_name`. The default argument for `search_paths` is `sleigh::gDefaultSearchPaths` which contains the install/build directories that the CMake project was configured with as well as a set of common installation locations.
 
+## Integration as a Dependency
+
+An installation of sleigh provides a CMake interface that can be used to assist in building your project.
+
+An example of how to use the CMake package config file can be found in the [find_package](tests/find_package/CMakeLists.txt) example.
+
+We also provide a CMake helper function [`sleigh_compile`](cmake/modules/sleighCompile.cmake) to compile your own `.slaspec` files using the installed sleigh compiler from this project.
+
+Lastly, the installed compiled sleigh files can be located through the CMake variable `SLEIGH_INSTALL_SPECDIR`, which is an absolute path to the root directory for where the compiled sleigh files are located---you should manually inspect this to know what to expect.
+
+Referencing the [CMake config file](cmake/install-config.cmake.in) is also suggested for learning more about the exposed CMake variables and modules.
+
 ## License
 
 See the LICENSE file in the top directory of this repo.
