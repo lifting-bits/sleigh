@@ -125,7 +125,7 @@ An example of how to use the CMake package config file can be found in the [find
 
 We also provide a CMake helper function [`sleigh_compile`](cmake/modules/sleighCompile.cmake) to compile your own `.slaspec` files using the installed sleigh compiler from this project.
 
-Lastly, the installed compiled sleigh files can be located through the CMake variable `SLEIGH_INSTALL_SPECDIR`, which is an absolute path to the root directory for where the compiled sleigh files are located---you should manually inspect this to know what to expect.
+Lastly, the installed compiled sleigh files can be located through the CMake variable `sleigh_INSTALL_SPECDIR`, which is an absolute path to the root directory for where the compiled sleigh files are located---you should manually inspect this to know what to expect.
 
 Referencing the [CMake config file](cmake/install-config.cmake.in) is also suggested for learning more about the exposed CMake variables and modules.
 
