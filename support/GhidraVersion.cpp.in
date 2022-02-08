@@ -15,7 +15,7 @@ std::string_view GetGhidraVersion(void) { return "@ghidra_version@"; }
 std::string_view GetGhidraCommitHash(void) { return "@ghidra_git_tag@"; }
 
 std::string_view GetGhidraReleaseType(void) {
-  return "@SLEIGH_GHIDRA_RELEASE_TYPE@";
+  return "@sleigh_GHIDRA_RELEASE_TYPE@";
 }
 
 } // namespace sleigh

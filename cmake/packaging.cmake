@@ -7,7 +7,7 @@
 #
 
 set(PACKAGE_VERSION 1)
-if("${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
   set(PACKAGE_VERSION "DEV.${ghidra_short_commit}")
 endif()
 
