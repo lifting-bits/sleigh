@@ -10,7 +10,7 @@
 
 namespace sleigh {
 
-static const char *kSleighSpecInstallDir = "@SLEIGH_SPEC_INSTALL_DIR@";
-static const char *kSleighSpecBuildDir = "@SLEIGH_SPEC_BUILD_DIR@";
+static const char *kSleighSpecInstallDir = "@sleigh_SPEC_INSTALL_DIR@";
+static const char *kSleighSpecBuildDir = "@sleigh_SPEC_BUILD_DIR@";
 
 } // namespace sleigh

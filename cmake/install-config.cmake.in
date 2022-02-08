@@ -3,4 +3,7 @@
 include("${CMAKE_CURRENT_LIST_DIR}/sleighTargets.cmake")
 
 # Path relative-root to reach installed specfiles directory
-set_and_check(SLEIGH_INSTALL_SPECDIR "@PACKAGE_sleigh_INSTALL_SPECDIR@")
+set_and_check(sleigh_INSTALL_SPECDIR "@PACKAGE_sleigh_INSTALL_SPECDIR@")
+
+# Helpers exposed by default when finding sleigh
+include("${CMAKE_CURRENT_LIST_DIR}/modules/sleighCompile.cmake")

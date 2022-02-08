@@ -19,11 +19,11 @@ project("sleigh"
 
 include("cmake/options.cmake")
 
-if(SLEIGH_ENABLE_TESTS)
+if(sleigh_ENABLE_TESTS)
   include("CTest")
 endif()
 
-if(SLEIGH_ENABLE_PACKAGING)
+if(sleigh_ENABLE_PACKAGING)
   include("cmake/packaging.cmake")
 
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -194,14 +194,14 @@ target_compile_features(sleigh_settings INTERFACE
   cxx_std_17
 )
 
-set(SLEIGH_SPEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/sleigh/specfiles/")
-set(SLEIGH_SPEC_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/specfiles/")
+set(sleigh_SPEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/sleigh/specfiles/")
+set(sleigh_SPEC_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/specfiles/")
 
 set_target_properties(sleigh_settings PROPERTIES
   INTERFACE_POSITION_INDEPENDENT_CODE ON
 )
 
-if(SLEIGH_ENABLE_SANITIZERS)
+if(sleigh_ENABLE_SANITIZERS)
   message(STATUS "sleigh: Sanitizers have been enabled")
 
   if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -225,11 +225,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   )
 
   foreach(debug_setting ${debug_setting_list})
-    if(NOT SLEIGH_${debug_setting})
+    if(NOT sleigh_${debug_setting})
       continue()
     endif()
 
-    message(STATUS "sleigh: Enabling debug setting: SLEIGH_${debug_setting}")
+    message(STATUS "sleigh: Enabling debug setting: sleigh_${debug_setting}")
 
     target_compile_definitions(sleigh_settings INTERFACE
       ${debug_setting}
@@ -243,11 +243,11 @@ set(internal_setting_list
 )
 
 foreach(internal_setting ${internal_setting_list})
-  if(NOT SLEIGH_${internal_setting})
+  if(NOT sleigh_${internal_setting})
     continue()
   endif()
 
-  message(STATUS "sleigh: Enabling internal setting: SLEIGH_${internal_setting}")
+  message(STATUS "sleigh: Enabling internal setting: sleigh_${internal_setting}")
 
   target_compile_definitions(sleigh_settings INTERFACE
     ${internal_setting}
@@ -291,7 +291,7 @@ endif()
 # ghidra_test_dbg
 #
 
-if(SLEIGH_ENABLE_TESTS)
+if(sleigh_ENABLE_TESTS)
   add_executable(ghidra_test_dbg
     ${sleigh_core_source_list}
     ${sleigh_deccore_source_list}
@@ -446,7 +446,7 @@ endif()
 # Documentation
 #
 
-if(SLEIGH_ENABLE_DOCUMENTATION)
+if(sleigh_ENABLE_DOCUMENTATION)
   message(STATUS "sleigh: Documentation has been enabled")
 
   find_package(Doxygen REQUIRED COMPONENTS dot)
@@ -467,7 +467,7 @@ endif()
 # Spec files
 #
 # Sets 'spec_file_list' variable
-if(NOT "${SLEIGH_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+if(NOT "${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
   include(spec-files-list/spec_files_stable.cmake)
 else()
   include(spec-files-list/spec_files_HEAD.cmake)
@@ -490,6 +490,7 @@ add_custom_command(
 set(spec_targets)
 set(spec_files)
 set(spec_dirs)
+include(cmake/modules/sleighCompile.cmake)
 # Example: '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages/mx51.slaspec'
 foreach(spec_file ${spec_file_list})
   # Get 'mx51'
@@ -515,21 +516,15 @@ foreach(spec_file ${spec_file_list})
   # Add relative spec processor directory for later processing
   list(APPEND spec_dirs "${spec_proc_dir}")
 
-  # Compile the sla file
-  add_custom_command(
-    OUTPUT "${spec_out}"
-    DEPENDS "${spec_file}" "${spec_files_build_log_dir}"
-    COMMAND "$<TARGET_FILE:sleigh::sleigh_opt>" ${spec_file} "${spec_out}" > ${spec_build_log} 2>&1
-    WORKING_DIRECTORY "${spec_dir}"
-    COMMENT "sleigh: Compiling the ${spec_name} spec file (${spec_build_log})"
-    BYPRODUCTS ${spec_build_log}
-    VERBATIM
-  )
-
   string(REPLACE "." "_" spec_target_name ${spec_name})
   set(spec_target "sleigh_spec_${spec_target_name}")
-  add_custom_target(${spec_target}
-    DEPENDS ${spec_out}
+
+  # Compile the sla file
+  sleigh_compile(
+    TARGET "${spec_target}"
+    SLASPEC "${spec_file}"
+    LOG_FILE "${spec_build_log}"
+    OUT_FILE "${spec_out}"
   )
   add_dependencies(${spec_target} sleigh_copy_${proc_name}_dir)
 
@@ -568,7 +563,7 @@ add_custom_target(sleigh_all_sla_specs ALL DEPENDS
 # Examples
 #
 
-if(SLEIGH_ENABLE_EXAMPLES)
+if(sleigh_ENABLE_EXAMPLES)
   add_executable(sleighexample
     "${library_root}/sleighexample.cc"
   )
@@ -639,7 +634,7 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
 
   set(CMAKE_INSTALL_DOCDIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/sleigh")
 
-  if(SLEIGH_ENABLE_DOCUMENTATION)
+  if(sleigh_ENABLE_DOCUMENTATION)
     # Build docs during install
     install(CODE
       "execute_process(
@@ -654,7 +649,7 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
       DESTINATION
         "${CMAKE_INSTALL_DOCDIR}"
     )
-  endif(SLEIGH_ENABLE_DOCUMENTATION)
+  endif(sleigh_ENABLE_DOCUMENTATION)
 
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(output_folder_path "${CMAKE_CURRENT_BINARY_DIR}/symlinks")
@@ -753,6 +748,11 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
     FILES ${PROJECT_BINARY_DIR}/install-config.cmake
     RENAME sleighConfig.cmake
     DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
+  )
+
+  install(
+    FILES cmake/modules/sleighCompile.cmake
+    DESTINATION "${sleigh_INSTALL_CMAKEDIR}/modules"
   )
 endif()
 
