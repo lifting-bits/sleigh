@@ -167,6 +167,11 @@ jobs:
         echo ::set-output name=RPM_PACKAGE_PATH::$(ls build/*.rpm)
         echo ::set-output name=RPM_PACKAGE_NAME::$(cd build && ls *.rpm)
 
+        # Rename .tar.gz files for OS
+        pushd build
+        for f in *.tar.gz; do mv "$f" "${{ runner.os }}-$f"; done
+        popd
+
         echo ::set-output name=TGZ_PACKAGE_PATH::$(ls build/*.tar.gz)
         echo ::set-output name=TGZ_PACKAGE_NAME::$(cd build && ls *.tar.gz)
 
