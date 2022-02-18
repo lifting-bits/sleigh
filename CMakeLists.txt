@@ -6,7 +6,7 @@
 # the LICENSE file found in the root directory of this source tree.
 #
 
-cmake_minimum_required(VERSION 3.21.0)
+cmake_minimum_required(VERSION 3.15)
 
 # Sets "library_root" variable for decompiler cpp root directory
 # Sets "ghidra_version" for numeric version number
@@ -454,7 +454,7 @@ if(sleigh_ENABLE_DOCUMENTATION)
   set(documentation_output "${CMAKE_CURRENT_BINARY_DIR}/doc")
   # Always run this target because we have no source file tracking for incremental builds
   add_custom_target(sleigh_documentation
-    COMMAND "${CMAKE_COMMAND}" -E rm -rf "${library_root}/../doc" "${documentation_output}"
+    COMMAND "${CMAKE_COMMAND}" -E remove_directory "${library_root}/../doc" "${documentation_output}"
     COMMAND Doxygen::doxygen Doxyfile
     COMMAND "${CMAKE_COMMAND}" -E copy_directory "${library_root}/../doc" "${documentation_output}"
     COMMENT "sleigh: Generating the Doxygen documentation"
@@ -494,17 +494,23 @@ include(cmake/modules/sleighCompile.cmake)
 # Example: '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages/mx51.slaspec'
 foreach(spec_file ${spec_file_list})
   # Get 'mx51'
-  cmake_path(GET spec_file STEM LAST_ONLY spec_name)
+  get_filename_component(spec_name "${spec_file}" NAME_WLE)
+
   # Get '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages'
-  cmake_path(GET spec_file PARENT_PATH spec_dir)
+  get_filename_component(spec_dir "${spec_file}" DIRECTORY)
+
   # Get '8051/data/languages'
-  cmake_path(RELATIVE_PATH spec_dir
-    BASE_DIRECTORY "${ghidrasource_SOURCE_DIR}/${spec_files_dir_prefix}"
-    OUTPUT_VARIABLE spec_proc_dir
+  file(RELATIVE_PATH spec_proc_dir
+    "${ghidrasource_SOURCE_DIR}/${spec_files_dir_prefix}"
+    "${spec_dir}"
   )
+
+  # Add relative spec processor directory for later processing
+  list(APPEND spec_dirs ${spec_proc_dir})
+
   # Get '8051'
-  cmake_path(GET spec_proc_dir PARENT_PATH proc_name)
-  cmake_path(GET proc_name PARENT_PATH proc_name)
+  get_filename_component(proc_name "${spec_proc_dir}" DIRECTORY)
+  get_filename_component(proc_name "${proc_name}" DIRECTORY)
 
   set(spec_build_log "${spec_files_build_log_dir}/${spec_name}_build.log")
   # Combine back again for the build directory output like
@@ -512,9 +518,6 @@ foreach(spec_file ${spec_file_list})
   set(spec_out_dir "${spec_files_root_dir}/${spec_proc_dir}")
   # '<build_prefix>/Ghidra/Processors/8051/data/languages/mx51.sla'
   set(spec_out "${spec_out_dir}/${spec_name}.sla")
-
-  # Add relative spec processor directory for later processing
-  list(APPEND spec_dirs "${spec_proc_dir}")
 
   string(REPLACE "." "_" spec_target_name ${spec_name})
   set(spec_target "sleigh_spec_${spec_target_name}")
@@ -537,8 +540,11 @@ list(REMOVE_DUPLICATES spec_dirs)
 foreach(spec_dir ${spec_dirs})
   set(spec_src_dir "${ghidrasource_SOURCE_DIR}/${spec_files_dir_prefix}/${spec_dir}")
   set(spec_out_dir "${spec_files_root_dir}/${spec_dir}")
-  cmake_path(GET spec_dir PARENT_PATH proc_name)
-  cmake_path(GET proc_name PARENT_PATH proc_name)
+
+  # Get the processor directory name
+  get_filename_component(proc_name "${spec_dir}" DIRECTORY)
+  get_filename_component(proc_name "${proc_name}" DIRECTORY)
+
   # Copy all other files from the slaspec source directory:
   # '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages'
   # NOTE: This only copies the directory once, so you will need to remove the
