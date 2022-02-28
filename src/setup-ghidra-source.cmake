@@ -11,7 +11,8 @@ set_property(CACHE sleigh_GHIDRA_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 
 # Ghidra pinned stable version commit
 set(ghidra_version "10.1.2")
-set(ghidra_git_tag "63bb30ac8bee0e3ff34c9812d751edcfdc70dbe4")
+set(ghidra_git_tag "Ghidra_10.1.2_build")
+set(ghidra_shallow TRUE)
 # pinned stable patches list
 set(ghidra_patches
   PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
@@ -26,6 +27,7 @@ if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL HEAD)
   set(ghidra_version "${ghidra_head_version}")
   set(ghidra_head_git_tag "3e245c6f80b1fe6465a8d5f73c09bcd1fd823fb1")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
+  set(ghidra_shallow FALSE)
   set(ghidra_patches
     PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
     "${CMAKE_CURRENT_SOURCE_DIR}/patches/stable/0001-Fix-arg-parsing-in-sleigh-C-test-runner.patch"
@@ -46,6 +48,7 @@ FetchContent_Declare(GhidraSource
   GIT_REPOSITORY https://github.com/NationalSecurityAgency/ghidra
   GIT_TAG ${ghidra_git_tag}
   GIT_PROGRESS TRUE
+  GIT_SHALLOW ${ghidra_shallow}
   ${ghidra_patches}
 )
 FetchContent_MakeAvailable(GhidraSource)
