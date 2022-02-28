@@ -16,7 +16,7 @@ set(ghidra_shallow TRUE)
 # pinned stable patches list
 set(ghidra_patches
   PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
-  "${CMAKE_CURRENT_SOURCE_DIR}/patches/stable/0001-Fix-arg-parsing-in-sleigh-C-test-runner.patch"
+  "${CMAKE_CURRENT_SOURCE_DIR}/patches/stable/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
@@ -30,7 +30,7 @@ if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL HEAD)
   set(ghidra_shallow FALSE)
   set(ghidra_patches
     PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
-    "${CMAKE_CURRENT_SOURCE_DIR}/patches/stable/0001-Fix-arg-parsing-in-sleigh-C-test-runner.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
   )
 endif()
 

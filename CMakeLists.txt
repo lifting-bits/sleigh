@@ -315,8 +315,15 @@ if(sleigh_ENABLE_TESTS)
   )
 
   add_test(
-    NAME ghidra_test_dbg
+    NAME ghidra_unittest_dbg
     COMMAND ghidra_test_dbg -sleighpath "${CMAKE_CURRENT_BINARY_DIR}" unittests
+  )
+
+  add_test(
+    NAME ghidra_datatest_dbg
+    COMMAND ghidra_test_dbg -sleighpath "${CMAKE_CURRENT_BINARY_DIR}"
+      -path "${ghidrasource_SOURCE_DIR}/Ghidra/Features/Decompiler/src/decompile/datatests"
+      datatests
   )
 endif()
 
