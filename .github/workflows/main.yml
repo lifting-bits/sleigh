@@ -43,7 +43,7 @@ jobs:
           graphviz
 
         # Minimum supported CMake version testing
-        curl -L "https://github.com/Kitware/CMake/releases/download/v3.21.0/cmake-3.21.0-linux-$(uname -m).sh" -o /tmp/cmake-install.sh
+        curl -L "https://github.com/Kitware/CMake/releases/download/v3.15.0/cmake-3.15.0-Linux-$(uname -m).sh" -o /tmp/cmake-install.sh
         mkdir -p "${HOME}/.local"
         bash /tmp/cmake-install.sh --skip-license --exclude-subdir "--prefix=${HOME}/.local"
 
