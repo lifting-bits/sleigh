@@ -24,7 +24,7 @@ jobs:
         release: [stable, HEAD]
 
     steps:
-    - uses: actions/checkout@v2.4.0
+    - uses: actions/checkout@v3
 
     - name: Setup Git User for Applying Patches
       # See this thread for more details https://github.community/t/github-actions-bot-email-address/17204/5
