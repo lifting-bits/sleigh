@@ -532,6 +532,7 @@ foreach(spec_file ${spec_file_list})
   # Compile the sla file
   sleigh_compile(
     TARGET "${spec_target}"
+    COMPILER "$<TARGET_FILE:sleigh::sleigh_opt>"
     SLASPEC "${spec_file}"
     LOG_FILE "${spec_build_log}"
     OUT_FILE "${spec_out}"

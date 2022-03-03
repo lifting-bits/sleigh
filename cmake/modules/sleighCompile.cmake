@@ -11,6 +11,7 @@ cmake_minimum_required(VERSION 3.15)
 # Takes the following required arguments:
 #
 #   TARGET: Named CMake target for performing sleigh compilation
+#   COMPILER: Path to sleigh compiler executable
 #   SLASPEC: Path to slaspec file
 #   LOG_FILE: File to write logs
 #   OUT_FILE: Compiled sleigh output file (should be in build directory somewhere)
@@ -20,7 +21,7 @@ cmake_minimum_required(VERSION 3.15)
 # rebuild the sleigh file then you must delete the OUT_FILE
 function(sleigh_compile)
   set(options)
-  set(oneValueArgs TARGET SLASPEC LOG_FILE OUT_FILE)
+  set(oneValueArgs TARGET COMPILER SLASPEC LOG_FILE OUT_FILE)
   set(multiValueArgs)
   cmake_parse_arguments(parsed
     "${options}"
@@ -54,7 +55,7 @@ function(sleigh_compile)
     MAIN_DEPENDENCY "${spec_file}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${spec_out_dir}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${spec_build_log_dir}"
-    COMMAND "$<TARGET_FILE:sleigh::sleigh_opt>" ${spec_file} "${spec_out}" > "${spec_build_log}" 2>&1
+    COMMAND "${parsed_COMPILER}" ${spec_file} "${spec_out}" > "${spec_build_log}" 2>&1
     WORKING_DIRECTORY "${spec_dir}"
     COMMENT "sleigh: Compiling the '${spec_name}' spec file (logs written in '${spec_build_log}')"
     BYPRODUCTS "${spec_build_log}"
