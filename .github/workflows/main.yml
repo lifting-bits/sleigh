@@ -179,7 +179,7 @@ jobs:
     # DEB Package
     - name: Upload the DEB package artifact (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux'
-      uses: actions/upload-artifact@v2.3.1
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ steps.package_locations.outputs.DEB_PACKAGE_NAME }}
         path: ${{ steps.package_locations.outputs.DEB_PACKAGE_PATH }}
@@ -193,7 +193,7 @@ jobs:
     # RPM Package
     - name: Upload the RPM package artifact (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux'
-      uses: actions/upload-artifact@v2.3.1
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ steps.package_locations.outputs.RPM_PACKAGE_NAME }}
         path: ${{ steps.package_locations.outputs.RPM_PACKAGE_PATH }}
@@ -206,7 +206,7 @@ jobs:
     # TGZ Package
     - name: Upload the TGZ package artifact (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo'
-      uses: actions/upload-artifact@v2.3.1
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ steps.package_locations.outputs.TGZ_PACKAGE_NAME }}
         path: ${{ steps.package_locations.outputs.TGZ_PACKAGE_PATH }}
