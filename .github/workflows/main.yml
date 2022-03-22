@@ -73,7 +73,7 @@ jobs:
         message("::set-output name=timestamp::${current_date}")
 
     - name: Update the cache (ccache)
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: "${{ github.workspace }}/ccache"
         key: ${{ steps.cache_key.outputs.VALUE }}_ccache_${{ steps.cache_key.outputs.timestamp }}
