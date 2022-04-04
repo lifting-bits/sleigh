@@ -18,4 +18,5 @@ add_executable(sleigh_test
 target_link_libraries(sleigh_test PRIVATE
   sleigh::sla
   sleigh::decomp
+  sleigh::support
 )
