@@ -44,9 +44,14 @@ add_library(support
 
 add_library(sleigh::support ALIAS support)
 
-target_link_libraries(support PUBLIC
-  sleigh::sleigh_settings
+target_compile_features(support PUBLIC
+  cxx_std_17
 )
+
+set_target_properties(support PROPERTIES
+  INTERFACE_POSITION_INDEPENDENT_CODE ON
+)
+
 target_include_directories(support PRIVATE
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
   "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/support>"

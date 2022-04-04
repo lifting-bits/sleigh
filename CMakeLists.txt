@@ -191,7 +191,7 @@ add_library(sleigh_settings INTERFACE)
 add_library(sleigh::sleigh_settings ALIAS sleigh_settings)
 
 target_compile_features(sleigh_settings INTERFACE
-  cxx_std_17
+  cxx_std_11
 )
 
 set(sleigh_SPEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/sleigh/specfiles/")
