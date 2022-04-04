@@ -44,7 +44,7 @@ add_library(support
 
 add_library(sleigh::support ALIAS support)
 
-target_compile_features(support PRIVATE
+target_compile_features(support PUBLIC
   cxx_std_17
 )
 
