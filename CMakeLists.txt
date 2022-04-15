@@ -273,9 +273,11 @@ add_executable(decomp_opt
 )
 add_executable(sleigh::decomp_opt ALIAS decomp_opt)
 
-target_compile_definitions(decomp_opt PRIVATE
-  __TERMINAL__
-)
+if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+  target_compile_definitions(decomp_opt PRIVATE
+    __TERMINAL__
+  )
+endif()
 
 target_link_libraries(decomp_opt PRIVATE
   sleigh::sleigh_settings
@@ -315,9 +317,11 @@ if(sleigh_ENABLE_TESTS)
   )
   target_include_directories(ghidra_test_dbg PRIVATE $<BUILD_INTERFACE:${library_root}>)
 
-  target_compile_definitions(ghidra_test_dbg PRIVATE
-    __TERMINAL__
-  )
+  if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+    target_compile_definitions(ghidra_test_dbg PRIVATE
+      __TERMINAL__
+    )
+  endif()
 
   add_test(
     NAME ghidra_unittest_dbg

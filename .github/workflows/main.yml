@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         build_type: [RelWithDebInfo, Debug]
         release: [stable, HEAD]
 
@@ -63,6 +63,10 @@ jobs:
           doxygen \
           graphviz
 
+    - name: Install Windows system dependencies
+      if: runner.os == 'Windows'
+      run: choco install ccache
+
     - name: Generate cache key
       id: cache_key
       shell: cmake -P {0}
@@ -94,56 +98,57 @@ jobs:
         # Clear stats before every build
         execute_process(COMMAND ccache -z)
 
+    - name: CMake version
+      run: cmake --version
+
     - name: Configure the project
-      run: |
-        cmake --version
-        cmake \
-          -S . \
-          -B build \
-          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-          -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-          -Dsleigh_GHIDRA_RELEASE_TYPE=${{ matrix.release }} \
-          -Dsleigh_ENABLE_TESTS=ON \
-          -Dsleigh_ENABLE_EXAMPLES=ON \
-          -Dsleigh_ENABLE_PACKAGING=ON \
-          -Dsleigh_ENABLE_DOCUMENTATION=ON
+      run: cmake
+        -S .
+        -B build
+        -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        -DCMAKE_C_COMPILER_LAUNCHER=ccache
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -Dsleigh_GHIDRA_RELEASE_TYPE=${{ matrix.release }}
+        -Dsleigh_ENABLE_TESTS=ON
+        -Dsleigh_ENABLE_EXAMPLES=ON
+        -Dsleigh_ENABLE_PACKAGING=ON
+        -Dsleigh_ENABLE_DOCUMENTATION=ON
 
     - name: Build the project
-      run: |
-        cmake \
-          --build build \
-          -j 2 \
-          -v
+      run: cmake
+        --build build
+        --config ${{ matrix.build_type }}
+        -j 2
+        -v
 
     - name: Run the tests
-      run: |
-        ( cd build && ctest -V )
+      working-directory: build
+      run: ctest -V -C ${{ matrix.build_type }}
 
     - name: Run the example
-      run: |
-        cmake \
-          --build build \
-          -j 2 \
-          --target sleighexample_runner
+      run: cmake
+        --build build
+        -j 2
+        --config ${{ matrix.build_type }}
+        --target sleighexample_runner
 
     - name: Run the install target
-      run: |
-        cmake --install build \
-          --prefix install
+      run: cmake --install build
+        --config ${{ matrix.build_type }}
+        --prefix install
 
     - name: Test install directory
       working-directory: tests/find_package
       run: |
-        cmake -B build -S . -Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh
-        cmake --build build -j 2
+        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --build build -j 2 --config ${{ matrix.build_type }}
         ./build/sleigh_test
 
     - name: Create the packages
-      run: |
-        cmake \
-          --build build \
-          -j 2 \
+      run: cmake
+          --build build
+          -j 2
+          --config ${{ matrix.build_type }}
           --target package
 
     - name: Test the DEB package
@@ -151,15 +156,12 @@ jobs:
       run: |
         sudo dpkg -i build/*.deb
 
-        cmake \
-          -S tests/find_package \
-          -B find_package_build
-
-        cmake \
-          --build find_package_build -j 2 --verbose
+        cmake -S tests/find_package -B find_package_build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --build find_package_build -j 2 --config ${{ matrix.build_type }} --verbose
 
     - name: Locate the packages (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo'
+      shell: bash
       id: package_locations
       run: |
         echo ::set-output name=DEB_PACKAGE_PATH::$(ls build/*.deb)

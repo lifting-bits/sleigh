@@ -22,6 +22,11 @@ option(sleigh_DFSVERIFY_DEBUG "Make sure that the block ordering algorithm produ
 option(sleigh_CPUI_STATISTICS "Turn on collection of cover and cast statistics")
 option(sleigh_CPUI_RULECOMPILE "Allow user defined dynamic rules")
 
+# Sanity checking
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+  set(sleigh_ENABLE_DOCUMENTATION OFF CACHE BOOL "Unsupported on Windows" FORCE)
+endif()
+
 # ---- Warning guard ----
 
 # target_include_directories with the SYSTEM modifier will request the compiler
