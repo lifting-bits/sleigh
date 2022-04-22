@@ -110,7 +110,6 @@ set(sleigh_deccore_source_list
   "${library_root}/funcdata_block.cc"
   "${library_root}/funcdata_op.cc"
   "${library_root}/funcdata_varnode.cc"
-  "${library_root}/unionresolve.cc"
   "${library_root}/pcodeinject.cc"
   "${library_root}/heritage.cc"
   "${library_root}/prefersplit.cc"
