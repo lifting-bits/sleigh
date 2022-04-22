@@ -51,8 +51,7 @@ jobs:
 
         # Use Homebrew for latest build tool version for use in CI
         brew install \
-          ccache \
-          ninja
+          ccache
 
     - name: Install macOS system dependencies
       if: runner.os == 'macOS'
@@ -60,7 +59,6 @@ jobs:
         echo "MACOSX_DEPLOYMENT_TARGET=10.15" >> ${GITHUB_ENV}
         brew install \
           ccache \
-          ninja \
           cmake \
           doxygen \
           graphviz
@@ -102,7 +100,6 @@ jobs:
         cmake \
           -S . \
           -B build \
-          -G Ninja \
           -DCMAKE_C_COMPILER=clang \
           -DCMAKE_CXX_COMPILER=clang++ \
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
@@ -118,6 +115,7 @@ jobs:
       run: |
         cmake \
           --build build \
+          -j 2 \
           -v
 
     - name: Run the tests
@@ -128,6 +126,7 @@ jobs:
       run: |
         cmake \
           --build build \
+          -j 2 \
           --target sleighexample_runner
 
     - name: Run the install target
@@ -139,13 +138,14 @@ jobs:
       working-directory: tests/find_package
       run: |
         cmake -B build -S . -Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh
-        cmake --build build
+        cmake --build build -j 2
         ./build/sleigh_test
 
     - name: Create the packages
       run: |
         cmake \
           --build build \
+          -j 2 \
           --target package
 
     - name: Test the DEB package
@@ -158,7 +158,7 @@ jobs:
           -B find_package_build
 
         cmake \
-          --build find_package_build --verbose
+          --build find_package_build -j 2 --verbose
 
     - name: Locate the packages (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo'

@@ -41,6 +41,9 @@ set(sleigh_support_source_list
 add_library(support
   ${sleigh_support_source_list}
 )
+# Need to explicitly add this dependency because BYPRODUCTS doesn't work under
+# CMake 3.16 with GNU Makefiles
+add_dependencies(support check_git)
 
 add_library(sleigh::support ALIAS support)
 
