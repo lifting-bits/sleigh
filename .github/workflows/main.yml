@@ -84,11 +84,12 @@ jobs:
           ${{ steps.cache_key.outputs.VALUE }}_ccache_
 
     - name: Setup ccache
+      working-directory: "${{ github.workspace }}"
       shell: cmake -P {0}
       run: |
-        file(MAKE_DIRECTORY "${{ github.workspace }}/ccache")
-        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_BASEDIR=${{ github.workspace }}\n")
-        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_DIR=${{ github.workspace }}/ccache\n")
+        file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ccache")
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_BASEDIR=${CMAKE_CURRENT_SOURCE_DIR}\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/ccache\n")
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESS=true\n")
         # Trial and error to get all files in here
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESSLEVEL=10\n")
