@@ -32,14 +32,10 @@ configure_file(
   @ONLY
 )
 
-set(sleigh_support_source_list
-  Support.cpp
-  ${POST_CONFIGURE_FILE}
-  "${CMAKE_CURRENT_BINARY_DIR}/GhidraVersion.cpp"
-)
-
 add_library(support
-  ${sleigh_support_source_list}
+  Support.cpp
+  "${POST_CONFIGURE_FILE}"
+  "${CMAKE_CURRENT_BINARY_DIR}/GhidraVersion.cpp"
 )
 # Need to explicitly add this dependency because BYPRODUCTS doesn't work under
 # CMake 3.16 with GNU Makefiles
