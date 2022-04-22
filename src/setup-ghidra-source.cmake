@@ -32,11 +32,12 @@ if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL HEAD)
     PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
     "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
   )
+  string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
+else()
+  set(ghidra_short_commit "${ghidra_git_tag}")
 endif()
 
-string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
-
-message(STATUS "Using Ghidra version ${ghidra_version} at commit ${ghidra_short_commit}")
+message(STATUS "Using Ghidra version ${ghidra_version} at git ref ${ghidra_short_commit}")
 
 include(FetchContent)
 
