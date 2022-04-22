@@ -133,6 +133,11 @@ set(sleigh_deccore_source_list
   "${library_root}/opbehavior.cc"
   "${library_root}/paramid.cc"
 )
+if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND sleigh_deccore_source_list
+    "${library_root}/unionresolve.cc"
+  )
+endif()
 
 set(sleigh_extra_source_list
   "${library_root}/callgraph.cc"
