@@ -199,10 +199,10 @@ std::optional<LiftArgs> ParseArgs(int argc, char *argv[]) {
       const char *addr_str = argv[arg_index++];
       try {
         addr = std::stoul(addr_str);
-      } catch (const std::invalid_argument &ia) {
+      } catch (const std::invalid_argument &) {
         std::cerr << "Invalid address argument: " << addr_str << std::endl;
         return {};
-      } catch (const std::out_of_range &oor) {
+      } catch (const std::out_of_range &) {
         std::cerr << "Address argument out of range: " << addr_str << std::endl;
         return {};
       }
