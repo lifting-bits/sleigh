@@ -11,21 +11,6 @@ add_executable(sleigh-lift
 )
 add_executable(sleigh::sleigh-lift ALIAS sleigh-lift)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  if(MSVC)
-    target_compile_options(sleigh-lift PRIVATE
-      /W4
-      /WX
-    )
-  else()
-    target_compile_options(sleigh-lift PRIVATE
-      -Wall
-      -Werror
-      -Wextra
-    )
-  endif()
-endif()
-
 target_link_libraries(sleigh-lift PRIVATE
   sleigh::sla
   sleigh::decomp
