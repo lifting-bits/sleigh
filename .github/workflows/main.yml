@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         build_type: [RelWithDebInfo, Debug]
         release: [stable, HEAD]
 
@@ -63,6 +63,10 @@ jobs:
           doxygen \
           graphviz
 
+    - name: Install Windows system dependencies
+      if: runner.os == 'Windows'
+      run: choco install ccache
+
     - name: Generate cache key
       id: cache_key
       shell: cmake -P {0}
@@ -80,11 +84,12 @@ jobs:
           ${{ steps.cache_key.outputs.VALUE }}_ccache_
 
     - name: Setup ccache
+      working-directory: "${{ github.workspace }}"
       shell: cmake -P {0}
       run: |
-        file(MAKE_DIRECTORY "${{ github.workspace }}/ccache")
-        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_BASEDIR=${{ github.workspace }}\n")
-        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_DIR=${{ github.workspace }}/ccache\n")
+        file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ccache")
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_BASEDIR=${CMAKE_CURRENT_SOURCE_DIR}\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/ccache\n")
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESS=true\n")
         # Trial and error to get all files in here
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESSLEVEL=10\n")
@@ -94,56 +99,54 @@ jobs:
         # Clear stats before every build
         execute_process(COMMAND ccache -z)
 
+    - name: CMake version
+      run: cmake --version
+
     - name: Configure the project
-      run: |
-        cmake --version
-        cmake \
-          -S . \
-          -B build \
-          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-          -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-          -Dsleigh_GHIDRA_RELEASE_TYPE=${{ matrix.release }} \
-          -Dsleigh_ENABLE_TESTS=ON \
-          -Dsleigh_ENABLE_EXAMPLES=ON \
-          -Dsleigh_ENABLE_PACKAGING=ON \
-          -Dsleigh_ENABLE_DOCUMENTATION=ON
+      run: cmake
+        -S .
+        -B build
+        -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        -DCMAKE_C_COMPILER_LAUNCHER=ccache
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -Dsleigh_GHIDRA_RELEASE_TYPE=${{ matrix.release }}
+        -Dsleigh_ENABLE_TESTS=ON
+        -Dsleigh_ENABLE_EXAMPLES=ON
+        -Dsleigh_ENABLE_PACKAGING=ON
+        -Dsleigh_ENABLE_DOCUMENTATION=ON
 
     - name: Build the project
-      run: |
-        cmake \
-          --build build \
-          -j 2 \
-          -v
-
-    - name: Run the tests
-      run: |
-        ( cd build && ctest -V )
+      run: cmake
+        --build build
+        --config ${{ matrix.build_type }}
+        -j 2
+        -v
 
     - name: Run the example
-      run: |
-        cmake \
-          --build build \
-          -j 2 \
-          --target sleighexample_runner
+      run: cmake
+        --build build
+        -j 2
+        --config ${{ matrix.build_type }}
+        --target sleighexample_runner
 
     - name: Run the install target
-      run: |
-        cmake --install build \
-          --prefix install
+      run: cmake --install build
+        --config ${{ matrix.build_type }}
+        --prefix install
 
     - name: Test install directory
       working-directory: tests/find_package
       run: |
-        cmake -B build -S . -Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh
-        cmake --build build -j 2
-        ./build/sleigh_test
+        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --build build -j 2 --config ${{ matrix.build_type }}
+        cd build
+        ctest -V -C ${{ matrix.build_type }}
 
     - name: Create the packages
-      run: |
-        cmake \
-          --build build \
-          -j 2 \
+      run: cmake
+          --build build
+          -j 2
+          --config ${{ matrix.build_type }}
           --target package
 
     - name: Test the DEB package
@@ -151,15 +154,12 @@ jobs:
       run: |
         sudo dpkg -i build/*.deb
 
-        cmake \
-          -S tests/find_package \
-          -B find_package_build
-
-        cmake \
-          --build find_package_build -j 2 --verbose
+        cmake -S tests/find_package -B find_package_build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --build find_package_build -j 2 --config ${{ matrix.build_type }} --verbose
 
     - name: Locate the packages (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo'
+      shell: bash
       id: package_locations
       run: |
         echo ::set-output name=DEB_PACKAGE_PATH::$(ls build/*.deb)
@@ -216,6 +216,15 @@ jobs:
       if: matrix.build_type == 'RelWithDebInfo' && startsWith(github.ref, 'refs/tags/') && matrix.release == 'stable'
       with:
         files: ${{ steps.package_locations.outputs.TGZ_PACKAGE_PATH }}
+
+    # This step is down at the bottom because Windows fails but we still want
+    # to upload the built binaries, regardless. We also want to see if/when
+    # Windows tests start passing or are still failing, so there is no special
+    # handling. GitHub Actions does not support the concept of an allowable
+    # failure state
+    - name: Run the tests
+      working-directory: build
+      run: ctest -V -C ${{ matrix.build_type }}
 
     - name: ccache stats
       run: ccache -s --verbose

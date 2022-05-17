@@ -199,10 +199,10 @@ std::optional<LiftArgs> ParseArgs(int argc, char *argv[]) {
       const char *addr_str = argv[arg_index++];
       try {
         addr = std::stoul(addr_str);
-      } catch (const std::invalid_argument &ia) {
+      } catch (const std::invalid_argument &) {
         std::cerr << "Invalid address argument: " << addr_str << std::endl;
         return {};
-      } catch (const std::out_of_range &oor) {
+      } catch (const std::out_of_range &) {
         std::cerr << "Address argument out of range: " << addr_str << std::endl;
         return {};
       }
@@ -261,7 +261,7 @@ int main(int argc, char *argv[]) {
   ContextInternal ctx;
   Sleigh engine(&load_image, &ctx);
   DocumentStorage storage;
-  Element *root = storage.openDocument(*sla_file_path)->getRoot();
+  Element *root = storage.openDocument(sla_file_path->string())->getRoot();
   storage.registerTag(root);
   std::optional<std::filesystem::path> pspec_file_path;
   if (args->pspec_file_name) {
@@ -285,7 +285,7 @@ int main(int argc, char *argv[]) {
     }
   }
   if (pspec_file_path) {
-    Element *pspec_root = storage.openDocument(*pspec_file_path)->getRoot();
+    Element *pspec_root = storage.openDocument(pspec_file_path->string())->getRoot();
     storage.registerTag(pspec_root);
   }
   engine.initialize(storage);

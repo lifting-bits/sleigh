@@ -20,3 +20,9 @@ target_link_libraries(sleigh_test PRIVATE
   sleigh::decomp
   sleigh::support
 )
+
+include(CTest)
+add_test(
+  NAME smoketest
+  COMMAND sleigh_test
+)

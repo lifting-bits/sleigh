@@ -7,10 +7,12 @@
 */
 
 #pragma once
+#ifndef _MSC_VER
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 #include "address.hh"
 #include "context.hh"
 #include "emulate.hh"
@@ -33,7 +35,9 @@
 #include "translate.hh"
 #include "types.h"
 #include "xml.hh"
+#ifndef _MSC_VER
 #pragma GCC diagnostic pop
+#endif
 
 #include "Support.h"
 #include "Version.h"
