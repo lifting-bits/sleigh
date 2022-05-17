@@ -122,10 +122,6 @@ jobs:
         -j 2
         -v
 
-    - name: Run the tests
-      working-directory: build
-      run: ctest -V -C ${{ matrix.build_type }}
-
     - name: Run the example
       run: cmake
         --build build
@@ -219,6 +215,15 @@ jobs:
       if: matrix.build_type == 'RelWithDebInfo' && startsWith(github.ref, 'refs/tags/') && matrix.release == 'stable'
       with:
         files: ${{ steps.package_locations.outputs.TGZ_PACKAGE_PATH }}
+
+    # This step is down at the bottom because Windows fails but we still want
+    # to upload the built binaries, regardless. We also want to see if/when
+    # Windows tests start passing or are still failing, so there is no special
+    # handling. GitHub Actions does not support the concept of an allowable
+    # failure state
+    - name: Run the tests
+      working-directory: build
+      run: ctest -V -C ${{ matrix.build_type }}
 
     - name: ccache stats
       run: ccache -s --verbose
