@@ -139,7 +139,8 @@ jobs:
       run: |
         cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         cmake --build build -j 2 --config ${{ matrix.build_type }}
-        ./build/sleigh_test
+        cd build
+        ctest -V -C ${{ matrix.build_type }}
 
     - name: Create the packages
       run: cmake
