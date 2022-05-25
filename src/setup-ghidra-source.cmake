@@ -16,7 +16,8 @@ set(ghidra_shallow TRUE)
 # pinned stable patches list
 set(ghidra_patches
   PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
-  "${CMAKE_CURRENT_SOURCE_DIR}/patches/stable/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
+  "${CMAKE_CURRENT_SOURCE_DIR}/patches/stable/0001-Fixes-CLI-argument-parsing.patch"
+  "${CMAKE_CURRENT_SOURCE_DIR}/patches/stable/0002-Support-non-zero-exit-code-when-tests-fail.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
@@ -30,7 +31,8 @@ if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL HEAD)
   set(ghidra_shallow FALSE)
   set(ghidra_patches
     PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
-    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0001-Fixes-CLI-argument-parsing.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0002-Support-non-zero-exit-code-when-tests-fail.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
