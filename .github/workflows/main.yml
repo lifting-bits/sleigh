@@ -64,7 +64,7 @@ jobs:
 
     - name: Install Windows system dependencies
       if: runner.os == 'Windows'
-      run: choco install ccache doxygen.install
+      run: choco install ccache doxygen.install graphviz
 
     - name: Generate cache key
       id: cache_key
