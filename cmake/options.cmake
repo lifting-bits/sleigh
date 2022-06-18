@@ -17,6 +17,20 @@ if(PROJECT_IS_TOP_LEVEL)
   option(BUILD_SHARED_LIBS "Build shared libs. (Untested and not supported)" OFF)
 endif()
 
+if(sleigh_DEVELOPER_MODE)
+  option(sleigh_BUILD_DOCUMENTATION "Build documentation using Doxygen" OFF)
+  set(
+    DOXYGEN_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/docs"
+    CACHE PATH "Path for the generated Doxygen documentation"
+  )
+endif()
+
+set(
+  DOXYGEN_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/docs"
+  CACHE PATH "Path for the generated Doxygen documentation"
+)
+
+
 # Add-ons by ToB
 option(sleigh_BUILD_SUPPORT "Build ToB support libraries")
 option(sleigh_BUILD_EXTRATOOLS "Build extra ToB sleigh tools")
