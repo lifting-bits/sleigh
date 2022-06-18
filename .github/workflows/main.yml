@@ -37,21 +37,20 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y \
-          clang \
-          rpm \
-          doxygen \
-          xdot \
-          graphviz
+        sudo apt-get install -y rpm
 
         # Minimum supported CMake version testing
-        curl -L "https://github.com/Kitware/CMake/releases/download/v3.15.0/cmake-3.15.0-Linux-$(uname -m).sh" -o /tmp/cmake-install.sh
-        mkdir -p "${HOME}/.local"
-        bash /tmp/cmake-install.sh --skip-license --exclude-subdir "--prefix=${HOME}/.local"
+        #curl -L "https://github.com/Kitware/CMake/releases/download/v3.15.0/cmake-3.15.0-Linux-$(uname -m).sh" -o /tmp/cmake-install.sh
+        #mkdir -p "${HOME}/.local"
+        #bash /tmp/cmake-install.sh --skip-license --exclude-subdir "--prefix=${HOME}/.local"
+        brew install cmake
 
         # Use Homebrew for latest build tool version for use in CI
         brew install \
-          ccache
+          ccache \
+          doxygen \
+          xdot \
+          graphviz
 
     - name: Install macOS system dependencies
       if: runner.os == 'macOS'
@@ -65,7 +64,7 @@ jobs:
 
     - name: Install Windows system dependencies
       if: runner.os == 'Windows'
-      run: choco install ccache
+      run: choco install ccache doxygen.install
 
     - name: Generate cache key
       id: cache_key
@@ -106,6 +105,7 @@ jobs:
       run: cmake --version
 
     - name: Configure the project
+      shell: pwsh
       run: cmake "--preset=ci-$("${{ matrix.os }}".split("-")[0])"
         -Dsleigh_GHIDRA_RELEASE_TYPE=${{ matrix.release }}
         -Dsleigh_BUILD_DOCUMENTATION=ON
