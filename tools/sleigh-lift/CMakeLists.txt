@@ -6,31 +6,31 @@
 # the LICENSE file found in the root directory of this source tree.
 #
 
-add_executable(sleigh-lift
+add_executable(sleigh_lift
   src/main.cpp
 )
-add_executable(sleigh::sleigh-lift ALIAS sleigh-lift)
+add_executable(sleigh::sleigh_lift ALIAS sleigh_lift)
 
-target_link_libraries(sleigh-lift PRIVATE
+target_link_libraries(sleigh_lift PRIVATE
   sleigh::sla
   sleigh::decomp
   sleigh::support
 )
+target_compile_features(sleigh_lift PRIVATE cxx_std_17)
+set_target_properties(sleigh_lift PROPERTIES
+  EXPORT_NAME lift
+  OUTPUT_NAME sleighLift
+)
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
+  include(GNUInstallDirs)
   install(
-    TARGETS
-      sleigh-lift
-
-    EXPORT
-      "sleigh"
-
-    DESTINATION
-      "${CMAKE_INSTALL_BINDIR}"
-
-    PERMISSIONS
-      OWNER_READ OWNER_WRITE OWNER_EXECUTE
-      GROUP_READ GROUP_EXECUTE
-      WORLD_READ WORLD_EXECUTE
+    TARGETS sleigh_lift
+    EXPORT sleighExtraToolsTargets
+  )
+  install(
+    EXPORT sleighExtraToolsTargets
+    DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
+    NAMESPACE sleigh::
   )
 endif()

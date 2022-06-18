@@ -9,7 +9,7 @@
 cmake_minimum_required(VERSION 3.15.0)
 project("sleigh_find_package_test")
 
-find_package(sleigh REQUIRED)
+find_package(sleigh REQUIRED COMPONENTS Support)
 
 add_executable(sleigh_test
   src/main.cpp

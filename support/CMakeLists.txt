@@ -9,7 +9,7 @@
 # Generate the build and install directories to use in the support helpers
 configure_file(
   "${CMAKE_CURRENT_LIST_DIR}/SpecFilePaths.h.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/SpecFilePaths.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/include/sleigh/SpecFilePaths.h"
   @ONLY
 )
 
@@ -23,7 +23,7 @@ configure_file(
 set(PRE_CONFIGURE_FILE "${CMAKE_CURRENT_LIST_DIR}/Version.cpp.in")
 set(POST_CONFIGURE_FILE "${CMAKE_CURRENT_BINARY_DIR}/Version.cpp")
 set(GIT_FAIL_IF_NONZERO_EXIT OFF)
-include("${PROJECT_SOURCE_DIR}/cmake/git_watcher.cmake")
+include("../cmake/git_watcher.cmake")
 
 # Generate GHIDRA version helpers
 configure_file(
@@ -32,26 +32,49 @@ configure_file(
   @ONLY
 )
 
-add_library(support
+add_library(sleigh_support
   Support.cpp
   "${POST_CONFIGURE_FILE}"
   "${CMAKE_CURRENT_BINARY_DIR}/GhidraVersion.cpp"
 )
+add_library(sleigh::support ALIAS sleigh_support)
+
 # Need to explicitly add this dependency because BYPRODUCTS doesn't work under
 # CMake 3.16 with GNU Makefiles
-add_dependencies(support check_git)
+add_dependencies(sleigh_support check_git)
 
-add_library(sleigh::support ALIAS support)
-
-target_compile_features(support PUBLIC
-  cxx_std_17
+target_compile_features(sleigh_support PUBLIC cxx_std_17)
+set_target_properties(sleigh_support PROPERTIES
+  EXPORT_NAME support
+  OUTPUT_NAME slaSupport
+)
+target_include_directories(sleigh_support
+  PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
 )
 
-set_target_properties(support PROPERTIES
-  INTERFACE_POSITION_INDEPENDENT_CODE ON
-)
+if(NOT CMAKE_SKIP_INSTALL_RULES)
+  include(GNUInstallDirs)
 
-target_include_directories(support PRIVATE
-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
-  "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/support>"
-)
+  if(PROJECT_IS_TOP_LEVEL)
+    set(CMAKE_INSTALL_INCLUDEDIR include/sleigh CACHE PATH "")
+  endif()
+
+  install(
+    TARGETS sleigh_support
+    EXPORT sleighSupportTargets
+    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+  )
+  install(
+    DIRECTORY
+      include/
+      "${CMAKE_CURRENT_BINARY_DIR}/include/"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+  )
+  install(
+    EXPORT sleighSupportTargets
+    DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
+    NAMESPACE sleigh::
+  )
+endif()

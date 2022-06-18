@@ -96,6 +96,9 @@ jobs:
         # This should be multiplied by the number of compilation jobs and be no
         # larger than 5G, which is the cache max size
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_MAXSIZE=400M\n")
+        # Tell CMake to use ccache
+        file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_CXX_COMPILER_LAUNCHER=ccache\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_C_COMPILER_LAUNCHER=ccache\n")
         # Clear stats before every build
         execute_process(COMMAND ccache -z)
 
@@ -103,17 +106,9 @@ jobs:
       run: cmake --version
 
     - name: Configure the project
-      run: cmake
-        -S .
-        -B build
-        -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-        -DCMAKE_C_COMPILER_LAUNCHER=ccache
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+      run: cmake "--preset=ci-$("${{ matrix.os }}".split("-")[0])"
         -Dsleigh_GHIDRA_RELEASE_TYPE=${{ matrix.release }}
-        -Dsleigh_ENABLE_TESTS=ON
-        -Dsleigh_ENABLE_EXAMPLES=ON
-        -Dsleigh_ENABLE_PACKAGING=ON
-        -Dsleigh_ENABLE_DOCUMENTATION=ON
+        -Dsleigh_BUILD_DOCUMENTATION=ON
 
     - name: Build the project
       run: cmake
@@ -122,17 +117,28 @@ jobs:
         -j 2
         -v
 
+    - name: Build the docs
+      if: runner.os != 'Windows'
+      run: cmake
+        --build build
+        --config ${{ matrix.build_type }}
+        --target docs
+        -v
+
     - name: Run the example
       run: cmake
         --build build
         -j 2
         --config ${{ matrix.build_type }}
-        --target sleighexample_runner
+        --target sleigh_example_runner
 
     - name: Run the install target
       run: cmake --install build
         --config ${{ matrix.build_type }}
         --prefix install
+
+    - name: Smoketest sleigh lift
+      run: ./install/bin/sleighLift disassemble x86-64.sla 4881ecc00f0000
 
     - name: Test install directory
       working-directory: tests/find_package

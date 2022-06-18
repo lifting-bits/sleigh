@@ -6,7 +6,7 @@
   the LICENSE file found in the root directory of this source tree.
 */
 
-#include "Version.h"
+#include "sleigh/Version.h"
 
 namespace sleigh {
 
