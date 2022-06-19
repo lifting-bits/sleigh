@@ -71,7 +71,7 @@
       "hidden": true,
       "inherits": ["flags-unix", "ci-std"],
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {

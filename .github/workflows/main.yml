@@ -107,6 +107,7 @@ jobs:
     - name: Configure the project
       shell: pwsh
       run: cmake "--preset=ci-$("${{ matrix.os }}".split("-")[0])"
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -Dsleigh_GHIDRA_RELEASE_TYPE=${{ matrix.release }}
         -Dsleigh_BUILD_DOCUMENTATION=ON
 
