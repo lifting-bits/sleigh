@@ -119,7 +119,6 @@ jobs:
         -v
 
     - name: Build the docs
-      if: runner.os != 'Windows'
       run: cmake
         --build build
         --config ${{ matrix.build_type }}
