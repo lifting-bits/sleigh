@@ -19,7 +19,7 @@ endif()
 add_executable(sleigh_lift
   src/main.cpp
 )
-add_executable(sleigh::sleigh_lift ALIAS sleigh_lift)
+add_executable(sleigh::lift ALIAS sleigh_lift)
 
 target_link_libraries(sleigh_lift PRIVATE
   sleigh::sla
