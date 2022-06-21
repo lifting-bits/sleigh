@@ -153,8 +153,9 @@ jobs:
       run: |
         cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         cmake --build build -j 2 --config ${{ matrix.build_type }}
-        ./build/sleighLift --version
-        ./build/sleighLift disassemble x86-64.sla 4881ecc00f0000
+        cmake --install build --config ${{ matrix.build_type }} --prefix install
+        ./install/bin/sleighLift --version
+        ./install/bin/sleighLift disassemble x86-64.sla 4881ecc00f0000
 
     - name: Create the packages
       run: cmake
