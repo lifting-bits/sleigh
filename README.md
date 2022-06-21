@@ -10,7 +10,9 @@ This repository provides a CMake-based build project for SLEIGH so that it can b
 | ---- | ------- |
 | Linux | Yes |
 | macOS | Yes |
-| Windows | Not yet |
+| Windows | *Yes |
+
+\* Tests do not all work on Windows. See issue [#92](https://github.com/lifting-bits/sleigh/issues/92).
 
 ## Dependencies and Prerequisites
 
@@ -19,7 +21,7 @@ This repository provides a CMake-based build project for SLEIGH so that it can b
 | Name | Version | Linux Package to Install | macOS Homebrew Package to Install |
 | ---- | ------- | ------------------------ | --------------------------------- |
 | [Git](https://git-scm.com/) | Latest | git | N/A |
-| [CMake](https://cmake.org/) | 3.21+ | cmake | cmake |
+| [CMake](https://cmake.org/) | 3.15+ | cmake | cmake |
 
 **NOTE**: This CMake project pulls the Ghidra source code from the internet during configuration. See the [note on Ghidra source code section](#note-on-ghidra-source-code) for more details.
 
@@ -57,40 +59,34 @@ Please see [`src/README.md`](./src/README.md) for more information on how to cus
 
 ## Packaging
 
-The CMake configuration also supports building packages for SLEIGH. If the `sleigh_ENABLE_PACKAGING` option is set during the configuration step, the build step will generate a tarball containing the SLEIGH installation. Additionally, the build will create an RPM package if it finds `rpm` in the `PATH` and/or a DEB package if it finds `dpkg` in the `PATH`.
+The CMake configuration also supports building packages for SLEIGH.
 
 For example:
 
 ```sh
-cmake -B build -S . \
-    -Dsleigh_ENABLE_PACKAGING=ON
-
-# Build SLEIGH
-cmake --build build -j
-
 # Package SLEIGH
 cmake --build build --target package
 ```
 
 ## API Usage
 
-An example program called `sleigh-lift` has been included to demonstrate how to use the SLEIGH API. It takes a hexadecimal string of bytes and either disassembles it or lifts it to p-code. The program can be invoked like so, where the `action` argument must be either `disassemble` or `pcode`:
+An example program called `sleighLift` has been included to demonstrate how to use the SLEIGH API. It takes a hexadecimal string of bytes and either disassembles it or lifts it to p-code. The program can be invoked like so, where the `action` argument must be either `disassemble` or `pcode`:
 
 ```sh
-sleigh-lift [action] [sla_file] [bytes] [-a address] [-p root_sla_dir] [-s pspec_file]
+sleighLift [action] [sla_file] [bytes] [-a address] [-p root_sla_dir] [-s pspec_file]
 ```
 
 For example, to disassemble the following byte string:
 
 ```sh
-$ sleigh-lift disassemble x86-64.sla 4881ecc00f0000
+$ sleighLift disassemble x86-64.sla 4881ecc00f0000
 0x00000000: SUB RSP,0xfc0
 ```
 
 And to lift it to p-code:
 
 ```sh
-$ sleigh-lift pcode x86-64.sla 4881ecc00f0000
+$ sleighLift pcode x86-64.sla 4881ecc00f0000
 (register,0x200,1) = INT_LESS (register,0x20,8) (const,0xfc0,8)
 (register,0x20b,1) = INT_SBORROW (register,0x20,8) (const,0xfc0,8)
 (register,0x20,8) = INT_SUB (register,0x20,8) (const,0xfc0,8)
@@ -102,7 +98,7 @@ $ sleigh-lift pcode x86-64.sla 4881ecc00f0000
 (register,0x202,1) = INT_EQUAL (unique,0x12d00,1) (const,0x0,1)
 ```
 
-The `sleigh_ENABLE_EXAMPLES` option must be set to `ON` during the configuration step in order to build `sleigh-lift`.
+The `sleigh_BUILD_EXTRATOOLS` option must be set to `ON` during the configuration step in order to build `sleighLift`.
 
 ## Helpers
 
@@ -117,13 +113,15 @@ FindSpecFile(std::string_view file_name,
 
 The `sleigh::FindSpecFile` function will search the the paths provided by the user via the `search_paths` argument for a spec file with the name `file_name`. The default argument for `search_paths` is `sleigh::gDefaultSearchPaths` which contains the install/build directories that the CMake project was configured with as well as a set of common installation locations.
 
+The `sleigh_BUILD_SUPPORT` option must be set to `ON` during the configuration step in order to build the support library.
+
 ## Integration as a Dependency
 
 An installation of sleigh provides a CMake interface that can be used to assist in building your project.
 
 An example of how to use the CMake package config file can be found in the [find_package](tests/find_package/CMakeLists.txt) example.
 
-We also provide a CMake helper function [`sleigh_compile`](cmake/modules/sleighCompile.cmake) to compile your own `.slaspec` files using the installed sleigh compiler from this project.
+We also provide a CMake helper function [`sleigh_compile`](cmake/modules/sleighCompile.cmake) to compile your own `.slaspec` files using a sleigh compiler.
 
 Lastly, the installed compiled sleigh files can be located through the CMake variable `sleigh_INSTALL_SPECDIR`, which is an absolute path to the root directory for where the compiled sleigh files are located---you should manually inspect this to know what to expect.
 
