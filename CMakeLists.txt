@@ -195,7 +195,7 @@ add_executable(sleigh_decompiler
 add_executable(sleigh::decompiler ALIAS sleigh_decompiler)
 
 target_compile_features(sleigh_decompiler PUBLIC cxx_std_11)
-target_include_directories(sleigh_decompiler PRIVATE $<BUILD_INTERFACE:${library_root}>)
+target_include_directories(sleigh_decompiler PRIVATE "$<BUILD_INTERFACE:${library_root}>")
 if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
   target_compile_definitions(sleigh_decompiler PRIVATE
     __TERMINAL__
@@ -230,7 +230,7 @@ add_executable(sleigh_ghidra
 add_executable(sleigh::ghidra ALIAS sleigh_ghidra)
 
 target_compile_features(sleigh_ghidra PUBLIC cxx_std_11)
-target_include_directories(sleigh_ghidra PRIVATE $<BUILD_INTERFACE:${library_root}>)
+target_include_directories(sleigh_ghidra PRIVATE "$<BUILD_INTERFACE:${library_root}>")
 target_compile_definitions(sleigh_ghidra PRIVATE
   $<$<CONFIG:Debug>:CPUI_DEBUG>
 )
@@ -254,7 +254,7 @@ add_executable(sleigh_sleigh
 add_executable(sleigh::sleigh ALIAS sleigh_sleigh)
 
 target_compile_features(sleigh_sleigh PUBLIC cxx_std_11)
-target_include_directories(sleigh_sleigh PRIVATE $<BUILD_INTERFACE:${library_root}>)
+target_include_directories(sleigh_sleigh PRIVATE "$<BUILD_INTERFACE:${library_root}>")
 sleigh_add_optional_defines(sleigh_sleigh PRIVATE)
 set_target_properties(sleigh_sleigh PROPERTIES
   EXPORT_NAME sleigh
@@ -280,11 +280,11 @@ add_library(sleigh::sla ALIAS sleigh_sla)
 
 target_compile_features(sleigh_sla PUBLIC cxx_std_11)
 # Private include search path '#include "..."
-target_include_directories(sleigh_sla PRIVATE $<BUILD_INTERFACE:${library_root}>)
+target_include_directories(sleigh_sla PRIVATE "$<BUILD_INTERFACE:${library_root}>")
 # Public include search path in build directory
 target_include_directories(
   sleigh_sla SYSTEM
-  INTERFACE $<BUILD_INTERFACE:${public_headers_dir}>
+  INTERFACE "$<BUILD_INTERFACE:${public_headers_dir}>"
 )
 target_compile_definitions(sleigh_sla PRIVATE "$<$<CONFIG:Debug>:YYDEBUG>")
 sleigh_add_optional_defines(sleigh_sla PUBLIC)
@@ -309,11 +309,11 @@ add_library(sleigh::decomp ALIAS sleigh_decomp)
 
 target_compile_features(sleigh_decomp PUBLIC cxx_std_11)
 # Private include search path '#include "..."
-target_include_directories(sleigh_decomp PRIVATE $<BUILD_INTERFACE:${library_root}>)
+target_include_directories(sleigh_decomp PRIVATE "$<BUILD_INTERFACE:${library_root}>")
 # Public include search path in build directory
 target_include_directories(
   sleigh_decomp SYSTEM
-  INTERFACE $<BUILD_INTERFACE:${public_headers_dir}>
+  INTERFACE "$<BUILD_INTERFACE:${public_headers_dir}>"
 )
 sleigh_add_optional_defines(sleigh_decomp PUBLIC)
 

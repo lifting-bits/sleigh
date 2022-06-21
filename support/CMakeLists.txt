@@ -49,18 +49,18 @@ set_target_properties(sleigh_support PROPERTIES
   OUTPUT_NAME slaSupport
 )
 target_include_directories(sleigh_support
+  ${warning_guard}
   PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+)
+target_include_directories(sleigh_support
+  SYSTEM
+  PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
 )
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
   include(GNUInstallDirs)
-
-  if(PROJECT_IS_TOP_LEVEL)
-    set(CMAKE_INSTALL_INCLUDEDIR include/sleigh CACHE PATH "")
-  endif()
-
   install(
     TARGETS sleigh_support
     EXPORT sleighSupportTargets

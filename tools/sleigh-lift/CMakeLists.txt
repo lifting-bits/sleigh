@@ -6,6 +6,16 @@
 # the LICENSE file found in the root directory of this source tree.
 #
 
+cmake_minimum_required(VERSION 3.15)
+
+project(sleighLift CXX)
+
+include(../../cmake/project-is-top-level.cmake)
+
+if(PROJECT_IS_TOP_LEVEL)
+  find_package(sleigh REQUIRED COMPONENTS Support)
+endif()
+
 add_executable(sleigh_lift
   src/main.cpp
 )
@@ -24,6 +34,13 @@ set_target_properties(sleigh_lift PROPERTIES
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
   include(GNUInstallDirs)
+  if(PROJECT_IS_TOP_LEVEL)
+    set(
+      sleigh_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
+      CACHE PATH "CMake package config location relative to the install prefix"
+    )
+    mark_as_advanced(sleigh_INSTALL_CMAKEDIR)
+  endif()
   install(
     TARGETS sleigh_lift
     EXPORT sleighExtraToolsTargets
