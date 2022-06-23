@@ -6,7 +6,12 @@
   the LICENSE file found in the root directory of this source tree.
 */
 
-#include <sleigh/libsleigh.hh>
+#include <sleigh/libconfig.h>
+#include <sleigh/Support.h>
+#include <sleigh/Version.h>
+
+#include <sleigh/architecture.hh>
+#include <sleigh/sleigh.hh>
 
 #include <cassert>
 #include <iostream>
@@ -296,6 +301,19 @@ int main(int argc, char *argv[]) {
   //   void Architecture::parseProcessorConfig(DocumentStorage &store)
   const Element *el = storage.getTag("processor_spec");
   if (el) {
+#ifdef sleigh_RELEASE_IS_HEAD
+    XmlDecode decoder(el);
+    uint4 elemId = decoder.openElement(ELEM_PROCESSOR_SPEC);
+    for(;;) {
+      uint4 subId = decoder.peekElement();
+      if (subId == 0) break;
+      if (subId == ELEM_CONTEXT_DATA) {
+        ctx.decodeFromSpec(decoder,&engine);
+        break;
+      }
+    }
+    decoder.closeElement(elemId);
+#else
     const List &list(el->getChildren());
     for (List::const_iterator iter = list.begin(); iter != list.end(); ++iter) {
       const string &elname((*iter)->getName());
@@ -304,7 +322,9 @@ int main(int argc, char *argv[]) {
         break;
       }
     }
+#endif
   }
+
   // In order to parse and validate the byte string properly, we need to get the
   // address size from SLEIGH. Therefore this needs to happen after
   // initialization.

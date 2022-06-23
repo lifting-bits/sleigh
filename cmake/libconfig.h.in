@@ -1,0 +1,11 @@
+#ifndef SLEIGH_LIBCONFIG_H
+#define SLEIGH_LIBCONFIG_H
+
+#cmakedefine sleigh_RELEASE_IS_HEAD
+#cmakedefine sleigh_VERSION "@sleigh_VERSION@"
+#cmakedefine sleigh_VERSION_MAJOR @sleigh_VERSION_MAJOR@
+#cmakedefine sleigh_VERSION_MINOR @sleigh_VERSION_MINOR@
+#cmakedefine sleigh_VERSION_PATCH @sleigh_VERSION_PATCH@
+#cmakedefine sleigh_VERSION_TWEAK @sleigh_VERSION_TWEAK@
+
+#endif

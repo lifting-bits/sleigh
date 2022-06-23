@@ -12,6 +12,10 @@ cmake_minimum_required(VERSION 3.15)
 # Sets "ghidra_version" for numeric version number
 # Use "ghidrasource_SOURCE_DIR" variable for Ghidra repo root
 include(src/setup-ghidra-source.cmake)
+set(sleigh_RELEASE_IS_HEAD FALSE)
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+  set(sleigh_RELEASE_IS_HEAD TRUE)
+endif()
 
 project("sleigh"
   VERSION "${ghidra_version}"
@@ -137,16 +141,17 @@ set(public_include_header_list
   "${library_root}/xml.hh"
   "${library_root}/xml_arch.hh"
 )
-if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+if(sleigh_RELEASE_IS_HEAD)
   list(APPEND public_include_header_list
     "${library_root}/unionresolve.hh"
+    "${library_root}/marshal.hh"
   )
 endif()
 # Create custom target so that IDEs know these files are part of the sources
 add_custom_target(sleigh_all_headers SOURCES ${public_include_header_list})
 set(public_headers_dir ${CMAKE_CURRENT_BINARY_DIR}/include)
 file(MAKE_DIRECTORY "${public_headers_dir}/sleigh")
-
+configure_file(cmake/libconfig.h.in include/sleigh/libconfig.h)
 # Copy the public headers into our build directory so that we can control the layout.
 # Ideally, we want to let people '#include <sleigh/{header}>' without installing sleigh
 foreach(public_header ${public_include_header_list})
@@ -163,6 +168,11 @@ set(sleigh_core_source_list
   "${library_root}/opcodes.cc"
   "${library_root}/globalcontext.cc"
 )
+if(sleigh_RELEASE_IS_HEAD)
+  list(APPEND sleigh_core_source_list
+    "${library_root}/marshal.cc"
+  )
+endif()
 
 set(sleigh_deccore_source_list
   "${library_root}/capability.cc"
@@ -218,8 +228,7 @@ set(sleigh_deccore_source_list
   "${library_root}/opbehavior.cc"
   "${library_root}/paramid.cc"
 )
-
-if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+if(sleigh_RELEASE_IS_HEAD)
   list(APPEND sleigh_deccore_source_list
     "${library_root}/unionresolve.cc"
   )
@@ -566,10 +575,10 @@ endif()
 # Spec files
 #
 # Sets 'spec_file_list' variable
-if(NOT "${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
-  include(spec-files-list/spec_files_stable.cmake)
-else()
+if(sleigh_RELEASE_IS_HEAD)
   include(spec-files-list/spec_files_HEAD.cmake)
+else()
+  include(spec-files-list/spec_files_stable.cmake)
 endif()
 
 # This prefix should match the Ghidra repo to where the sla spec files are located
@@ -726,11 +735,11 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
   )
 
   install(
-    FILES
-    ${public_include_header_list}
+    DIRECTORY
+      "${CMAKE_CURRENT_BINARY_DIR}/include/"
 
     DESTINATION
-    ${CMAKE_INSTALL_INCLUDEDIR}/sleigh
+    ${CMAKE_INSTALL_INCLUDEDIR}
   )
 
   # Install the compiled sla files found in 'Ghidra' top-level directory
