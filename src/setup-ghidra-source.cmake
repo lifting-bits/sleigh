@@ -4,6 +4,7 @@
 set(sleigh_GHIDRA_RELEASE_TYPE "stable" CACHE
   STRING "Ghidra release type to use. 'HEAD' is used for active development purposes."
 )
+
 # This is just helper for CMake UIs. CMake does not enforce that the value matches one of those listed.
 set_property(CACHE sleigh_GHIDRA_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 
@@ -13,6 +14,13 @@ set_property(CACHE sleigh_GHIDRA_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 set(ghidra_version "10.1.4")
 set(ghidra_git_tag "Ghidra_10.1.4_build")
 set(ghidra_shallow TRUE)
+
+set(remill_patches "")
+
+if(remill_ENABLE_PATCHES)
+  set(remill_patches COMMAND patch -p0 -i "${CMAKE_CURRENT_SOURCE_DIR}/patches/remill_specific_patches/x86-ia.patch")
+endif()
+
 # pinned stable patches list
 set(ghidra_patches
   PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
@@ -51,6 +59,7 @@ FetchContent_Declare(GhidraSource
   GIT_PROGRESS TRUE
   GIT_SHALLOW ${ghidra_shallow}
   ${ghidra_patches}
+  ${remill_patches}
 )
 FetchContent_MakeAvailable(GhidraSource)
 
@@ -58,6 +67,7 @@ message(STATUS "Ghidra source located at '${ghidrasource_SOURCE_DIR}'")
 
 # Sanity check on Ghidra source code checkout
 set(library_root "${ghidrasource_SOURCE_DIR}/Ghidra/Features/Decompiler/src/decompile/cpp")
+
 if(NOT EXISTS "${library_root}/sleigh.hh")
   message(FATAL_ERROR "The Ghidra source directory has not been initialized correctly. Could not find '${library_root}'")
 endif()

@@ -11,6 +11,7 @@ option(sleigh_ENABLE_EXAMPLES "Set to true to build examples" ON)
 option(sleigh_ENABLE_DOCUMENTATION "Set to true to enable the documentation")
 option(sleigh_ENABLE_PACKAGING "Set to true to enable packaging")
 option(sleigh_ENABLE_SANITIZERS "Set to true to enable sanitizers")
+option(remill_ENABLE_PATCHES "Enables remill patches" OFF)
 
 # Internal debug settings
 option(sleigh_OPACTION_DEBUG "Turns on all the action tracing facilities")
@@ -34,12 +35,14 @@ endif()
 # This is to provide a user experience similar to find_package when
 # add_subdirectory or FetchContent is used to consume this project
 set(warning_guard "")
+
 if(NOT PROJECT_IS_TOP_LEVEL)
   option(sleigh_INCLUDES_WITH_SYSTEM
     "Use SYSTEM modifier for sleigh's includes, disabling warnings"
     ON
   )
   mark_as_advanced(sleigh_INCLUDES_WITH_SYSTEM)
+
   if(sleigh_INCLUDES_WITH_SYSTEM)
     set(warning_guard SYSTEM)
   endif()
