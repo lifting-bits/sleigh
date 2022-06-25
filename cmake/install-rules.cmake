@@ -4,26 +4,25 @@ endif()
 
 include("GNUInstallDirs")
 
-# Executable binary targets
 install(
   TARGETS
+    # Executable binary targets
     sleigh_decompiler
     sleigh_ghidra
     sleigh_sleigh
 
-  EXPORT
-    sleighTargets
-)
-
-# Library targets
-install(
-  TARGETS
+    # Library targets
     sleigh_sla
     sleigh_decomp
-
   EXPORT
     sleighTargets
-
+  RUNTIME #
+    COMPONENT tcmake_Runtime
+  LIBRARY #
+    COMPONENT tcmake_Runtime
+    NAMELINK_COMPONENT tcmake_Development
+  ARCHIVE #
+    COMPONENT tcmake_Development
   INCLUDES DESTINATION
     "${CMAKE_INSTALL_INCLUDEDIR}"
 )
@@ -31,12 +30,14 @@ install(
 install(
   FILES ${public_include_header_list}
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sleigh"
+  COMPONENT sleigh_Development
 )
 
 if(sleigh_BUILD_DOCUMENTATION)
   install(
     DIRECTORY "${DOXYGEN_OUTPUT_DIRECTORY}/html/"
     DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+    COMPONENT sleigh_Documentation
   )
 endif()
 
@@ -50,6 +51,7 @@ install(
   EXPORT sleighTargets
   DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
   NAMESPACE sleigh::
+  COMPONENT sleigh_Development
 )
 
 # Specfiles installation setup
@@ -68,9 +70,21 @@ mark_as_advanced(sleigh_INSTALL_SPECDIR)
 install(
   DIRECTORY "${spec_files_build_dir}/"
   DESTINATION "${sleigh_INSTALL_SPECDIR}"
+  COMPONENT sleigh_Runtime
 )
 
 include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(
+    "sleighConfigVersion.cmake"
+    COMPATIBILITY SameMinorVersion
+)
+
+install(
+    FILES "${PROJECT_BINARY_DIR}/sleighConfigVersion.cmake"
+    DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
+    COMPONENT sleigh_Development
+)
 
 configure_package_config_file(cmake/install-config.cmake.in
   ${PROJECT_BINARY_DIR}/install-config.cmake
@@ -83,11 +97,13 @@ install(
   FILES ${PROJECT_BINARY_DIR}/install-config.cmake
   RENAME sleighConfig.cmake
   DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
+  COMPONENT sleigh_Development
 )
 
 install(
   FILES cmake/modules/sleighCompile.cmake
   DESTINATION "${sleigh_INSTALL_CMAKEDIR}/modules"
+  COMPONENT sleigh_Development
 )
 
 if(PROJECT_IS_TOP_LEVEL)

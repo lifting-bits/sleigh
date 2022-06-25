@@ -44,10 +44,13 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
   install(
     TARGETS sleigh_lift
     EXPORT sleighExtraToolsTargets
+    RUNTIME #
+      COMPONENT sleigh_ExtraToolsRuntime
   )
   install(
     EXPORT sleighExtraToolsTargets
     DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
     NAMESPACE sleigh::
+    COMPONENT sleigh_ExtraToolsDevelopment
   )
 endif()

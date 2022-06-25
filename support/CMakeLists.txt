@@ -64,6 +64,13 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
   install(
     TARGETS sleigh_support
     EXPORT sleighSupportTargets
+    RUNTIME #
+      COMPONENT sleigh_SupportRuntime
+    LIBRARY #
+      COMPONENT sleigh_SupportRuntime
+      NAMELINK_COMPONENT sleigh_SupportDevelopment
+    ARCHIVE #
+      COMPONENT sleigh_SupportDevelopment
     INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
   )
   install(
@@ -71,10 +78,12 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
       include/
       "${CMAKE_CURRENT_BINARY_DIR}/include/"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    COMPONENT sleigh_SupportDevelopment
   )
   install(
     EXPORT sleighSupportTargets
     DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
     NAMESPACE sleigh::
+    COMPONENT sleigh_SupportDevelopment
   )
 endif()
