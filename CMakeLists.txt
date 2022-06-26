@@ -347,6 +347,20 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E make_directory ${spec_files_build_log_dir}
 )
 
+# Get the native machine's sleigh compiler or use the one we're about to build
+# if not cross compiling
+if(CMAKE_CROSSCOMPILING)
+  find_program(
+    SLEIGH_EXECUTABLE sleigh
+    DOC "Path to host system sleigh compiler"
+  )
+else()
+  set(
+    SLEIGH_EXECUTABLE "$<TARGET_FILE:sleigh::sleigh>"
+    CACHE FILEPATH "Path to host system sleigh compiler"
+  )
+endif()
+
 # Start processing all `.slaspec` files individually
 set(spec_targets)
 set(spec_files)
@@ -386,7 +400,7 @@ foreach(spec_file ${spec_file_list})
   # Compile the sla file
   sleigh_compile(
     TARGET "${spec_target}"
-    COMPILER "$<TARGET_FILE:sleigh::sleigh>"
+    COMPILER "${SLEIGH_EXECUTABLE}"
     SLASPEC "${spec_file}"
     LOG_FILE "${spec_build_log}"
     OUT_FILE "${spec_out}"
