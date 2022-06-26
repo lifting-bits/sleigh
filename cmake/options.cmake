@@ -25,11 +25,6 @@ if(sleigh_DEVELOPER_MODE)
   )
 endif()
 
-set(
-  DOXYGEN_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/docs"
-  CACHE PATH "Path for the generated Doxygen documentation"
-)
-
 
 # Add-ons by ToB
 option(sleigh_BUILD_SUPPORT "Build ToB support libraries")
@@ -37,6 +32,7 @@ option(sleigh_BUILD_EXTRATOOLS "Build extra ToB sleigh tools")
 if(sleigh_BUILD_EXTRATOOLS)
   set(sleigh_BUILD_SUPPORT ON CACHE BOOL "Build ToB support libraries" FORCE)
 endif()
+
 
 # Internal settings
 option(sleigh_CPUI_RULECOMPILE "Allow user defined dynamic rules")

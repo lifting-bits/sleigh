@@ -39,14 +39,9 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y rpm
 
-        # Minimum supported CMake version testing
-        #curl -L "https://github.com/Kitware/CMake/releases/download/v3.15.0/cmake-3.15.0-Linux-$(uname -m).sh" -o /tmp/cmake-install.sh
-        #mkdir -p "${HOME}/.local"
-        #bash /tmp/cmake-install.sh --skip-license --exclude-subdir "--prefix=${HOME}/.local"
-        brew install cmake
-
-        # Use Homebrew for latest build tool version for use in CI
+        # Use Homebrew for latest build tools for use in CI
         brew install \
+          cmake \
           ccache \
           doxygen \
           xdot \

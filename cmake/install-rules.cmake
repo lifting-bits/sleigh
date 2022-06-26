@@ -17,12 +17,12 @@ install(
   EXPORT
     sleighTargets
   RUNTIME #
-    COMPONENT tcmake_Runtime
+    COMPONENT sleigh_Runtime
   LIBRARY #
-    COMPONENT tcmake_Runtime
-    NAMELINK_COMPONENT tcmake_Development
+    COMPONENT sleigh_Runtime
+    NAMELINK_COMPONENT sleigh_Development
   ARCHIVE #
-    COMPONENT tcmake_Development
+    COMPONENT sleigh_Development
   INCLUDES DESTINATION
     "${CMAKE_INSTALL_INCLUDEDIR}"
 )

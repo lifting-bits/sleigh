@@ -34,7 +34,7 @@ endmacro()
 
 foreach(_comp ${sleigh_FIND_COMPONENTS})
   if (NOT _comp IN_LIST _sleigh_supported_components)
-    set(sleigh_FOUND False)
+    set(sleigh_FOUND FALSE)
     set(sleigh_NOT_FOUND_MESSAGE "Unsupported component: ${_comp}")
   endif()
   sleigh_load_component("${_comp}")
