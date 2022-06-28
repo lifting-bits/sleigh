@@ -18,7 +18,8 @@ set(ghidra_shallow TRUE)
 set(remill_patches "")
 
 if(remill_ENABLE_PATCHES)
-  set(remill_patches COMMAND patch -p0 -i "${CMAKE_CURRENT_SOURCE_DIR}/patches/remill_specific_patches/x86-ia.patch")
+  # TODO(Ian): do something better with previously applied patch
+  set(remill_patches COMMAND patch -p0 -i "${CMAKE_CURRENT_SOURCE_DIR}/patches/remill_specific_patches/x86-ia.patch" || true)
 endif()
 
 # pinned stable patches list

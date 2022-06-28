@@ -14,6 +14,7 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 #include "address.hh"
+#include "architecture.hh"
 #include "context.hh"
 #include "emulate.hh"
 #include "error.hh"
@@ -34,6 +35,7 @@
 #include "space.hh"
 #include "translate.hh"
 #include "types.h"
+#include "userop.hh"
 #include "xml.hh"
 #ifndef _MSC_VER
 #pragma GCC diagnostic pop
