@@ -137,6 +137,11 @@ set(public_include_header_list
   "${library_root}/xml.hh"
   "${library_root}/xml_arch.hh"
 )
+if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND public_include_header_list
+    "${library_root}/unionresolve.hh"
+  )
+endif()
 # Create custom target so that IDEs know these files are part of the sources
 add_custom_target(sleigh_all_headers SOURCES ${public_include_header_list})
 set(public_headers_dir ${CMAKE_CURRENT_BINARY_DIR}/include)
