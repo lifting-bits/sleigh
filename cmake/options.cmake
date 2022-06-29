@@ -11,7 +11,7 @@ option(sleigh_ENABLE_EXAMPLES "Set to true to build examples" ON)
 option(sleigh_ENABLE_DOCUMENTATION "Set to true to enable the documentation")
 option(sleigh_ENABLE_PACKAGING "Set to true to enable packaging")
 option(sleigh_ENABLE_SANITIZERS "Set to true to enable sanitizers")
-option(remill_ENABLE_PATCHES "Enables remill patches" OFF)
+option(sleigh_ADDITIONAL_PATCHES "Enables remill patches" "")
 
 # Internal debug settings
 option(sleigh_OPACTION_DEBUG "Turns on all the action tracing facilities")

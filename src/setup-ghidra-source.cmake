@@ -15,12 +15,12 @@ set(ghidra_version "10.1.4")
 set(ghidra_git_tag "Ghidra_10.1.4_build")
 set(ghidra_shallow TRUE)
 
-set(remill_patches "")
+set(additional_patches)
 
-if(remill_ENABLE_PATCHES)
-  # TODO(Ian): do something better with previously applied patch
-  set(remill_patches COMMAND patch -p0 -i "${CMAKE_CURRENT_SOURCE_DIR}/patches/remill_specific_patches/x86-ia.patch" || true)
-endif()
+# TODO(Ian): do something better with previously applied patch
+foreach(PFILE ${sleigh_ADDITIONAL_PATCHES})
+  set(additional_patches ${additional_patches} COMMAND patch -p0 -i "${CMAKE_CURRENT_SOURCE_DIR}/patches/remill_specific_patches/x86-ia.patch" || true)
+endforeach()
 
 # pinned stable patches list
 set(ghidra_patches
@@ -60,7 +60,7 @@ FetchContent_Declare(GhidraSource
   GIT_PROGRESS TRUE
   GIT_SHALLOW ${ghidra_shallow}
   ${ghidra_patches}
-  ${remill_patches}
+  ${additional_patches}
 )
 FetchContent_MakeAvailable(GhidraSource)
 
