@@ -179,6 +179,34 @@ set(sleigh_slacomp_source_list
   "${library_root}/slghscan.cc"
 )
 
+#
+# Common options that apply to all targets
+#
+macro(sleigh_add_optional_defines target visibility)
+  set(opt_defines "")
+  if(sleigh_CPUI_RULECOMPILE)
+    list(APPEND opt_defines "CPUI_RULECOMPILE")
+  endif()
+  if(sleigh_CPUI_STATISTICS)
+    list(APPEND opt_defines "CPUI_STATISTICS")
+  endif()
+  if(sleigh_DEBUG_BLOCKCONSISTENT)
+    list(APPEND opt_defines "BLOCKCONSISTENT_DEBUG")
+  endif()
+  if(sleigh_DEBUG_DFSVERIFY)
+    list(APPEND opt_defines "DFSVERIFY_DEBUG")
+  endif()
+  if(sleigh_DEBUG_MERGEMULTI)
+    list(APPEND opt_defines "MERGEMULTI_DEBUG")
+  endif()
+  if(sleigh_DEBUG_OPACTION)
+    list(APPEND opt_defines "OPACTION_DEBUG")
+  endif()
+  if(WIN32)
+    list(APPEND opt_defines "_WINDOWS")
+  endif()
+  target_compile_definitions("${target}" ${visibility} ${opt_defines})
+endmacro()
 
 #
 # decomp

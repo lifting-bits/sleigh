@@ -44,29 +44,6 @@ option(sleigh_DEBUG_DFSVERIFY "Make sure that the block ordering algorithm produ
 option(sleigh_DEBUG_MERGEMULTI "Check for MULTIEQUAL and INDIRECT intersections")
 option(sleigh_DEBUG_OPACTION "Turns on all the action tracing facilities")
 
-macro(sleigh_add_optional_defines target visibility)
-  set(opt_defines "")
-  if(sleigh_CPUI_RULECOMPILE)
-    list(APPEND opt_defines "CPUI_RULECOMPILE")
-  endif()
-  if(sleigh_CPUI_STATISTICS)
-    list(APPEND opt_defines "CPUI_STATISTICS")
-  endif()
-  if(sleigh_DEBUG_BLOCKCONSISTENT)
-    list(APPEND opt_defines "BLOCKCONSISTENT_DEBUG")
-  endif()
-  if(sleigh_DEBUG_DFSVERIFY)
-    list(APPEND opt_defines "DFSVERIFY_DEBUG")
-  endif()
-  if(sleigh_DEBUG_MERGEMULTI)
-    list(APPEND opt_defines "MERGEMULTI_DEBUG")
-  endif()
-  if(sleigh_DEBUG_OPACTION)
-    list(APPEND opt_defines "OPACTION_DEBUG")
-  endif()
-  target_compile_definitions("${target}" ${visibility} ${opt_defines})
-endmacro()
-
 # ---- Warning guard ----
 
 # target_include_directories with the SYSTEM modifier will request the compiler
