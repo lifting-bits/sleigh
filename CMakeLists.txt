@@ -523,7 +523,7 @@ endif()
 #
 
 if(sleigh_BUILD_EXTRATOOLS)
-  add_subdirectory(tools)
+  add_subdirectory(extra-tools)
 endif()
 
 if(sleigh_BUILD_SUPPORT)
