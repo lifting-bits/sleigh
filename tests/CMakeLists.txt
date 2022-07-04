@@ -17,7 +17,7 @@ add_executable(sleigh_ghidra_test
 
 target_compile_features(sleigh_ghidra_test PRIVATE cxx_std_11)
 target_include_directories(sleigh_ghidra_test PRIVATE "${library_root}")
-if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+if(WIN32)
   target_compile_definitions(sleigh_ghidra_test PRIVATE
     __TERMINAL__
   )

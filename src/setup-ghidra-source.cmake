@@ -1,4 +1,5 @@
 # ---- Setup Ghidra Source code ----
+include_guard(GLOBAL)
 
 # Set up Ghidra repo human-readable version settings
 set(sleigh_GHIDRA_RELEASE_TYPE "stable" CACHE
@@ -16,7 +17,7 @@ set(ghidra_shallow TRUE)
 # pinned stable patches list
 set(ghidra_patches
   PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
-  "${CMAKE_CURRENT_SOURCE_DIR}/patches/stable/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/../patches/stable/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
@@ -30,7 +31,7 @@ if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL HEAD)
   set(ghidra_shallow FALSE)
   set(ghidra_patches
     PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
-    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/../patches/HEAD/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
@@ -61,3 +62,128 @@ set(library_root "${ghidrasource_SOURCE_DIR}/Ghidra/Features/Decompiler/src/deco
 if(NOT EXISTS "${library_root}/sleigh.hh")
   message(FATAL_ERROR "The Ghidra source directory has not been initialized correctly. Could not find '${library_root}'")
 endif()
+
+# Source collection variables
+set(sleigh_core_source_list
+  "${library_root}/xml.cc"
+  "${library_root}/space.cc"
+  "${library_root}/float.cc"
+  "${library_root}/address.cc"
+  "${library_root}/pcoderaw.cc"
+  "${library_root}/translate.cc"
+  "${library_root}/opcodes.cc"
+  "${library_root}/globalcontext.cc"
+)
+
+set(sleigh_deccore_source_list
+  "${library_root}/capability.cc"
+  "${library_root}/architecture.cc"
+  "${library_root}/options.cc"
+  "${library_root}/graph.cc"
+  "${library_root}/cover.cc"
+  "${library_root}/block.cc"
+  "${library_root}/cast.cc"
+  "${library_root}/typeop.cc"
+  "${library_root}/database.cc"
+  "${library_root}/cpool.cc"
+  "${library_root}/comment.cc"
+  "${library_root}/stringmanage.cc"
+  "${library_root}/fspec.cc"
+  "${library_root}/action.cc"
+  "${library_root}/loadimage.cc"
+  "${library_root}/grammar.cc"
+  "${library_root}/varnode.cc"
+  "${library_root}/op.cc"
+  "${library_root}/type.cc"
+  "${library_root}/variable.cc"
+  "${library_root}/varmap.cc"
+  "${library_root}/jumptable.cc"
+  "${library_root}/emulate.cc"
+  "${library_root}/emulateutil.cc"
+  "${library_root}/flow.cc"
+  "${library_root}/userop.cc"
+  "${library_root}/funcdata.cc"
+  "${library_root}/funcdata_block.cc"
+  "${library_root}/funcdata_op.cc"
+  "${library_root}/funcdata_varnode.cc"
+  "${library_root}/pcodeinject.cc"
+  "${library_root}/heritage.cc"
+  "${library_root}/prefersplit.cc"
+  "${library_root}/rangeutil.cc"
+  "${library_root}/ruleaction.cc"
+  "${library_root}/subflow.cc"
+  "${library_root}/blockaction.cc"
+  "${library_root}/merge.cc"
+  "${library_root}/double.cc"
+  "${library_root}/transform.cc"
+  "${library_root}/coreaction.cc"
+  "${library_root}/condexe.cc"
+  "${library_root}/override.cc"
+  "${library_root}/dynamic.cc"
+  "${library_root}/crc32.cc"
+  "${library_root}/prettyprint.cc"
+  "${library_root}/printlanguage.cc"
+  "${library_root}/printc.cc"
+  "${library_root}/printjava.cc"
+  "${library_root}/memstate.cc"
+  "${library_root}/opbehavior.cc"
+  "${library_root}/paramid.cc"
+)
+if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND sleigh_deccore_source_list
+    "${library_root}/unionresolve.cc"
+  )
+endif()
+
+set(sleigh_extra_source_list
+  "${library_root}/callgraph.cc"
+  "${library_root}/ifacedecomp.cc"
+  "${library_root}/ifaceterm.cc"
+  "${library_root}/inject_sleigh.cc"
+  "${library_root}/interface.cc"
+  "${library_root}/libdecomp.cc"
+  "${library_root}/loadimage_xml.cc"
+  "${library_root}/raw_arch.cc"
+  "${library_root}/rulecompile.cc"
+  "${library_root}/sleigh_arch.cc"
+  "${library_root}/testfunction.cc"
+  "${library_root}/unify.cc"
+  "${library_root}/xml_arch.cc"
+)
+
+set(sleigh_source_list
+  "${library_root}/sleigh.cc"
+  "${library_root}/pcodeparse.cc"
+  "${library_root}/pcodecompile.cc"
+  "${library_root}/sleighbase.cc"
+  "${library_root}/slghsymbol.cc"
+  "${library_root}/slghpatexpress.cc"
+  "${library_root}/slghpattern.cc"
+  "${library_root}/semantics.cc"
+  "${library_root}/context.cc"
+  "${library_root}/filemanage.cc"
+)
+
+set(sleigh_ghidra_source_list
+  "${library_root}/ghidra_arch.cc"
+  "${library_root}/inject_ghidra.cc"
+  "${library_root}/ghidra_translate.cc"
+  "${library_root}/loadimage_ghidra.cc"
+  "${library_root}/typegrp_ghidra.cc"
+  "${library_root}/database_ghidra.cc"
+  "${library_root}/ghidra_context.cc"
+  "${library_root}/cpool_ghidra.cc"
+  "${library_root}/ghidra_process.cc"
+  "${library_root}/comment_ghidra.cc"
+  "${library_root}/string_ghidra.cc"
+)
+
+set(sleigh_slacomp_source_list
+  "${library_root}/slgh_compile.cc"
+  "${library_root}/slghparse.cc"
+  "${library_root}/slghscan.cc"
+)
+
+# Include separate file to make it easier to find user-specified compile
+# options
+include("${CMAKE_CURRENT_LIST_DIR}/compile_options.cmake")

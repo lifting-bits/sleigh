@@ -1,7 +1,7 @@
 # This file provides access to the installed sleigh targets.
 #
-# There are two optional components that could also be installed:
-#   * Support - support library for easier use of sleigh
+# There are optional components that could also be installed:
+#   * Support - Support library for easier use of sleigh
 #   * ExtraTools - Extra tools created by Trail of Bits
 
 @PACKAGE_INIT@
@@ -9,7 +9,9 @@
 include("${CMAKE_CURRENT_LIST_DIR}/sleighTargets.cmake")
 
 # Path relative-root to reach installed specfiles directory
-set_and_check(sleigh_INSTALL_SPECDIR "@PACKAGE_sleigh_INSTALL_SPECDIR@")
+if(EXISTS "@PACKAGE_sleigh_INSTALL_SPECDIR@")
+  set(sleigh_INSTALL_SPECDIR "@PACKAGE_sleigh_INSTALL_SPECDIR@")
+endif()
 
 # Helpers exposed by default when finding sleigh
 include("${CMAKE_CURRENT_LIST_DIR}/modules/sleighCompile.cmake")

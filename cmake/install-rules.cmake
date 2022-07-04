@@ -6,12 +6,6 @@ include("GNUInstallDirs")
 
 install(
   TARGETS
-    # Executable binary targets
-    sleigh_decompiler
-    sleigh_ghidra
-    sleigh_sleigh
-
-    # Library targets
     sleigh_sla
     sleigh_decomp
   EXPORT
@@ -55,8 +49,7 @@ install(
 )
 
 # Specfiles installation setup
-set(
-  sleigh_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/sleigh"
+set(sleigh_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/sleigh"
   CACHE PATH "sleigh data installation location relative to the install prefix"
 )
 mark_as_advanced(sleigh_INSTALL_DATADIR)
@@ -66,12 +59,14 @@ set(sleigh_INSTALL_SPECDIR "${sleigh_INSTALL_DATADIR}/specfiles"
 )
 mark_as_advanced(sleigh_INSTALL_SPECDIR)
 
-# Install the compiled sla files found in 'Ghidra' top-level directory
-install(
-  DIRECTORY "${spec_files_build_dir}/"
-  DESTINATION "${sleigh_INSTALL_SPECDIR}"
-  COMPONENT sleigh_Runtime
-)
+if(sleigh_BUILD_SLEIGHSPECS)
+  # Install the compiled sla files found in 'Ghidra' top-level directory
+  install(
+    DIRECTORY "${spec_files_build_dir}/"
+    DESTINATION "${sleigh_INSTALL_SPECDIR}"
+    COMPONENT sleigh_Runtime
+  )
+endif()
 
 include(CMakePackageConfigHelpers)
 

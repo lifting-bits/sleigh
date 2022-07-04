@@ -13,36 +13,27 @@
 # Targets necessary to build the project must be provided unconditionally, so
 # consumers can trivially build and package the project
 if(PROJECT_IS_TOP_LEVEL)
-  option(sleigh_DEVELOPER_MODE "Enable developer mode" OFF)
-  option(BUILD_SHARED_LIBS "Build shared libs. (Untested and not supported)" OFF)
+  option(sleigh_DEVELOPER_MODE "Enable developer mode")
+  option(BUILD_SHARED_LIBS "Build shared libs. (Untested and not supported)")
 endif()
 
 if(sleigh_DEVELOPER_MODE)
-  option(sleigh_BUILD_DOCUMENTATION "Build documentation using Doxygen" OFF)
+  option(sleigh_BUILD_DOCUMENTATION "Build documentation using Doxygen")
   set(
     DOXYGEN_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/docs"
     CACHE PATH "Path for the generated Doxygen documentation"
   )
 endif()
 
+include(CMakeDependentOption)
+
+# Optional project target building
+option(sleigh_BUILD_TOOLS "Build and install executable tools" ON)
+option(sleigh_BUILD_SLEIGHSPECS "Build and install sleigh spec files" ON)
 
 # Add-ons by ToB
-option(sleigh_BUILD_SUPPORT "Build ToB support libraries")
-option(sleigh_BUILD_EXTRATOOLS "Build extra ToB sleigh tools")
-if(sleigh_BUILD_EXTRATOOLS)
-  set(sleigh_BUILD_SUPPORT ON CACHE BOOL "Build ToB support libraries" FORCE)
-endif()
-
-
-# Internal settings
-option(sleigh_CPUI_RULECOMPILE "Allow user defined dynamic rules")
-option(sleigh_CPUI_STATISTICS "Turn on collection of cover and cast statistics")
-
-# Internal debug settings (naming is swapped to help with discoverability in CMake options)
-option(sleigh_DEBUG_BLOCKCONSISTENT "Check that block graph structure is consistent")
-option(sleigh_DEBUG_DFSVERIFY "Make sure that the block ordering algorithm produces a true depth first traversal of the dominator tree")
-option(sleigh_DEBUG_MERGEMULTI "Check for MULTIEQUAL and INDIRECT intersections")
-option(sleigh_DEBUG_OPACTION "Turns on all the action tracing facilities")
+option(sleigh_BUILD_SUPPORT "Build ToB support libraries" ON)
+cmake_dependent_option(sleigh_BUILD_EXTRATOOLS "Build extra ToB sleigh tools" ON "sleigh_BUILD_SUPPORT" OFF)
 
 # ---- Warning guard ----
 

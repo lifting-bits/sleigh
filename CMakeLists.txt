@@ -26,29 +26,112 @@ include(cmake/project-is-top-level.cmake)
 include(cmake/options.cmake)
 
 set(public_include_header_list
+  "${library_root}/action.hh"
   "${library_root}/address.hh"
+  "${library_root}/architecture.hh"
+  "${library_root}/block.hh"
+  "${library_root}/blockaction.hh"
+  "${library_root}/callgraph.hh"
+  "${library_root}/capability.hh"
+  "${library_root}/cast.hh"
+  "${library_root}/codedata.hh"
+  "${library_root}/comment.hh"
+  "${library_root}/comment_ghidra.hh"
+  "${library_root}/condexe.hh"
   "${library_root}/context.hh"
+  "${library_root}/coreaction.hh"
+  "${library_root}/cover.hh"
+  "${library_root}/cpool.hh"
+  "${library_root}/cpool_ghidra.hh"
+  "${library_root}/crc32.hh"
+  "${library_root}/database.hh"
+  "${library_root}/database_ghidra.hh"
+  "${library_root}/doccore.hh"
+  "${library_root}/docmain.hh"
+  "${library_root}/double.hh"
+  "${library_root}/dynamic.hh"
   "${library_root}/emulate.hh"
+  "${library_root}/emulateutil.hh"
   "${library_root}/error.hh"
+  "${library_root}/filemanage.hh"
   "${library_root}/float.hh"
+  "${library_root}/flow.hh"
+  "${library_root}/fspec.hh"
+  "${library_root}/funcdata.hh"
+  "${library_root}/ghidra_arch.hh"
+  "${library_root}/ghidra_context.hh"
+  "${library_root}/ghidra_process.hh"
+  "${library_root}/ghidra_translate.hh"
   "${library_root}/globalcontext.hh"
+  "${library_root}/grammar.hh"
+  "${library_root}/graph.hh"
+  "${library_root}/heritage.hh"
+  "${library_root}/ifacedecomp.hh"
+  "${library_root}/ifaceterm.hh"
+  "${library_root}/inject_ghidra.hh"
+  "${library_root}/inject_sleigh.hh"
+  "${library_root}/interface.hh"
+  "${library_root}/jumptable.hh"
+  "${library_root}/libdecomp.hh"
   "${library_root}/loadimage.hh"
+  "${library_root}/loadimage_ghidra.hh"
+  "${library_root}/loadimage_xml.hh"
   "${library_root}/memstate.hh"
+  "${library_root}/merge.hh"
+  "${library_root}/op.hh"
   "${library_root}/opbehavior.hh"
   "${library_root}/opcodes.hh"
+  "${library_root}/options.hh"
+  "${library_root}/override.hh"
+  "${library_root}/paramid.hh"
   "${library_root}/partmap.hh"
+  "${library_root}/pcodecompile.hh"
+  "${library_root}/pcodeinject.hh"
+  "${library_root}/pcodeparse.hh"
   "${library_root}/pcoderaw.hh"
+  "${library_root}/prefersplit.hh"
+  "${library_root}/prettyprint.hh"
+  "${library_root}/printc.hh"
+  "${library_root}/printjava.hh"
+  "${library_root}/printlanguage.hh"
+  "${library_root}/rangemap.hh"
+  "${library_root}/rangeutil.hh"
+  "${library_root}/raw_arch.hh"
+  "${library_root}/ruleaction.hh"
+  "${library_root}/rulecompile.hh"
   "${library_root}/semantics.hh"
   "${library_root}/sleigh.hh"
+  "${library_root}/sleigh_arch.hh"
   "${library_root}/sleighbase.hh"
+  "${library_root}/slgh_compile.hh"
+  "${library_root}/slghparse.hh"
   "${library_root}/slghpatexpress.hh"
   "${library_root}/slghpattern.hh"
   "${library_root}/slghsymbol.hh"
   "${library_root}/space.hh"
+  "${library_root}/string_ghidra.hh"
+  "${library_root}/stringmanage.hh"
+  "${library_root}/subflow.hh"
+  "${library_root}/testfunction.hh"
+  "${library_root}/transform.hh"
   "${library_root}/translate.hh"
+  "${library_root}/type.hh"
+  "${library_root}/typegrp_ghidra.hh"
+  "${library_root}/typeop.hh"
   "${library_root}/types.h"
+  "${library_root}/unify.hh"
+  "${library_root}/userop.hh"
+  "${library_root}/variable.hh"
+  "${library_root}/varmap.hh"
+  "${library_root}/varnode.hh"
   "${library_root}/xml.hh"
+  "${library_root}/xml_arch.hh"
 )
+if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND public_include_header_list
+    "${library_root}/unionresolve.hh"
+  )
+endif()
 # Create custom target so that IDEs know these files are part of the sources
 add_custom_target(sleigh_all_headers SOURCES ${public_include_header_list})
 set(public_headers_dir ${CMAKE_CURRENT_BINARY_DIR}/include)
@@ -58,237 +141,6 @@ file(MAKE_DIRECTORY "${public_headers_dir}/sleigh")
 foreach(public_header ${public_include_header_list})
   configure_file("${public_header}" "${public_headers_dir}/sleigh" COPYONLY)
 endforeach()
-
-set(sleigh_core_source_list
-  "${library_root}/xml.cc"
-  "${library_root}/space.cc"
-  "${library_root}/float.cc"
-  "${library_root}/address.cc"
-  "${library_root}/pcoderaw.cc"
-  "${library_root}/translate.cc"
-  "${library_root}/opcodes.cc"
-  "${library_root}/globalcontext.cc"
-)
-
-set(sleigh_deccore_source_list
-  "${library_root}/capability.cc"
-  "${library_root}/architecture.cc"
-  "${library_root}/options.cc"
-  "${library_root}/graph.cc"
-  "${library_root}/cover.cc"
-  "${library_root}/block.cc"
-  "${library_root}/cast.cc"
-  "${library_root}/typeop.cc"
-  "${library_root}/database.cc"
-  "${library_root}/cpool.cc"
-  "${library_root}/comment.cc"
-  "${library_root}/stringmanage.cc"
-  "${library_root}/fspec.cc"
-  "${library_root}/action.cc"
-  "${library_root}/loadimage.cc"
-  "${library_root}/grammar.cc"
-  "${library_root}/varnode.cc"
-  "${library_root}/op.cc"
-  "${library_root}/type.cc"
-  "${library_root}/variable.cc"
-  "${library_root}/varmap.cc"
-  "${library_root}/jumptable.cc"
-  "${library_root}/emulate.cc"
-  "${library_root}/emulateutil.cc"
-  "${library_root}/flow.cc"
-  "${library_root}/userop.cc"
-  "${library_root}/funcdata.cc"
-  "${library_root}/funcdata_block.cc"
-  "${library_root}/funcdata_op.cc"
-  "${library_root}/funcdata_varnode.cc"
-  "${library_root}/pcodeinject.cc"
-  "${library_root}/heritage.cc"
-  "${library_root}/prefersplit.cc"
-  "${library_root}/rangeutil.cc"
-  "${library_root}/ruleaction.cc"
-  "${library_root}/subflow.cc"
-  "${library_root}/blockaction.cc"
-  "${library_root}/merge.cc"
-  "${library_root}/double.cc"
-  "${library_root}/transform.cc"
-  "${library_root}/coreaction.cc"
-  "${library_root}/condexe.cc"
-  "${library_root}/override.cc"
-  "${library_root}/dynamic.cc"
-  "${library_root}/crc32.cc"
-  "${library_root}/prettyprint.cc"
-  "${library_root}/printlanguage.cc"
-  "${library_root}/printc.cc"
-  "${library_root}/printjava.cc"
-  "${library_root}/memstate.cc"
-  "${library_root}/opbehavior.cc"
-  "${library_root}/paramid.cc"
-)
-if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
-  list(APPEND sleigh_deccore_source_list
-    "${library_root}/unionresolve.cc"
-  )
-endif()
-
-set(sleigh_extra_source_list
-  "${library_root}/callgraph.cc"
-  "${library_root}/ifacedecomp.cc"
-  "${library_root}/ifaceterm.cc"
-  "${library_root}/inject_sleigh.cc"
-  "${library_root}/interface.cc"
-  "${library_root}/libdecomp.cc"
-  "${library_root}/loadimage_xml.cc"
-  "${library_root}/raw_arch.cc"
-  "${library_root}/rulecompile.cc"
-  "${library_root}/sleigh_arch.cc"
-  "${library_root}/testfunction.cc"
-  "${library_root}/unify.cc"
-  "${library_root}/xml_arch.cc"
-)
-
-set(sleigh_source_list
-  "${library_root}/sleigh.cc"
-  "${library_root}/pcodeparse.cc"
-  "${library_root}/pcodecompile.cc"
-  "${library_root}/sleighbase.cc"
-  "${library_root}/slghsymbol.cc"
-  "${library_root}/slghpatexpress.cc"
-  "${library_root}/slghpattern.cc"
-  "${library_root}/semantics.cc"
-  "${library_root}/context.cc"
-  "${library_root}/filemanage.cc"
-)
-
-set(sleigh_ghidra_source_list
-  "${library_root}/ghidra_arch.cc"
-  "${library_root}/inject_ghidra.cc"
-  "${library_root}/ghidra_translate.cc"
-  "${library_root}/loadimage_ghidra.cc"
-  "${library_root}/typegrp_ghidra.cc"
-  "${library_root}/database_ghidra.cc"
-  "${library_root}/ghidra_context.cc"
-  "${library_root}/cpool_ghidra.cc"
-  "${library_root}/ghidra_process.cc"
-  "${library_root}/comment_ghidra.cc"
-  "${library_root}/string_ghidra.cc"
-)
-
-set(sleigh_slacomp_source_list
-  "${library_root}/slgh_compile.cc"
-  "${library_root}/slghparse.cc"
-  "${library_root}/slghscan.cc"
-)
-
-#
-# Common options that apply to all targets
-#
-macro(sleigh_add_optional_defines target visibility)
-  set(opt_defines "")
-  if(sleigh_CPUI_RULECOMPILE)
-    list(APPEND opt_defines "CPUI_RULECOMPILE")
-  endif()
-  if(sleigh_CPUI_STATISTICS)
-    list(APPEND opt_defines "CPUI_STATISTICS")
-  endif()
-  if(sleigh_DEBUG_BLOCKCONSISTENT)
-    list(APPEND opt_defines "BLOCKCONSISTENT_DEBUG")
-  endif()
-  if(sleigh_DEBUG_DFSVERIFY)
-    list(APPEND opt_defines "DFSVERIFY_DEBUG")
-  endif()
-  if(sleigh_DEBUG_MERGEMULTI)
-    list(APPEND opt_defines "MERGEMULTI_DEBUG")
-  endif()
-  if(sleigh_DEBUG_OPACTION)
-    list(APPEND opt_defines "OPACTION_DEBUG")
-  endif()
-  if(WIN32)
-    list(APPEND opt_defines "_WINDOWS")
-  endif()
-  target_compile_definitions("${target}" ${visibility} ${opt_defines})
-endmacro()
-
-#
-# decomp
-#
-
-add_executable(sleigh_decompiler
-  ${sleigh_core_source_list}
-  ${sleigh_deccore_source_list}
-  ${sleigh_extra_source_list}
-  ${sleigh_source_list}
-
-  "${library_root}/consolemain.cc"
-)
-add_executable(sleigh::decompiler ALIAS sleigh_decompiler)
-
-target_compile_features(sleigh_decompiler PUBLIC cxx_std_11)
-target_include_directories(sleigh_decompiler PRIVATE "$<BUILD_INTERFACE:${library_root}>")
-if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-  target_compile_definitions(sleigh_decompiler PRIVATE
-    __TERMINAL__
-  )
-endif()
-target_compile_definitions(sleigh_decompiler PRIVATE
-  $<$<CONFIG:Debug>:CPUI_DEBUG>
-)
-sleigh_add_optional_defines(sleigh_decompiler PRIVATE)
-
-set_target_properties(sleigh_decompiler PROPERTIES
-  EXPORT_NAME decompiler
-  OUTPUT_NAME decomp
-  OUTPUT_NAME_DEBUG decomp_dbg
-)
-
-#
-# ghidra
-#
-
-add_executable(sleigh_ghidra
-  ${sleigh_core_source_list}
-  ${sleigh_deccore_source_list}
-  ${sleigh_ghidra_source_list}
-
-  "$<$<CONFIG:Debug>:${library_root}/callgraph.cc>"
-  "$<$<CONFIG:Debug>:${library_root}/ifacedecomp.cc>"
-  "$<$<CONFIG:Debug>:${library_root}/ifaceterm.cc>"
-  "$<$<CONFIG:Debug>:${library_root}/interface.cc>"
-  "$<$<CONFIG:Debug>:${library_root}/testfunction.cc>"
-)
-add_executable(sleigh::ghidra ALIAS sleigh_ghidra)
-
-target_compile_features(sleigh_ghidra PUBLIC cxx_std_11)
-target_include_directories(sleigh_ghidra PRIVATE "$<BUILD_INTERFACE:${library_root}>")
-target_compile_definitions(sleigh_ghidra PRIVATE
-  $<$<CONFIG:Debug>:CPUI_DEBUG>
-)
-sleigh_add_optional_defines(sleigh_ghidra PRIVATE)
-
-set_target_properties(sleigh_ghidra PROPERTIES
-  EXPORT_NAME ghidra
-  OUTPUT_NAME ghidra
-  OUTPUT_NAME_DEBUG ghidra_dbg
-)
-
-#
-# sleigh
-#
-
-add_executable(sleigh_sleigh
-  ${sleigh_core_source_list}
-  ${sleigh_source_list}
-  ${sleigh_slacomp_source_list}
-)
-add_executable(sleigh::sleigh ALIAS sleigh_sleigh)
-
-target_compile_features(sleigh_sleigh PUBLIC cxx_std_11)
-target_include_directories(sleigh_sleigh PRIVATE "$<BUILD_INTERFACE:${library_root}>")
-sleigh_add_optional_defines(sleigh_sleigh PRIVATE)
-set_target_properties(sleigh_sleigh PROPERTIES
-  EXPORT_NAME sleigh
-  OUTPUT_NAME sleigh
-  OUTPUT_NAME_DEBUG sleigh_dbg
-)
 
 #
 # sla
@@ -351,9 +203,15 @@ set_target_properties(sleigh_decomp PROPERTIES
   OUTPUT_NAME_DEBUG decomp_dbg
 )
 
+if(sleigh_BUILD_TOOLS)
+  add_subdirectory(tools)
+endif()
+
 #
 # Spec files
 #
+
+if(sleigh_BUILD_SLEIGHSPECS)
 
 # Sets 'spec_file_list' variable
 if(NOT "${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
@@ -363,7 +221,7 @@ else()
 endif()
 
 # This prefix should match the Ghidra repo to where the sla spec files are located
-set(spec_files_dir_prefix Ghidra/Processors)
+set(spec_files_dir_prefix "Ghidra/Processors")
 # This is the root directory where all individual processor spec file directories will be created
 set(spec_files_build_dir "${CMAKE_CURRENT_BINARY_DIR}/specfiles")
 # This is where we will be copying the generated artifacts for each processor
@@ -383,6 +241,9 @@ if(CMAKE_CROSSCOMPILING)
     DOC "Path to host system sleigh compiler"
   )
 else()
+  if(NOT TARGET sleigh::sleigh)
+    add_subdirectory(tools/spec-compiler)
+  endif()
   set(
     SLEIGH_EXECUTABLE "$<TARGET_FILE:sleigh::sleigh>"
     CACHE FILEPATH "Path to host system sleigh compiler"
@@ -469,12 +330,15 @@ add_custom_target(sleigh_all_sla_specs ALL DEPENDS
   ${spec_targets}
 )
 
+endif() # sleigh_BUILD_SLEIGHSPECS
+
 #
 # Included Example
 #
 
 if(PROJECT_IS_TOP_LEVEL)
-  option(sleigh_BUILD_EXAMPLE "Build included sleigh example" "${sleigh_DEVELOPER_MODE}")
+  include(CMakeDependentOption)
+  cmake_dependent_option(sleigh_BUILD_EXAMPLE "Build included sleigh example" "${sleigh_DEVELOPER_MODE}" "sleigh_BUILD_SLEIGHSPECS" OFF)
   if(sleigh_BUILD_EXAMPLE)
     add_executable(sleigh_example
       "${library_root}/sleighexample.cc"

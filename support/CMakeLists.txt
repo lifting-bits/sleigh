@@ -61,6 +61,7 @@ target_include_directories(sleigh_support
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
   include(GNUInstallDirs)
+
   install(
     TARGETS sleigh_support
     EXPORT sleighSupportTargets
@@ -73,6 +74,7 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
       COMPONENT sleigh_SupportDevelopment
     INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
   )
+
   install(
     DIRECTORY
       include/
@@ -80,6 +82,7 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
     COMPONENT sleigh_SupportDevelopment
   )
+
   install(
     EXPORT sleighSupportTargets
     DESTINATION "${sleigh_INSTALL_CMAKEDIR}"

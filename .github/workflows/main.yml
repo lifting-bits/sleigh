@@ -143,7 +143,7 @@ jobs:
         ctest -V -C ${{ matrix.build_type }}
 
     - name: Test tool install directory
-      working-directory: tools/sleigh-lift
+      working-directory: extra-tools/sleigh-lift
       run: |
         cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         cmake --build build -j 2 --config ${{ matrix.build_type }}
@@ -233,7 +233,7 @@ jobs:
     # failure state
     - name: Run the tests
       working-directory: build
-      run: ctest -V -C ${{ matrix.build_type }}
+      run: ctest -VV -C ${{ matrix.build_type }}
 
     - name: ccache stats
       run: ccache -s --verbose
