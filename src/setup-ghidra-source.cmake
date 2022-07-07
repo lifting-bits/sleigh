@@ -19,7 +19,7 @@ set(additional_patches)
 
 # TODO(Ian): do something better with previously applied patch
 foreach(PFILE ${sleigh_ADDITIONAL_PATCHES})
-  set(additional_patches ${additional_patches} COMMAND patch -p0 -i "${CMAKE_CURRENT_SOURCE_DIR}/patches/remill_specific_patches/x86-ia.patch" || true)
+  set(additional_patches ${additional_patches} COMMAND patch -p0 -i "${PFILE}" || true)
 endforeach()
 
 # pinned stable patches list
