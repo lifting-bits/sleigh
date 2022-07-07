@@ -10,13 +10,15 @@ set_property(CACHE sleigh_GHIDRA_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 
 # **** Setup pinned git info ****
 
+find_package(Git REQUIRED)
+
 # Ghidra pinned stable version commit
 set(ghidra_version "10.1.4")
 set(ghidra_git_tag "Ghidra_10.1.4_build")
 set(ghidra_shallow TRUE)
 # pinned stable patches list
 set(ghidra_patches
-  PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
+  PATCH_COMMAND "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
   "${CMAKE_CURRENT_LIST_DIR}/../patches/stable/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
 )
 
@@ -30,7 +32,7 @@ if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL HEAD)
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
-    PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
+    PATCH_COMMAND "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
     "${CMAKE_CURRENT_LIST_DIR}/../patches/HEAD/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
