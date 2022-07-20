@@ -146,6 +146,7 @@ endif()
 add_custom_target(sleigh_all_headers SOURCES ${public_include_header_list})
 set(public_headers_dir ${CMAKE_CURRENT_BINARY_DIR}/include)
 file(MAKE_DIRECTORY "${public_headers_dir}/sleigh")
+
 # Copy the public headers into our build directory so that we can control the layout.
 # Ideally, we want to let people '#include <sleigh/{header}>' without installing sleigh
 foreach(public_header ${public_include_header_list})
@@ -217,6 +218,7 @@ set(sleigh_deccore_source_list
   "${library_root}/opbehavior.cc"
   "${library_root}/paramid.cc"
 )
+
 if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
   list(APPEND sleigh_deccore_source_list
     "${library_root}/unionresolve.cc"
@@ -275,7 +277,6 @@ set(sleigh_slacomp_source_list
 #
 # sleigh settings
 #
-
 add_library(sleigh_settings INTERFACE)
 add_library(sleigh::sleigh_settings ALIAS sleigh_settings)
 
@@ -346,7 +347,6 @@ endforeach()
 #
 # decomp_opt, decomp_dbg
 #
-
 add_executable(decomp_opt
   ${sleigh_core_source_list}
   ${sleigh_deccore_source_list}
@@ -381,7 +381,6 @@ endif()
 #
 # ghidra_test_dbg
 #
-
 if(sleigh_ENABLE_TESTS)
   add_executable(ghidra_test_dbg
     ${sleigh_core_source_list}
@@ -394,7 +393,7 @@ if(sleigh_ENABLE_TESTS)
     "${library_root}/../unittests/testcirclerange.cc"
     "${library_root}/../unittests/testfloatemu.cc"
     "${library_root}/../unittests/testtypes.cc"
-    )
+  )
 
   target_link_libraries(ghidra_test_dbg PRIVATE
     sleigh::sleigh_settings
@@ -415,15 +414,14 @@ if(sleigh_ENABLE_TESTS)
   add_test(
     NAME ghidra_datatest_dbg
     COMMAND ghidra_test_dbg -sleighpath "${CMAKE_CURRENT_BINARY_DIR}"
-      -path "${ghidrasource_SOURCE_DIR}/Ghidra/Features/Decompiler/src/decompile/datatests"
-      datatests
+    -path "${ghidrasource_SOURCE_DIR}/Ghidra/Features/Decompiler/src/decompile/datatests"
+    datatests
   )
 endif()
 
 #
 # ghidra_opt, ghidra_dbg
 #
-
 add_executable(ghidra_opt
   ${sleigh_core_source_list}
   ${sleigh_deccore_source_list}
@@ -457,7 +455,6 @@ endif()
 #
 # sleigh_opt, sleigh_dbg
 #
-
 add_executable(sleigh_opt
   ${sleigh_core_source_list}
   ${sleigh_source_list}
@@ -479,7 +476,6 @@ endif()
 #
 # sla, sla_dbg
 #
-
 add_library(sla
   ${sleigh_core_source_list}
   ${sleigh_source_list}
@@ -495,8 +491,10 @@ add_library(sleigh::sla ALIAS sla)
 target_link_libraries(sla PUBLIC
   sleigh::sleigh_settings
 )
+
 # Private include search path '#include "..."
 target_include_directories(sla PRIVATE $<BUILD_INTERFACE:${library_root}>)
+
 # Public include search path in build directory
 target_include_directories(
   sla SYSTEM
@@ -516,7 +514,6 @@ endif()
 #
 # decomp, decomp_dbg
 #
-
 add_library(decomp
   ${sleigh_core_source_list}
   ${sleigh_deccore_source_list}
@@ -528,8 +525,10 @@ add_library(sleigh::decomp ALIAS decomp)
 target_link_libraries(decomp PUBLIC
   sleigh::sleigh_settings
 )
+
 # Private include search path '#include "..."
 target_include_directories(decomp PRIVATE $<BUILD_INTERFACE:${library_root}>)
+
 # Public include search path in build directory
 target_include_directories(
   decomp SYSTEM
@@ -545,13 +544,13 @@ endif()
 #
 # Documentation
 #
-
 if(sleigh_ENABLE_DOCUMENTATION)
   message(STATUS "sleigh: Documentation has been enabled")
 
   find_package(Doxygen REQUIRED COMPONENTS dot)
 
   set(documentation_output "${CMAKE_CURRENT_BINARY_DIR}/doc")
+
   # Always run this target because we have no source file tracking for incremental builds
   add_custom_target(sleigh_documentation
     COMMAND "${CMAKE_COMMAND}" -E remove_directory "${library_root}/../doc" "${documentation_output}"
@@ -575,8 +574,10 @@ endif()
 
 # This prefix should match the Ghidra repo to where the sla spec files are located
 set(spec_files_dir_prefix Ghidra/Processors)
+
 # This is the root directory where all individual processor spec file directories will be created
 set(spec_files_build_dir "${CMAKE_CURRENT_BINARY_DIR}/specfiles")
+
 # This is where we will be copying the generated artifacts for each processor
 set(spec_files_root_dir "${spec_files_build_dir}/${spec_files_dir_prefix}")
 set(spec_files_build_log_dir ${CMAKE_CURRENT_BINARY_DIR}/spec_build_logs)
@@ -591,6 +592,7 @@ set(spec_targets)
 set(spec_files)
 set(spec_dirs)
 include(cmake/modules/sleighCompile.cmake)
+
 # Example: '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages/mx51.slaspec'
 foreach(spec_file ${spec_file_list})
   # Get 'mx51'
@@ -613,9 +615,11 @@ foreach(spec_file ${spec_file_list})
   get_filename_component(proc_name "${proc_name}" DIRECTORY)
 
   set(spec_build_log "${spec_files_build_log_dir}/${spec_name}_build.log")
+
   # Combine back again for the build directory output like
   # '<build_prefix>/Ghidra/Processors/8051/data/languages'
   set(spec_out_dir "${spec_files_root_dir}/${spec_proc_dir}")
+
   # '<build_prefix>/Ghidra/Processors/8051/data/languages/mx51.sla'
   set(spec_out "${spec_out_dir}/${spec_name}.sla")
 
@@ -638,6 +642,7 @@ endforeach()
 
 # Copy and create specfile directories
 list(REMOVE_DUPLICATES spec_dirs)
+
 foreach(spec_dir ${spec_dirs})
   set(spec_src_dir "${ghidrasource_SOURCE_DIR}/${spec_files_dir_prefix}/${spec_dir}")
   set(spec_out_dir "${spec_files_root_dir}/${spec_dir}")
@@ -669,7 +674,6 @@ add_custom_target(sleigh_all_sla_specs ALL DEPENDS
 #
 # Examples
 #
-
 if(sleigh_ENABLE_EXAMPLES)
   add_executable(sleighexample
     "${library_root}/sleighexample.cc"
@@ -699,27 +703,26 @@ add_subdirectory(support)
 #
 # Install targets
 #
-
 if(NOT CMAKE_SKIP_INSTALL_RULES)
   include("GNUInstallDirs")
 
   install(
     TARGETS
-      sleigh_settings
+    sleigh_settings
 
-      sla
-      decomp
-      support
+    sla
+    decomp
+    support
 
-      decomp_opt
-      ghidra_opt
-      sleigh_opt
+    decomp_opt
+    ghidra_opt
+    sleigh_opt
 
     EXPORT
-      sleighTargets
+    sleighTargets
 
     INCLUDES DESTINATION
-      ${CMAKE_INSTALL_INCLUDEDIR}
+    ${CMAKE_INSTALL_INCLUDEDIR}
   )
 
   install(
@@ -733,10 +736,10 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
   # Install the compiled sla files found in 'Ghidra' top-level directory
   install(
     DIRECTORY
-      "${spec_files_build_dir}"
+    "${spec_files_build_dir}"
 
     DESTINATION
-      "${CMAKE_INSTALL_DATADIR}/sleigh"
+    "${CMAKE_INSTALL_DATADIR}/sleigh"
   )
 
   set(CMAKE_INSTALL_DOCDIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/sleigh")
@@ -751,10 +754,10 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
     )
     install(
       DIRECTORY
-        "${documentation_output}/html/"
+      "${documentation_output}/html/"
 
       DESTINATION
-        "${CMAKE_INSTALL_DOCDIR}"
+      "${CMAKE_INSTALL_DOCDIR}"
     )
   endif(sleigh_ENABLE_DOCUMENTATION)
 
@@ -775,9 +778,8 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
     add_custom_target(sleigh_symlinks_builder ALL)
 
     foreach(target_name "decomp"
-                        "ghidra"
-                        "sleigh")
-
+      "ghidra"
+      "sleigh")
       set(source_name "${target_name}_dbg")
       set(destination_name "${target_name}_opt")
       set(output_path "${output_folder_path}/${destination_name}")
@@ -805,15 +807,15 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
 
       install(
         FILES
-          "${output_path}"
+        "${output_path}"
 
         DESTINATION
-          "${CMAKE_INSTALL_BINDIR}"
+        "${CMAKE_INSTALL_BINDIR}"
 
         PERMISSIONS
-          OWNER_READ OWNER_WRITE OWNER_EXECUTE
-          GROUP_READ GROUP_EXECUTE
-          WORLD_READ WORLD_EXECUTE
+        OWNER_READ OWNER_WRITE OWNER_EXECUTE
+        GROUP_READ GROUP_EXECUTE
+        WORLD_READ WORLD_EXECUTE
       )
     endforeach()
   endif()
