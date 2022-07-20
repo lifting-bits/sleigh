@@ -39,9 +39,7 @@ else()
   set(ghidra_short_commit "${ghidra_git_tag}")
 endif()
 
-foreach(PFILE ${sleigh_ADDITIONAL_PATCHES})
-  set(ghidra_patches ${ghidra_patches} "${PFILE}")
-endforeach()
+list(APPEND ghidra_patches ${sleigh_ADDITIONAL_PATCHES})
 
 message(STATUS "Using Ghidra version ${ghidra_version} at git ref ${ghidra_short_commit}")
 
