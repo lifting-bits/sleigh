@@ -39,7 +39,9 @@ else()
   set(ghidra_short_commit "${ghidra_git_tag}")
 endif()
 
-list(APPEND ghidra_patches ${sleigh_ADDITIONAL_PATCHES})
+if(sleigh_ADDITIONAL_PATCHES)
+  list(APPEND ghidra_patches ${sleigh_ADDITIONAL_PATCHES})
+endif()
 
 message(STATUS "Using Ghidra version ${ghidra_version} at git ref ${ghidra_short_commit}")
 
