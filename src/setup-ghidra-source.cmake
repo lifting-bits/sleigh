@@ -15,13 +15,6 @@ set(ghidra_version "10.1.4")
 set(ghidra_git_tag "Ghidra_10.1.4_build")
 set(ghidra_shallow TRUE)
 
-set(additional_patches)
-
-# TODO(Ian): do something better with previously applied patch
-foreach(PFILE ${sleigh_ADDITIONAL_PATCHES})
-  set(additional_patches ${additional_patches} COMMAND patch -p0 -i "${PFILE}" || true)
-endforeach()
-
 # pinned stable patches list
 set(ghidra_patches
   PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
@@ -46,6 +39,10 @@ else()
   set(ghidra_short_commit "${ghidra_git_tag}")
 endif()
 
+foreach(PFILE ${sleigh_ADDITIONAL_PATCHES})
+  set(ghidra_patches ${ghidra_patches} "${PFILE}")
+endforeach()
+
 message(STATUS "Using Ghidra version ${ghidra_version} at git ref ${ghidra_short_commit}")
 
 include(FetchContent)
@@ -60,7 +57,6 @@ FetchContent_Declare(GhidraSource
   GIT_PROGRESS TRUE
   GIT_SHALLOW ${ghidra_shallow}
   ${ghidra_patches}
-  ${additional_patches}
 )
 FetchContent_MakeAvailable(GhidraSource)
 
