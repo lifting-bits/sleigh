@@ -11,7 +11,8 @@ option(sleigh_ENABLE_EXAMPLES "Set to true to build examples" ON)
 option(sleigh_ENABLE_DOCUMENTATION "Set to true to enable the documentation")
 option(sleigh_ENABLE_PACKAGING "Set to true to enable packaging")
 option(sleigh_ENABLE_SANITIZERS "Set to true to enable sanitizers")
-option(sleigh_ADDITIONAL_PATCHES "The accepted patch format is git patch files, to be applied via git am. The format of the list is a CMake semicolon separated list." "")
+set(sleigh_ADDITIONAL_PATCHES "" CACHE STRING
+  "The accepted patch format is git patch files, to be applied via git am. The format of the list is a CMake semicolon separated list.")
 
 # Internal debug settings
 option(sleigh_OPACTION_DEBUG "Turns on all the action tracing facilities")
