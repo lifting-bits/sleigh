@@ -6,7 +6,7 @@
 # the LICENSE file found in the root directory of this source tree.
 #
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.18)
 
 # Sets "library_root" variable for decompiler cpp root directory
 # Sets "ghidra_version" for numeric version number
