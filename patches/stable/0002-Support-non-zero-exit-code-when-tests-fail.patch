@@ -1,25 +1,21 @@
-From 031d9830abe8517540389672fd22dc479e46d696 Mon Sep 17 00:00:00 2001
+From b1db26ccfdd2444a76b9700ac9781fcbc079911c Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
-Date: Sun, 13 Feb 2022 12:59:42 -0500
-Subject: [PATCH] Small improvements to C++ decompiler testing from CLI
+Date: Tue, 24 May 2022 19:52:13 -0400
+Subject: [PATCH 2/2] Support non-zero exit code when tests fail
 
-* Fixes argument parsing to accept more than one option for specifying
-  paths.
-
-* Return a non-zero exit code (clamped to max value 255, even if more
-  than 255 tests fail) indicating number of failed tests. This is
-  helpful when running in a script (like in CI) to detect failures
-  instead of detecting failures through manual visual inspection of
-  output text.
+Return a non-zero exit code (saturated to max value 255, even if more
+than 255 tests fail) indicating number of failed tests. This is helpful
+when running in a script (like in CI) to detect failures instead of
+detecting failures through manual visual inspection of output text.
 ---
- .../Decompiler/src/decompile/cpp/test.cc      | 42 ++++++++++++++-----
+ .../Decompiler/src/decompile/cpp/test.cc      | 40 +++++++++++++++++--
  .../Decompiler/src/decompile/cpp/test.hh      |  2 +-
  .../src/decompile/cpp/testfunction.cc         |  3 +-
  .../src/decompile/cpp/testfunction.hh         |  2 +-
- 4 files changed, 36 insertions(+), 13 deletions(-)
+ 4 files changed, 40 insertions(+), 7 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc
-index e81f2564a..ebc049c29 100644
+index 35ee07dc6..2c19c0174 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc
 @@ -14,6 +14,9 @@
@@ -50,39 +46,32 @@ index e81f2564a..ebc049c29 100644
  }
  
  /// Create list of the absolute path of all tests to be run
-@@ -85,7 +90,7 @@ int main(int argc, char **argv) {
-   set<string> dataTestNames;
-   string dirname("../datatests");
-   string sleighdirname("../../../../../../..");
--  if (argc > 0) {
-+  while (argc > 0) {
-     string command(argv[0]);
-     if (command == "-path") {
-       dirname = argv[1];
-@@ -109,30 +114,47 @@ int main(int argc, char **argv) {
-       argv += 1;
-       argc -= 1;
-     }
--  }
--  if (argc > 0) {
--    string command(argv[0]);
--    if (command == "unittests") {
-+    else if (command == "unittests") {
-       runUnitTests = true;
-       runDataTests = false;	// Run only unit tests
-       unitTestNames.insert(argv + 1,argv + argc);
-+      break;
-     }
-     else if (command == "datatests") {
-       runUnitTests = false;	// Run only data-tests
-       runDataTests = true;
-       dataTestNames.insert(argv + 1,argv + argc);
-+      break;
-     }
-     else {
--      cout << "USAGE: ghidra_test [-path <datatestdir>] [[unittests|datatests] [testname1 testname2 ...]]" << endl;
-+      cout << "USAGE: ghidra_test [-usesleighenv] [-sleighpath <sleighdir>] [-path <datatestdir>] [[unittests|datatests] [testname1 testname2 ...]]" << endl;
-+      return -1;
+@@ -75,6 +80,24 @@ void gatherDataTests(const string &dirname,set<string> &testNames,vector<string>
+   }
+ }
+ 
++/// \brief This function performs a saturating add on two numbers where the
++/// result is to be used as an exit code for a CLI application.
++///
++/// \param current The current return code
++/// \param add A number to add to the current return code
++/// \return A number that can be used as an exit code up to 255.
++int add_exit_code(int current, int add) {
++  const int CLAMP = 255;
++  int ret = current + add;
++  if (current < 0 ||  	// Sanity checks
++      current > CLAMP ||
++      ret < current ||	// Can only happen due to overflow
++      ret > CLAMP) {  	// Check clamp value
++    ret = CLAMP;	// Set to max exit code
++  }
++  return ret;
++}
++
+ int main(int argc, char **argv) {
+   bool runUnitTests = true;
+   bool runDataTests = true;
+@@ -127,12 +150,21 @@ int main(int argc, char **argv) {
      }
    }
    startDecompilerLibrary(sleighdirname.c_str());
@@ -90,15 +79,11 @@ index e81f2564a..ebc049c29 100644
 -    UnitTest::run(unitTestNames);
 +
 +  // Keep track of failed tests as return code to indicate failures, clamped at
-+  // max 255 value
++  // max exit code value in add_exit_code
 +  int failedTests = 0;
 +  if (runUnitTests) {
 +    int errors = UnitTest::run(unitTestNames);
-+    // Clamp at 255 max return code
-+    failedTests = std::min(
-+        failedTests +
-+            (errors < 0 ? 255 : std::min(errors, 255)),
-+        255);
++    failedTests = add_exit_code(failedTests, errors);
 +  }
    if (runDataTests) {
      vector<string> testFiles;
@@ -106,11 +91,7 @@ index e81f2564a..ebc049c29 100644
      cout << endl << endl;
 -    FunctionTestCollection::runTestFiles(testFiles,cout);
 +    int errors = FunctionTestCollection::runTestFiles(testFiles,cout);
-+    // Clamp at 255 max return code
-+    failedTests = std::min(
-+        failedTests +
-+          (errors < 0 ? 255 : std::min(errors, 255)),
-+        255);
++    failedTests = add_exit_code(failedTests, errors);
    }
 +
 +  return failedTests;
@@ -161,5 +142,5 @@ index 52125b401..46abd6bce 100644
  
  #endif
 -- 
-2.35.1
+2.36.1
 
