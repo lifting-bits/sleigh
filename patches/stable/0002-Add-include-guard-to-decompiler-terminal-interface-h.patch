@@ -1,0 +1,32 @@
+From 7dbb73c2750af81bcef88e2c6731320819b42186 Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.d.kilmer@gmail.com>
+Date: Thu, 28 Jul 2022 09:20:03 -0400
+Subject: [PATCH] Add include guard to decompiler terminal interface header
+
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.hh | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.hh
+index 3ca912dd6..0b70d8b22 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.hh
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.hh
+@@ -16,6 +16,9 @@
+ /// \file ifaceterm.hh
+ /// \brief Add some terminal capabilities to the command-line interface (IfaceStatus)
+ 
++#ifndef __IFACE_TERM__
++#define __IFACE_TERM__
++
+ #include "interface.hh"
+ 
+ #ifdef __TERMINAL__
+@@ -48,3 +51,5 @@ class IfaceTerm : public IfaceStatus {
+   virtual void popScript(void);
+   virtual bool isStreamFinished(void) const;
+ };
++
++#endif
+-- 
+2.37.1
+

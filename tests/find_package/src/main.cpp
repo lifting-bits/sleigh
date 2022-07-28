@@ -6,10 +6,6 @@
   the LICENSE file found in the root directory of this source tree.
 */
 
-#include <sleigh/sleigh.hh>
-#include <sleigh/heritage.hh>
-
-#include <sleigh/libconfig.h>
-#include <sleigh/Version.h>
+#include <sleigh/libsleigh.hh>
 
 int main() { return 0; }
