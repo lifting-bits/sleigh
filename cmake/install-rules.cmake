@@ -22,7 +22,7 @@ install(
 )
 
 install(
-  FILES ${public_include_header_list}
+  DIRECTORY "${public_headers_dir}/sleigh"
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sleigh"
   COMPONENT sleigh_Development
 )

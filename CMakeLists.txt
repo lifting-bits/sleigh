@@ -144,7 +144,7 @@ endif()
 add_custom_target(sleigh_all_headers SOURCES ${public_include_header_list})
 set(public_headers_dir ${CMAKE_CURRENT_BINARY_DIR}/include)
 file(MAKE_DIRECTORY "${public_headers_dir}/sleigh")
-configure_file(cmake/libconfig.h.in include/sleigh/libconfig.h)
+configure_file(cmake/libconfig.h.in "${public_headers_dir}/sleigh/libconfig.h")
 # Copy the public headers into our build directory so that we can control the layout.
 # Ideally, we want to let people '#include <sleigh/{header}>' without installing sleigh
 foreach(public_header ${public_include_header_list})
