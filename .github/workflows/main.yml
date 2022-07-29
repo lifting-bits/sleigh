@@ -109,7 +109,7 @@ jobs:
         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         -DCMAKE_C_COMPILER_LAUNCHER=ccache
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -Dsleigh_GHIDRA_RELEASE_TYPE=${{ matrix.release }}
+        -Dsleigh_RELEASE_TYPE=${{ matrix.release }}
         -Dsleigh_ENABLE_TESTS=ON
         -Dsleigh_ENABLE_EXAMPLES=ON
         -Dsleigh_ENABLE_PACKAGING=ON
