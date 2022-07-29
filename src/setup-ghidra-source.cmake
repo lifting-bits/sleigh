@@ -11,8 +11,8 @@ set_property(CACHE sleigh_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 # **** Setup pinned git info ****
 
 # Ghidra pinned stable version commit
-set(ghidra_version "10.1.4")
-set(ghidra_git_tag "Ghidra_10.1.4_build")
+set(ghidra_version "10.1.5")
+set(ghidra_git_tag "Ghidra_${ghidra_version}_build")
 set(ghidra_shallow TRUE)
 
 # pinned stable patches list
