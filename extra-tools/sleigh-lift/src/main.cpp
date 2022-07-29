@@ -257,6 +257,10 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
   // Put together SLEIGH components
+#ifdef sleigh_RELEASE_IS_HEAD
+  AttributeId::initialize();
+  ElementId::initialize();
+#endif
   InMemoryLoadImage load_image(addr);
   ContextInternal ctx;
   Sleigh engine(&load_image, &ctx);
@@ -296,6 +300,22 @@ int main(int argc, char *argv[]) {
   //   void Architecture::parseProcessorConfig(DocumentStorage &store)
   const Element *el = storage.getTag("processor_spec");
   if (el) {
+#ifdef sleigh_RELEASE_IS_HEAD
+    XmlDecode decoder(&engine, el);
+    uint4 elemId = decoder.openElement(ELEM_PROCESSOR_SPEC);
+    for(;;) {
+      uint4 subId = decoder.peekElement();
+      if (subId == 0) break;
+      else if (subId == ELEM_CONTEXT_DATA) {
+        ctx.decodeFromSpec(decoder);
+        break;
+      } else {
+        decoder.openElement();
+        decoder.closeElementSkipping(subId);
+      }
+    }
+    decoder.closeElement(elemId);
+#else
     const List &list(el->getChildren());
     for (List::const_iterator iter = list.begin(); iter != list.end(); ++iter) {
       const string &elname((*iter)->getName());
@@ -304,7 +324,9 @@ int main(int argc, char *argv[]) {
         break;
       }
     }
+#endif
   }
+
   // In order to parse and validate the byte string properly, we need to get the
   // address size from SLEIGH. Therefore this needs to happen after
   // initialization.

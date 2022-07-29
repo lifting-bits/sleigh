@@ -1,6 +1,6 @@
 # Ghidra Patches
 
-This directory contains small patches that should not affect any deployed Ghidra sleigh functionality from its original intent.
+This directory contains small patches that do not affect any deployed Ghidra sleigh functionality from its original intent unless otherwise specified.
 
 These patches primarily support packaging and testing, or fixing critical issues that prevent building for one reason or another.
 

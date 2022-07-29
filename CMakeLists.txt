@@ -6,7 +6,7 @@
 # the LICENSE file found in the root directory of this source tree.
 #
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.18)
 
 include(cmake/prelude.cmake)
 
@@ -14,6 +14,10 @@ include(cmake/prelude.cmake)
 # Sets "ghidra_version" for numeric version number
 # Use "ghidrasource_SOURCE_DIR" variable for Ghidra repo root
 include(src/setup-ghidra-source.cmake)
+set(sleigh_RELEASE_IS_HEAD FALSE)
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+  set(sleigh_RELEASE_IS_HEAD TRUE)
+endif()
 
 project(sleigh
   VERSION "${ghidra_version}"
@@ -25,6 +29,9 @@ project(sleigh
 include(cmake/project-is-top-level.cmake)
 include(cmake/options.cmake)
 
+#
+# Move headers so we can prefix with "sleigh/"
+#
 set(public_include_header_list
   "${library_root}/action.hh"
   "${library_root}/address.hh"
@@ -127,15 +134,17 @@ set(public_include_header_list
   "${library_root}/xml.hh"
   "${library_root}/xml_arch.hh"
 )
-if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+if(sleigh_RELEASE_IS_HEAD)
   list(APPEND public_include_header_list
     "${library_root}/unionresolve.hh"
+    "${library_root}/marshal.hh"
   )
 endif()
 # Create custom target so that IDEs know these files are part of the sources
 add_custom_target(sleigh_all_headers SOURCES ${public_include_header_list})
 set(public_headers_dir ${CMAKE_CURRENT_BINARY_DIR}/include)
 file(MAKE_DIRECTORY "${public_headers_dir}/sleigh")
+configure_file(cmake/libconfig.h.in include/sleigh/libconfig.h)
 # Copy the public headers into our build directory so that we can control the layout.
 # Ideally, we want to let people '#include <sleigh/{header}>' without installing sleigh
 foreach(public_header ${public_include_header_list})
@@ -145,7 +154,6 @@ endforeach()
 #
 # sla
 #
-
 add_library(sleigh_sla
   ${sleigh_core_source_list}
   ${sleigh_source_list}
@@ -178,7 +186,6 @@ set_target_properties(sleigh_sla PROPERTIES
 #
 # decomp
 #
-
 add_library(sleigh_decomp
   ${sleigh_core_source_list}
   ${sleigh_deccore_source_list}
@@ -210,20 +217,20 @@ endif()
 #
 # Spec files
 #
-
 if(sleigh_BUILD_SLEIGHSPECS)
 
 # Sets 'spec_file_list' variable
-if(NOT "${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
-  include(spec-files-list/spec_files_stable.cmake)
-else()
+if(sleigh_RELEASE_IS_HEAD)
   include(spec-files-list/spec_files_HEAD.cmake)
+else()
+  include(spec-files-list/spec_files_stable.cmake)
 endif()
 
 # This prefix should match the Ghidra repo to where the sla spec files are located
 set(spec_files_dir_prefix "Ghidra/Processors")
 # This is the root directory where all individual processor spec file directories will be created
 set(spec_files_build_dir "${CMAKE_CURRENT_BINARY_DIR}/specfiles")
+
 # This is where we will be copying the generated artifacts for each processor
 set(spec_files_root_dir "${spec_files_build_dir}/${spec_files_dir_prefix}")
 set(spec_files_build_log_dir ${CMAKE_CURRENT_BINARY_DIR}/spec_build_logs)
@@ -255,6 +262,7 @@ set(spec_targets)
 set(spec_files)
 set(spec_dirs)
 include(cmake/modules/sleighCompile.cmake)
+
 # Example: '<ghidra_source_prefix>/Ghidra/Processors/8051/data/languages/mx51.slaspec'
 foreach(spec_file ${spec_file_list})
   # Get 'mx51'
@@ -277,9 +285,11 @@ foreach(spec_file ${spec_file_list})
   get_filename_component(proc_name "${proc_name}" DIRECTORY)
 
   set(spec_build_log "${spec_files_build_log_dir}/${spec_name}_build.log")
+
   # Combine back again for the build directory output like
   # '<build_prefix>/Ghidra/Processors/8051/data/languages'
   set(spec_out_dir "${spec_files_root_dir}/${spec_proc_dir}")
+
   # '<build_prefix>/Ghidra/Processors/8051/data/languages/mx51.sla'
   set(spec_out "${spec_out_dir}/${spec_name}.sla")
 
@@ -302,6 +312,7 @@ endforeach()
 
 # Copy and create specfile directories
 list(REMOVE_DUPLICATES spec_dirs)
+
 foreach(spec_dir ${spec_dirs})
   set(spec_src_dir "${ghidrasource_SOURCE_DIR}/${spec_files_dir_prefix}/${spec_dir}")
   set(spec_out_dir "${spec_files_root_dir}/${spec_dir}")
@@ -335,7 +346,6 @@ endif() # sleigh_BUILD_SLEIGHSPECS
 #
 # Included Example
 #
-
 if(PROJECT_IS_TOP_LEVEL)
   include(CMakeDependentOption)
   cmake_dependent_option(sleigh_BUILD_EXAMPLE "Build included sleigh example" "${sleigh_DEVELOPER_MODE}" "sleigh_BUILD_SLEIGHSPECS" OFF)
@@ -377,7 +387,6 @@ endif()
 #
 # Install rules
 #
-
 if(NOT CMAKE_SKIP_INSTALL_RULES)
   include(cmake/install-rules.cmake)
 endif()
@@ -385,7 +394,6 @@ endif()
 #
 # Extras provided by Trail of Bits
 #
-
 if(sleigh_BUILD_EXTRATOOLS)
   add_subdirectory(extra-tools)
 endif()
@@ -401,10 +409,7 @@ endif()
 if(NOT sleigh_DEVELOPER_MODE)
   return()
 elseif(NOT PROJECT_IS_TOP_LEVEL)
-  message(
-    AUTHOR_WARNING
-    "Developer mode is intended for developers of sleigh"
-  )
+  message(AUTHOR_WARNING "Developer mode is intended for developers of sleigh")
 endif()
 
 include(cmake/dev-mode.cmake)

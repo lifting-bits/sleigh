@@ -2,43 +2,53 @@
 include_guard(GLOBAL)
 
 # Set up Ghidra repo human-readable version settings
-set(sleigh_GHIDRA_RELEASE_TYPE "stable" CACHE
-  STRING "Ghidra release type to use. 'HEAD' is used for active development purposes."
+set(sleigh_RELEASE_TYPE "stable" CACHE
+  STRING "Release type to use. 'HEAD' is used for active development purposes."
 )
+
 # This is just helper for CMake UIs. CMake does not enforce that the value matches one of those listed.
-set_property(CACHE sleigh_GHIDRA_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
+set_property(CACHE sleigh_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 
 # **** Setup pinned git info ****
 
 find_package(Git REQUIRED)
 
 # Ghidra pinned stable version commit
-set(ghidra_version "10.1.4")
-set(ghidra_git_tag "Ghidra_10.1.4_build")
+set(ghidra_version "10.1.5")
+set(ghidra_git_tag "Ghidra_${ghidra_version}_build")
 set(ghidra_shallow TRUE)
+
+set(sleigh_ADDITIONAL_PATCHES "" CACHE STRING
+  "The accepted patch format is git patch files, to be applied via git am. The format of the list is a CMake semicolon separated list.")
+
 # pinned stable patches list
 set(ghidra_patches
   PATCH_COMMAND "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
-  "${CMAKE_CURRENT_LIST_DIR}/../patches/stable/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
+  "${CMAKE_CURRENT_SOURCE_DIR}/patches/stable/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
+  "${CMAKE_CURRENT_SOURCE_DIR}/patches/stable/0002-Add-include-guards-to-decompiler-C-headers.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
-if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL HEAD)
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: Try to remember to look at Ghidra/application.properties
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "10.2")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "d2883bbb8c9af943625e8d55e67452765056d7eb")
+  set(ghidra_head_git_tag "75ae8b3c367010ddc9bfcf1efbe9e768ff3bea93")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
     PATCH_COMMAND "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
-    "${CMAKE_CURRENT_LIST_DIR}/../patches/HEAD/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0002-Initialize-ID-lookup-tables-to-fix-sleighexample.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0003-Add-include-guards-to-decompiler-C-headers.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
   set(ghidra_short_commit "${ghidra_git_tag}")
 endif()
+
+list(APPEND ghidra_patches ${sleigh_ADDITIONAL_PATCHES})
 
 message(STATUS "Using Ghidra version ${ghidra_version} at git ref ${ghidra_short_commit}")
 
@@ -61,6 +71,7 @@ message(STATUS "Ghidra source located at '${ghidrasource_SOURCE_DIR}'")
 
 # Sanity check on Ghidra source code checkout
 set(library_root "${ghidrasource_SOURCE_DIR}/Ghidra/Features/Decompiler/src/decompile/cpp")
+
 if(NOT EXISTS "${library_root}/sleigh.hh")
   message(FATAL_ERROR "The Ghidra source directory has not been initialized correctly. Could not find '${library_root}'")
 endif()
@@ -76,6 +87,11 @@ set(sleigh_core_source_list
   "${library_root}/opcodes.cc"
   "${library_root}/globalcontext.cc"
 )
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND sleigh_core_source_list
+    "${library_root}/marshal.cc"
+  )
+endif()
 
 set(sleigh_deccore_source_list
   "${library_root}/capability.cc"
@@ -131,7 +147,7 @@ set(sleigh_deccore_source_list
   "${library_root}/opbehavior.cc"
   "${library_root}/paramid.cc"
 )
-if("${sleigh_GHIDRA_RELEASE_TYPE}" STREQUAL "HEAD")
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   list(APPEND sleigh_deccore_source_list
     "${library_root}/unionresolve.cc"
   )

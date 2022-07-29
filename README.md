@@ -21,7 +21,7 @@ This repository provides a CMake-based build project for SLEIGH so that it can b
 | Name | Version | Linux Package to Install | macOS Homebrew Package to Install |
 | ---- | ------- | ------------------------ | --------------------------------- |
 | [Git](https://git-scm.com/) | Latest | git | N/A |
-| [CMake](https://cmake.org/) | 3.15+ | cmake | cmake |
+| [CMake](https://cmake.org/) | 3.18+ | cmake | cmake |
 
 **NOTE**: This CMake project pulls the Ghidra source code from the internet during configuration. See the [note on Ghidra source code section](#note-on-ghidra-source-code) for more details.
 

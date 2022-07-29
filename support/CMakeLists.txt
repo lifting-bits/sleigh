@@ -22,6 +22,8 @@ configure_file(
 # the source code for watching a git repository.
 set(PRE_CONFIGURE_FILE "${CMAKE_CURRENT_LIST_DIR}/Version.cpp.in")
 set(POST_CONFIGURE_FILE "${CMAKE_CURRENT_BINARY_DIR}/Version.cpp")
+set(GIT_STATE_FILE "${CMAKE_CURRENT_BINARY_DIR}/git-state-sleigh")
+set(GIT_WORKING_DIR "${PROJECT_SOURCE_DIR}")
 set(GIT_FAIL_IF_NONZERO_EXIT OFF)
 include("../cmake/git_watcher.cmake")
 
