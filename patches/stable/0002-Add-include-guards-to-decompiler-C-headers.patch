@@ -1,0 +1,137 @@
+From 143296b212e6c3c8bc8cc1e0d88511f5bbc858ff Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.d.kilmer@gmail.com>
+Date: Thu, 28 Jul 2022 09:20:03 -0400
+Subject: [PATCH] Add include guards to decompiler C++ headers
+
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh    | 5 +++++
+ Ghidra/Features/Decompiler/src/decompile/cpp/graph.hh       | 6 ++++++
+ Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.hh   | 5 +++++
+ Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.hh    | 5 +++++
+ .../Features/Decompiler/src/decompile/cpp/slgh_compile.hh   | 5 +++++
+ Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.hh    | 6 ++++++
+ 6 files changed, 32 insertions(+)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh
+index 9d1f21d04..4f5c8ac2b 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh
+@@ -17,6 +17,9 @@
+ /// \file bfd_arch.hh
+ /// \brief Specific implementation of Architecture using GNU BFD libraries
+ 
++#ifndef __BFD_ARCH__
++#define __BFD_ARCH__
++
+ #include "sleigh_arch.hh"
+ #include "loadimage_bfd.hh"
+ 
+@@ -45,3 +48,5 @@ class BfdArchitecture : public SleighArchitecture {
+   BfdArchitecture(const string &fname,const string &targ,ostream *estream);	///< Constructor
+   virtual ~BfdArchitecture(void) {}
+ };
++
++#endif
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/graph.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/graph.hh
+index 364a5258d..edd6ce865 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/graph.hh
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/graph.hh
+@@ -14,8 +14,14 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
++
++#ifndef __GRAPH__
++#define __GRAPH__
++
+ #include "funcdata.hh"
+ 
+ extern void dump_dataflow_graph(Funcdata &data,ostream &s);
+ extern void dump_controlflow_graph(const string &name,const BlockGraph &graph,ostream &s);
+ extern void dump_dom_graph(const string &name,const BlockGraph &graph,ostream &s);
++
++#endif
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.hh
+index 3ca912dd6..0b70d8b22 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.hh
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.hh
+@@ -16,6 +16,9 @@
+ /// \file ifaceterm.hh
+ /// \brief Add some terminal capabilities to the command-line interface (IfaceStatus)
+ 
++#ifndef __IFACE_TERM__
++#define __IFACE_TERM__
++
+ #include "interface.hh"
+ 
+ #ifdef __TERMINAL__
+@@ -48,3 +51,5 @@ class IfaceTerm : public IfaceStatus {
+   virtual void popScript(void);
+   virtual bool isStreamFinished(void) const;
+ };
++
++#endif
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.hh
+index 7457a6303..a99fcbcd8 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.hh
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.hh
+@@ -15,6 +15,10 @@
+  */
+ /// \file raw_arch.hh
+ /// \brief Bare bones capability for treating a file as a raw executable image
++
++#ifndef __RAW_ARCH__
++#define __RAW_ARCH__
++
+ #include "sleigh_arch.hh"
+ #include "loadimage.hh"
+ 
+@@ -44,3 +48,4 @@ class RawBinaryArchitecture : public SleighArchitecture {
+   virtual ~RawBinaryArchitecture(void) {}
+ };
+ 
++#endif
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.hh
+index edb19aed3..78c8ad21c 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.hh
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.hh
+@@ -16,6 +16,9 @@
+ /// \file slgh_compile.hh
+ /// \brief High-level control of the sleigh compilation process
+ 
++#ifndef __SLGH_COMPILE__
++#define __SLGH_COMPILE__
++
+ #include "sleighbase.hh"
+ #include "pcodecompile.hh"
+ #include "filemanage.hh"
+@@ -446,3 +449,5 @@ class SleighCompile : public SleighBase {
+ 
+ extern SleighCompile *slgh;		///< A global reference to the SLEIGH compiler accessible to the parse functions
+ extern int yydebug;			///< Debug state for the SLEIGH parse functions
++
++#endif
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.hh
+index 4d404e6ad..0154582b0 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.hh
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.hh
+@@ -15,6 +15,10 @@
+  */
+ /// \file xml_arch.hh
+ /// \brief Extension to read executables based on an XML format
++
++#ifndef __XML_ARCH__
++#define __XML_ARCH__
++
+ #include "sleigh_arch.hh"
+ #include "loadimage_xml.hh"
+ 
+@@ -43,3 +47,5 @@ class XmlArchitecture : public SleighArchitecture {
+   XmlArchitecture(const string &fname,const string &targ,ostream *estream);	///< Constructor
+   virtual ~XmlArchitecture(void) {}
+ };
++
++#endif
+-- 
+2.37.1
+
