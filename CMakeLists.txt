@@ -210,6 +210,20 @@ set_target_properties(sleigh_decomp PROPERTIES
   OUTPUT_NAME_DEBUG decomp_dbg
 )
 
+# This is the root directory where all individual processor spec file directories will be created.
+# NOTE: Needs to be defined here before the install rules
+set(spec_files_build_dir "${CMAKE_CURRENT_BINARY_DIR}/specfiles")
+
+#
+# Install rules
+#
+if(NOT CMAKE_SKIP_INSTALL_RULES)
+  include(cmake/install-rules.cmake)
+endif()
+
+#
+# Build tool projects
+#
 if(sleigh_BUILD_TOOLS)
   add_subdirectory(tools)
 endif()
@@ -228,8 +242,6 @@ endif()
 
 # This prefix should match the Ghidra repo to where the sla spec files are located
 set(spec_files_dir_prefix "Ghidra/Processors")
-# This is the root directory where all individual processor spec file directories will be created
-set(spec_files_build_dir "${CMAKE_CURRENT_BINARY_DIR}/specfiles")
 
 # This is where we will be copying the generated artifacts for each processor
 set(spec_files_root_dir "${spec_files_build_dir}/${spec_files_dir_prefix}")
@@ -382,13 +394,6 @@ if(PROJECT_IS_TOP_LEVEL)
       add_dependencies(sleigh_example_runner sleigh_example_${action})
     endforeach()
   endif()
-endif()
-
-#
-# Install rules
-#
-if(NOT CMAKE_SKIP_INSTALL_RULES)
-  include(cmake/install-rules.cmake)
 endif()
 
 #
