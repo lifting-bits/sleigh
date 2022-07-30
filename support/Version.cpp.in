@@ -31,7 +31,7 @@
   SOFTWARE.
 */
 
-#include "Version.h"
+#include "sleigh/Version.h"
 
 namespace sleigh {
 

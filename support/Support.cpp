@@ -6,9 +6,9 @@
   the LICENSE file found in the root directory of this source tree.
 */
 
-#include "SpecFilePaths.h"
+#include "sleigh/Support.h"
 
-#include "Support.h"
+#include "sleigh/SpecFilePaths.h"
 
 namespace sleigh {
 
