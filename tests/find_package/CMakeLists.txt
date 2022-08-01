@@ -6,7 +6,7 @@
 # the LICENSE file found in the root directory of this source tree.
 #
 
-cmake_minimum_required(VERSION 3.15.0)
+cmake_minimum_required(VERSION 3.18)
 project("sleigh_find_package_test")
 
 find_package(sleigh REQUIRED COMPONENTS Support)

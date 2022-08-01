@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.18)
 
 include(../../cmake/prelude.cmake)
 include(../../src/setup-ghidra-source.cmake)

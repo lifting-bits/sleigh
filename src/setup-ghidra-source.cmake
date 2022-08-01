@@ -24,8 +24,8 @@ set(sleigh_ADDITIONAL_PATCHES "" CACHE STRING
 # pinned stable patches list
 set(ghidra_patches
   PATCH_COMMAND "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
-  "${CMAKE_CURRENT_LIST_DIR}/../patches/stable/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/../patches/stable/0002-Add-include-guards-to-decompiler-C-headers.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0002-Add-include-guards-to-decompiler-C-headers.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
@@ -39,9 +39,9 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
     PATCH_COMMAND "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
-    "${CMAKE_CURRENT_LIST_DIR}/../patches/HEAD/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/../patches/HEAD/0002-Initialize-ID-lookup-tables-to-fix-sleighexample.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/../patches/HEAD/0003-Add-include-guards-to-decompiler-C-headers.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Initialize-ID-lookup-tables-to-fix-sleighexample.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Add-include-guards-to-decompiler-C-headers.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
@@ -205,3 +205,10 @@ set(sleigh_slacomp_source_list
 # Include separate file to make it easier to find user-specified compile
 # options
 include("${CMAKE_CURRENT_LIST_DIR}/compile_options.cmake")
+
+# Sets 'spec_file_list' variable
+if(sleigh_RELEASE_IS_HEAD)
+  include("${CMAKE_CURRENT_LIST_DIR}/spec_files_HEAD.cmake")
+else()
+  include("${CMAKE_CURRENT_LIST_DIR}/spec_files_stable.cmake")
+endif()

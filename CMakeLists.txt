@@ -233,23 +233,16 @@ endif()
 #
 if(sleigh_BUILD_SLEIGHSPECS)
 
-# Sets 'spec_file_list' variable
-if(sleigh_RELEASE_IS_HEAD)
-  include(spec-files-list/spec_files_HEAD.cmake)
-else()
-  include(spec-files-list/spec_files_stable.cmake)
-endif()
-
 # This prefix should match the Ghidra repo to where the sla spec files are located
 set(spec_files_dir_prefix "Ghidra/Processors")
 
 # This is where we will be copying the generated artifacts for each processor
 set(spec_files_root_dir "${spec_files_build_dir}/${spec_files_dir_prefix}")
-set(spec_files_build_log_dir ${CMAKE_CURRENT_BINARY_DIR}/spec_build_logs)
+set(spec_files_build_log_dir "${CMAKE_CURRENT_BINARY_DIR}/spec_build_logs")
 
 add_custom_command(
-  OUTPUT ${spec_files_build_log_dir}
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${spec_files_build_log_dir}
+  OUTPUT "${spec_files_build_log_dir}"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${spec_files_build_log_dir}"
 )
 
 # Get the native machine's sleigh compiler or use the one we're about to build
