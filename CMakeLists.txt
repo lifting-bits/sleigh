@@ -355,37 +355,7 @@ if(PROJECT_IS_TOP_LEVEL)
   include(CMakeDependentOption)
   cmake_dependent_option(sleigh_BUILD_EXAMPLE "Build included sleigh example" "${sleigh_DEVELOPER_MODE}" "sleigh_BUILD_SLEIGHSPECS" OFF)
   if(sleigh_BUILD_EXAMPLE)
-    add_executable(sleigh_example
-      "${library_root}/sleighexample.cc"
-    )
-
-    target_compile_features(sleigh_example PRIVATE cxx_std_11)
-    sleigh_add_optional_defines(sleigh_example PRIVATE)
-    target_link_libraries(sleigh_example PRIVATE
-      sleigh::sla
-      sleigh::decomp
-    )
-
-    add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/specfiles/x86.sla"
-      COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/specfiles"
-      COMMAND "${CMAKE_COMMAND}" -E create_symlink
-        "${spec_files_root_dir}/x86/data/languages/x86.sla"
-        "${CMAKE_CURRENT_BINARY_DIR}/specfiles/x86.sla"
-      MAIN_DEPENDENCY "${spec_files_root_dir}/x86/data/languages/x86.sla"
-    )
-    add_custom_target(sleigh_example_x86_symlink DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/specfiles/x86.sla")
-
-    add_custom_target(sleigh_example_runner)
-    set(example_actions disassemble pcode emulate)
-    foreach(action ${example_actions})
-      add_custom_target(sleigh_example_${action}
-        COMMAND sleigh_example ${action}
-        COMMENT "Running example ${action}"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-      )
-      add_dependencies(sleigh_example_${action} sleigh_example_x86_symlink)
-      add_dependencies(sleigh_example_runner sleigh_example_${action})
-    endforeach()
+    add_subdirectory(example)
   endif()
 endif()
 
