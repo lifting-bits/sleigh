@@ -17,7 +17,9 @@ add_executable(sleigh_ghidra_test
 
 target_compile_features(sleigh_ghidra_test PRIVATE cxx_std_11)
 target_include_directories(sleigh_ghidra_test PRIVATE "${library_root}")
-if(WIN32)
+include(CheckIncludeFileCXX)
+check_include_file_cxx(termios.h HAVE_TERMIOS_H)
+if(HAVE_TERMIOS_H)
   target_compile_definitions(sleigh_ghidra_test PRIVATE
     __TERMINAL__
   )

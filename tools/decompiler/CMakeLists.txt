@@ -24,7 +24,9 @@ add_executable(sleigh::decompiler ALIAS sleigh_decompiler)
 
 target_compile_features(sleigh_decompiler PUBLIC cxx_std_11)
 target_include_directories(sleigh_decompiler PRIVATE "$<BUILD_INTERFACE:${library_root}>")
-if(WIN32)
+include(CheckIncludeFileCXX)
+check_include_file_cxx(termios.h HAVE_TERMIOS_H)
+if(HAVE_TERMIOS_H)
   target_compile_definitions(sleigh_decompiler PRIVATE
     __TERMINAL__
   )
