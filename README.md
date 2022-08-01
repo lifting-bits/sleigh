@@ -1,8 +1,8 @@
-# SLEIGH Library
+# Sleigh Library
 
-[SLEIGH](https://ghidra.re/courses/languages/html/sleigh.html) is a language used to describe the semantics of instruction sets of general-purpose microprocessors, with enough detail to facilitate the reverse engineering of software compiled for these architectures. It is part of the [GHIDRA reverse engineering platform](https://github.com/NationalSecurityAgency/ghidra), and underpins two of its major components: its disassembly and decompilation engines.
+[Sleigh](https://ghidra.re/courses/languages/html/sleigh.html) is a language used to describe the semantics of instruction sets of general-purpose microprocessors, with enough detail to facilitate the reverse engineering of software compiled for these architectures. It is part of the [Ghidra reverse engineering platform](https://github.com/NationalSecurityAgency/ghidra) and underpins two of its major components: its disassembly and decompilation engines.
 
-This repository provides a CMake-based build project for SLEIGH so that it can be built and packaged as a standalone library, and be reused in projects other than GHIDRA.
+This repository provides a CMake-based build project for Sleigh so that it can be built and packaged as a standalone library and be reused in projects other than Ghidra.
 
 ## Supported Platforms
 
@@ -12,7 +12,7 @@ This repository provides a CMake-based build project for SLEIGH so that it can b
 | macOS | Yes |
 | Windows | *Yes |
 
-\* Tests do not all work on Windows. See issue [#92](https://github.com/lifting-bits/sleigh/issues/92).
+\* Not all tests work on Windows. See issue [#92](https://github.com/lifting-bits/sleigh/issues/92).
 
 ## Dependencies and Prerequisites
 
@@ -20,7 +20,7 @@ This repository provides a CMake-based build project for SLEIGH so that it can b
 
 | Name | Version | Linux Package to Install | macOS Homebrew Package to Install |
 | ---- | ------- | ------------------------ | --------------------------------- |
-| [Git](https://git-scm.com/) | Latest | git | N/A |
+| [Git](https://git-scm.com/) | Latest | git | git |
 | [CMake](https://cmake.org/) | 3.18+ | cmake | cmake |
 
 **NOTE**: This CMake project pulls the Ghidra source code from the internet during configuration. See the [note on Ghidra source code section](#note-on-ghidra-source-code) for more details.
@@ -37,7 +37,7 @@ For building documentation:
 ## Build and Install the SLEIGH Library
 
 ```sh
-# Clone this repository (CMake project for SLEIGH)
+# Clone this repository (CMake project for sleigh)
 git clone https://github.com/lifting-bits/sleigh.git
 cd sleigh
 
@@ -45,17 +45,17 @@ cd sleigh
 cmake -B build -S .
 
 # Build SLEIGH
-cmake --build build -j
+cmake --build build --parallel 8
 
 # Install SLEIGH
-cmake --install build --prefix <path where SLEIGH will install>
+cmake --install build --prefix ./install
 ```
 
 ### Note on Ghidra source code
 
 The Ghidra source code is not actually included in this git repo, and by default, CMake will automatically pull a stable version from the internet for you.
 
-Please see [`src/README.md`](./src/README.md) for more information on how to customize which Ghidra source code commit will be used/compiled, including specifying your own local copy of the Ghidra source.
+Please see [`src/README.md`](src/README.md) for more information on how to customize which Ghidra source code commit will be used/compiled, including specifying your own local copy of the Ghidra source.
 
 ## Packaging
 
@@ -70,7 +70,7 @@ cmake --build build --target package
 
 ## API Usage
 
-An example program called `sleighLift` has been included to demonstrate how to use the SLEIGH API. It takes a hexadecimal string of bytes and either disassembles it or lifts it to p-code. The program can be invoked like so, where the `action` argument must be either `disassemble` or `pcode`:
+An example program called `sleighLift` has been included to demonstrate how to use the Sleigh API. It takes a hexadecimal string of bytes and can disassemble it or lift it to p-code. The program can be invoked as follows, where the `action` argument must be either `disassemble` or `pcode`:
 
 ```sh
 sleighLift [action] [sla_file] [bytes] [-a address] [-p root_sla_dir] [-s pspec_file]
@@ -98,11 +98,11 @@ $ sleighLift pcode x86-64.sla 4881ecc00f0000
 (register,0x202,1) = INT_EQUAL (unique,0x12d00,1) (const,0x0,1)
 ```
 
-The `sleigh_BUILD_EXTRATOOLS` option must be set to `ON` during the configuration step in order to build `sleighLift`.
+If you do not want to build `sleighLift`, you must set the CMake variable `sleigh_BUILD_EXTRATOOLS` option to `OFF` during CMake configuration.
 
 ## Helpers
 
-This repository contains a helper that is not part of SLEIGH/GHIDRA, which can be found under `support/`. It has the following signature and can help the user find the location of a given spec file on the system:
+This repository contains a helper not part of Sleigh/Ghidra, which you can find in the `support` directory. It has the following signature and can help the user find the location of a given spec file on the system:
 
 ```c++
 std::optional<std::filesystem::path>
@@ -111,22 +111,24 @@ FindSpecFile(std::string_view file_name,
                  gDefaultSearchPaths);
 ```
 
-The `sleigh::FindSpecFile` function will search the the paths provided by the user via the `search_paths` argument for a spec file with the name `file_name`. The default argument for `search_paths` is `sleigh::gDefaultSearchPaths` which contains the install/build directories that the CMake project was configured with as well as a set of common installation locations.
+The `sleigh::FindSpecFile` function will search the paths provided by the user via the `search_paths` argument for a spec file with the name `file_name`. The default argument for `search_paths` is `sleigh::gDefaultSearchPaths` which contains the install/build directories generated during CMake configuration and a set of common installation locations.
 
-The `sleigh_BUILD_SUPPORT` option must be set to `ON` during the configuration step in order to build the support library.
+If you do not want to build the helpers, you must set the CMake variable `sleigh_BUILD_SUPPORT` option to `OFF` during CMake configuration.
 
 ## Integration as a Dependency
 
-An installation of sleigh provides a CMake interface that can be used to assist in building your project.
+An installation of Sleigh provides a CMake interface that you can use when building your project.
 
-An example of how to use the CMake package config file can be found in the [find_package](tests/find_package/CMakeLists.txt) example.
+You can find an example of how to use the CMake package config file in the [find_package](tests/find_package/CMakeLists.txt) example.
 
-We also provide a CMake helper function [`sleigh_compile`](cmake/modules/sleighCompile.cmake) to compile your own `.slaspec` files using a sleigh compiler.
+We also provide a CMake helper function [`sleigh_compile`](cmake/modules/sleighCompile.cmake) to compile your `.slaspec` files using a sleigh compiler.
 
-Lastly, the installed compiled sleigh files can be located through the CMake variable `sleigh_INSTALL_SPECDIR`, which is an absolute path to the root directory for where the compiled sleigh files are located---you should manually inspect this to know what to expect.
+You can find a more complex CMake example with compiling Sleigh specifications in the [`example`](example/CMakeLists.txt) directory, which uses the upstream-provided sleigh example source code.
 
-Referencing the [CMake config file](cmake/install-config.cmake.in) is also suggested for learning more about the exposed CMake variables and modules.
+Lastly, you can locate the installed compiled sleigh files through the CMake variable `sleigh_INSTALL_SPECDIR`, which is an absolute path to the root directory for the compiled sleigh files---you should manually inspect this to know what to expect.
+
+Referencing the [CMake config file](cmake/install-config.cmake.in) and [`specfiles` CMake file](sleighspecs/specfiles.cmake.in) is also suggested for learning more about the exposed CMake variables and modules.
 
 ## License
 
-See the LICENSE file in the top directory of this repo.
+See the [LICENSE file](LICENSE).
