@@ -48,26 +48,6 @@ install(
   COMPONENT sleigh_Development
 )
 
-# Specfiles installation setup
-set(sleigh_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/sleigh"
-  CACHE PATH "sleigh data installation location relative to the install prefix"
-)
-mark_as_advanced(sleigh_INSTALL_DATADIR)
-
-set(sleigh_INSTALL_SPECDIR "${sleigh_INSTALL_DATADIR}/specfiles"
-  CACHE PATH "sleigh specfile root destination relative to the install prefix"
-)
-mark_as_advanced(sleigh_INSTALL_SPECDIR)
-
-if(sleigh_BUILD_SLEIGHSPECS)
-  # Install the compiled sla files found in 'Ghidra' top-level directory
-  install(
-    DIRECTORY "${spec_files_build_dir}/"
-    DESTINATION "${sleigh_INSTALL_SPECDIR}"
-    COMPONENT sleigh_Runtime
-  )
-endif()
-
 include(CMakePackageConfigHelpers)
 
 write_basic_package_version_file(
@@ -82,14 +62,13 @@ install(
 )
 
 configure_package_config_file(cmake/install-config.cmake.in
-  ${PROJECT_BINARY_DIR}/install-config.cmake
+  "${PROJECT_BINARY_DIR}/install-config.cmake"
   INSTALL_DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
   NO_CHECK_REQUIRED_COMPONENTS_MACRO
-  PATH_VARS sleigh_INSTALL_SPECDIR
 )
 
 install(
-  FILES ${PROJECT_BINARY_DIR}/install-config.cmake
+  FILES "${PROJECT_BINARY_DIR}/install-config.cmake"
   RENAME sleighConfig.cmake
   DESTINATION "${sleigh_INSTALL_CMAKEDIR}"
   COMPONENT sleigh_Development

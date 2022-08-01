@@ -8,10 +8,8 @@
 
 include("${CMAKE_CURRENT_LIST_DIR}/sleighTargets.cmake")
 
-# Path relative-root to reach installed specfiles directory
-if(EXISTS "@PACKAGE_sleigh_INSTALL_SPECDIR@")
-  set(sleigh_INSTALL_SPECDIR "@PACKAGE_sleigh_INSTALL_SPECDIR@")
-endif()
+# Populate CMake variable(s) related to specfiles
+include("${CMAKE_CURRENT_LIST_DIR}/specfiles.cmake" OPTIONAL)
 
 # Extra version details. Either 'stable' or 'HEAD'
 set(sleigh_RELEASE_IS_HEAD "@sleigh_RELEASE_IS_HEAD@")

@@ -14,7 +14,7 @@ include(../cmake/project-is-top-level.cmake)
 
 if(PROJECT_IS_TOP_LEVEL)
   find_package(sleigh)
-  if(sleigh_NOT_FOUND)
+  if(NOT sleigh_FOUND)
     message(WARNING "Could not find sleigh, building from source")
   endif()
 endif()

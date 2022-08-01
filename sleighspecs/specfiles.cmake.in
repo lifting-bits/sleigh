@@ -1,0 +1,4 @@
+@PACKAGE_INIT@
+
+# Path relative-root to reach installed specfiles directory
+set_and_check(sleigh_INSTALL_SPECDIR "@PACKAGE_sleigh_INSTALL_SPECDIR@")
