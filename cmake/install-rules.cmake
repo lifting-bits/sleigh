@@ -2,7 +2,7 @@ if(PROJECT_IS_TOP_LEVEL)
   set(CMAKE_INSTALL_INCLUDEDIR include/sleigh CACHE PATH "")
 endif()
 
-include("GNUInstallDirs")
+include(GNUInstallDirs)
 
 install(
   TARGETS

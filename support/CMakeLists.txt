@@ -62,6 +62,10 @@ target_include_directories(sleigh_support
 )
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
+  if(PROJECT_IS_TOP_LEVEL)
+    set(CMAKE_INSTALL_INCLUDEDIR include/sleigh CACHE PATH "")
+  endif()
+
   include(GNUInstallDirs)
 
   install(

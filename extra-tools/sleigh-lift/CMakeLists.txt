@@ -34,13 +34,13 @@ set_target_properties(sleigh_lift PROPERTIES
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
   include(GNUInstallDirs)
-  if(PROJECT_IS_TOP_LEVEL)
-    set(
-      sleigh_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
-      CACHE PATH "CMake package config location relative to the install prefix"
-    )
-    mark_as_advanced(sleigh_INSTALL_CMAKEDIR)
-  endif()
+
+  set(
+    sleigh_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/sleigh"
+    CACHE PATH "CMake package config location relative to the install prefix"
+  )
+  mark_as_advanced(sleigh_INSTALL_CMAKEDIR)
+
   install(
     TARGETS sleigh_lift
     EXPORT sleighExtraToolsTargets
