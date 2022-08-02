@@ -1,6 +1,6 @@
-From f62b1e5483a99efe3ae6598291ec010ecee749d4 Mon Sep 17 00:00:00 2001
+From 33ff58323d84c0ba57091b5bd408907a7646fd67 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
-Date: Mon, 7 Feb 2022 02:02:03 +1100
+Date: Tue, 2 Aug 2022 17:04:19 +1000
 Subject: [PATCH] Fix UBSAN errors in decompiler
 
 ---
@@ -20,10 +20,10 @@ Subject: [PATCH] Fix UBSAN errors in decompiler
  13 files changed, 59 insertions(+), 23 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
-index 1cb02c5b2..3a60d1322 100644
+index bd0d84d50..8fbd393e4 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
-@@ -685,7 +685,7 @@ uintb sign_extend(uintb in,int4 sizein,int4 sizeout)
+@@ -631,7 +631,7 @@ uintb sign_extend(uintb in,int4 sizein,int4 sizeout)
  void sign_extend(intb &val,int4 bit)
  
  {
@@ -32,7 +32,7 @@ index 1cb02c5b2..3a60d1322 100644
    mask = (~mask)<<bit;
    if (((val>>bit)&1)!=0)
      val |= mask;
-@@ -699,7 +699,7 @@ void sign_extend(intb &val,int4 bit)
+@@ -645,7 +645,7 @@ void sign_extend(intb &val,int4 bit)
  void zero_extend(intb &val,int4 bit)
  
  {
@@ -42,13 +42,13 @@ index 1cb02c5b2..3a60d1322 100644
    mask <<= 1;
    val &= (~mask);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
-index 0526ed04c..e79fd041e 100644
+index 89685bd76..54dc2cfc8 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
-@@ -2633,8 +2633,12 @@ void ProtoModelMerged::decode(Decoder &decoder)
+@@ -2468,8 +2468,12 @@ void ProtoModelMerged::restoreXml(const Element *el)
+     foldIn(mymodel);
      modellist.push_back(mymodel);
    }
-   decoder.closeElement(elemId);
 -  ((ParamListMerged *)input)->finalize();
 -  ((ParamListMerged *)output)->finalize();
 +  if (input->getType() == ParamList::p_merged) {
@@ -61,7 +61,7 @@ index 0526ed04c..e79fd041e 100644
  
  void ParameterBasic::setTypeLock(bool val)
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
-index e6b282ac7..f6a35728f 100644
+index a710d2597..3472e391a 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 @@ -501,7 +501,13 @@ void Funcdata::setHighLevel(void)
@@ -80,10 +80,10 @@ index e6b282ac7..f6a35728f 100644
    uint4 vnFlags = vn->getFlags() & (Varnode::directwrite|Varnode::addrforce);
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
-index b4f8a3f8e..068393416 100644
+index af89c583a..f7086bbf8 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
-@@ -667,7 +667,11 @@ uintb PcodeOp::getNZMaskLocal(bool cliploop) const
+@@ -650,7 +650,11 @@ uintb PcodeOp::getNZMaskLocal(bool cliploop) const
      break;
    case CPUI_PIECE:
      resmask = getIn(0)->getNZMask();
@@ -116,10 +116,10 @@ index 3b84bac6a..3e0c39904 100644
  }
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
-index 49128f7e6..133da8178 100644
+index 7927becec..4987e37ec 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
-@@ -619,8 +619,10 @@ vector<OpTpl *> *PcodeCompile::assignBitRange(VarnodeTpl *vn,uint4 bitoffset,uin
+@@ -622,8 +622,10 @@ vector<OpTpl *> *PcodeCompile::assignBitRange(VarnodeTpl *vn,uint4 bitoffset,uin
    uint4 smallsize = (numbits+7)/8; // Size of input (output of rhs)
    bool shiftneeded = (bitoffset != 0);
    bool zextneeded = true;
@@ -132,7 +132,7 @@ index 49128f7e6..133da8178 100644
  
    if (vn->getSize().getType()==ConstTpl::real) {
      // If we know the size of the bitranged varnode, we can
-@@ -724,9 +726,6 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
+@@ -727,9 +729,6 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
      }
    }
  
@@ -142,7 +142,7 @@ index 49128f7e6..133da8178 100644
    if (truncneeded && ((bitoffset % 8)==0)) {
      truncshift = bitoffset/8;
      bitoffset = 0;
-@@ -749,8 +748,13 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
+@@ -752,8 +751,13 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
      appendOp(CPUI_INT_RIGHT,res,bitoffset,4);
    if (truncneeded)
      appendOp(CPUI_SUBPIECE,res,truncshift,4);
@@ -159,7 +159,7 @@ index 49128f7e6..133da8178 100644
    return res;
  }
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index b5bdb4700..ef741545c 100644
+index 2a5d92040..d65ae2918 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 @@ -974,7 +974,12 @@ int4 RulePullsubIndirect::applyOp(PcodeOp *op,Funcdata &data)
@@ -176,11 +176,11 @@ index b5bdb4700..ef741545c 100644
    consume = ~consume;
    if ((consume & indir->getIn(0)->getConsume())!=0) return 0;
  
-@@ -6785,8 +6790,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
+@@ -6767,8 +6772,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
+ {
    Varnode *sb = op->getIn(0);
-   Datatype *sbType = sb->getTypeReadFacing(op);
-   if (sbType->getMetatype() != TYPE_PTR) return 0;
--  TypeSpacebase *sbtype = (TypeSpacebase *)((TypePointer *)sbType)->getPtrTo();
+   if (sb->getType()->getMetatype() != TYPE_PTR) return 0;
+-  TypeSpacebase *sbtype = (TypeSpacebase *)((TypePointer *)sb->getType())->getPtrTo();
 -  if (sbtype->getMetatype() != TYPE_SPACEBASE) return 0;
 +  Datatype *sbTypePtr = ((TypePointer *)sbType)->getPtrTo();
 +  if (sbTypePtr->getMetatype() != TYPE_SPACEBASE) return 0;
@@ -188,7 +188,7 @@ index b5bdb4700..ef741545c 100644
    Varnode *vn1 = op->getIn(1);
    if (!vn1->isConstant()) return 0;
    Varnode *outvn = op->getOut();
-@@ -7822,7 +7828,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
+@@ -7781,7 +7787,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *outvn = op->getOut();
    int4 flowsize = outvn->getSize();
    uintb mask = calc_mask( flowsize );
@@ -235,7 +235,7 @@ index dccf0437d..f7f598667 100644
      type=op2.type; value=op2.value; value_real=op2.value_real; select=op2.select; }
    ConstTpl(const_type tp,uintb val);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-index 3ec58b9d0..55fcfd7c8 100644
+index 40d775b2d..5535d4108 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 @@ -2150,8 +2150,8 @@ string SleighCompile::checkSymbols(SymbolScope *scope)
@@ -262,10 +262,10 @@ index 5f4a8fe32..50bc33b8b 100644
  }
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index b8dbcd55b..b2d0c1bb6 100644
+index 75b74d465..f478f19a4 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-@@ -3073,8 +3073,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
+@@ -2392,8 +2392,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
    top.submeta = sub;			// Search on the incorrect submeta
    iter = tree.lower_bound(&top);
    while(iter != tree.end()) {
