@@ -182,7 +182,7 @@ index 2a5d92040..d65ae2918 100644
    if (sb->getType()->getMetatype() != TYPE_PTR) return 0;
 -  TypeSpacebase *sbtype = (TypeSpacebase *)((TypePointer *)sb->getType())->getPtrTo();
 -  if (sbtype->getMetatype() != TYPE_SPACEBASE) return 0;
-+  Datatype *sbTypePtr = ((TypePointer *)sbType)->getPtrTo();
++  Datatype *sbTypePtr = ((TypePointer *)sb->getType())->getPtrTo();
 +  if (sbTypePtr->getMetatype() != TYPE_SPACEBASE) return 0;
 +  TypeSpacebase *sbtype = (TypeSpacebase *)sbTypePtr;
    Varnode *vn1 = op->getIn(1);
