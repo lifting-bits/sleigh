@@ -1,0 +1,293 @@
+From 33ff58323d84c0ba57091b5bd408907a7646fd67 Mon Sep 17 00:00:00 2001
+From: Alex Cameron <asc@tetsuo.sh>
+Date: Tue, 2 Aug 2022 17:04:19 +1000
+Subject: [PATCH] Fix UBSAN errors in decompiler
+
+---
+ .../Decompiler/src/decompile/cpp/address.cc    |  4 ++--
+ .../Decompiler/src/decompile/cpp/fspec.cc      |  8 ++++++--
+ .../src/decompile/cpp/funcdata_varnode.cc      |  8 +++++++-
+ .../Decompiler/src/decompile/cpp/op.cc         |  6 +++++-
+ .../Decompiler/src/decompile/cpp/opbehavior.cc |  8 +++++++-
+ .../src/decompile/cpp/pcodecompile.cc          | 18 +++++++++++-------
+ .../Decompiler/src/decompile/cpp/ruleaction.cc | 18 ++++++++++++++----
+ .../Decompiler/src/decompile/cpp/semantics.cc  |  2 ++
+ .../Decompiler/src/decompile/cpp/semantics.hh  |  2 +-
+ .../src/decompile/cpp/slgh_compile.cc          |  2 +-
+ .../Decompiler/src/decompile/cpp/slghsymbol.cc |  2 +-
+ .../Decompiler/src/decompile/cpp/type.cc       |  2 +-
+ .../src/decompile/unittests/testfloatemu.cc    |  2 +-
+ 13 files changed, 59 insertions(+), 23 deletions(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
+index bd0d84d50..8fbd393e4 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
+@@ -631,7 +631,7 @@ uintb sign_extend(uintb in,int4 sizein,int4 sizeout)
+ void sign_extend(intb &val,int4 bit)
+ 
+ {
+-  intb mask = 0;
++  uintb mask = 0;
+   mask = (~mask)<<bit;
+   if (((val>>bit)&1)!=0)
+     val |= mask;
+@@ -645,7 +645,7 @@ void sign_extend(intb &val,int4 bit)
+ void zero_extend(intb &val,int4 bit)
+ 
+ {
+-  intb mask = 0;
++  uintb mask = 0;
+   mask = (~mask)<<bit;
+   mask <<= 1;
+   val &= (~mask);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
+index 89685bd76..54dc2cfc8 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
+@@ -2468,8 +2468,12 @@ void ProtoModelMerged::restoreXml(const Element *el)
+     foldIn(mymodel);
+     modellist.push_back(mymodel);
+   }
+-  ((ParamListMerged *)input)->finalize();
+-  ((ParamListMerged *)output)->finalize();
++  if (input->getType() == ParamList::p_merged) {
++    ((ParamListMerged *)input)->finalize();
++  }
++  if (output->getType() == ParamList::p_merged) {
++    ((ParamListMerged *)output)->finalize();
++  }
+ }
+ 
+ void ParameterBasic::setTypeLock(bool val)
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
+index a710d2597..3472e391a 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
+@@ -501,7 +501,13 @@ void Funcdata::setHighLevel(void)
+ void Funcdata::transferVarnodeProperties(Varnode *vn,Varnode *newVn,int4 lsbOffset)
+ 
+ {
+-  uintb newConsume = (vn->getConsume() >> 8*lsbOffset) & calc_mask(newVn->getSize());
++  uintb newConsume = vn->getConsume();
++  if (8*lsbOffset < sizeof(newConsume)) {
++    newConsume >>= 8*lsbOffset;
++  } else {
++    newConsume = 0;
++  }
++  newConsume &= calc_mask(newVn->getSize());
+ 
+   uint4 vnFlags = vn->getFlags() & (Varnode::directwrite|Varnode::addrforce);
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
+index af89c583a..f7086bbf8 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
+@@ -650,7 +650,11 @@ uintb PcodeOp::getNZMaskLocal(bool cliploop) const
+     break;
+   case CPUI_PIECE:
+     resmask = getIn(0)->getNZMask();
+-    resmask <<= 8*getIn(1)->getSize();
++    if (8*getIn(1)->getSize() < sizeof(resmask)) {
++      resmask <<= 8*getIn(1)->getSize();
++    } else {
++      resmask = 0;
++    }
+     resmask |= getIn(1)->getNZMask();
+     break;
+   case CPUI_INT_MULT:
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
+index 3b84bac6a..3e0c39904 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
+@@ -747,7 +747,13 @@ uintb OpBehaviorPiece::evaluateBinary(int4 sizeout,int4 sizein,uintb in1,uintb i
+ uintb OpBehaviorSubpiece::evaluateBinary(int4 sizeout,int4 sizein,uintb in1,uintb in2) const
+ 
+ {
+-  uintb res = (in1>>(in2*8)) & calc_mask(sizeout);
++  uintb res = in1;
++  if ((in2*8) < sizeof(in1)) {
++    res >>= (in2*8);
++  } else {
++    res = 0;
++  }
++  res &= calc_mask(sizeout);
+   return res;
+ }
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
+index 7927becec..4987e37ec 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
+@@ -622,8 +622,10 @@ vector<OpTpl *> *PcodeCompile::assignBitRange(VarnodeTpl *vn,uint4 bitoffset,uin
+   uint4 smallsize = (numbits+7)/8; // Size of input (output of rhs)
+   bool shiftneeded = (bitoffset != 0);
+   bool zextneeded = true;
+-  uintb mask = (uintb)2;
+-  mask = ~(((mask<<(numbits-1))-1) << bitoffset);
++  uintb mask = 0;
++  const int4 masknumbits = sizeof(mask) * 8;
++  if (numbits - 1 < masknumbits && bitoffset < masknumbits)
++    mask = ~(((static_cast<uintb>(2) << (numbits - 1)) - 1) << bitoffset);
+ 
+   if (vn->getSize().getType()==ConstTpl::real) {
+     // If we know the size of the bitranged varnode, we can
+@@ -727,9 +729,6 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
+     }
+   }
+ 
+-  uintb mask = (uintb)2;
+-  mask = ((mask<<(numbits-1))-1);
+-  
+   if (truncneeded && ((bitoffset % 8)==0)) {
+     truncshift = bitoffset/8;
+     bitoffset = 0;
+@@ -752,8 +751,13 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
+     appendOp(CPUI_INT_RIGHT,res,bitoffset,4);
+   if (truncneeded)
+     appendOp(CPUI_SUBPIECE,res,truncshift,4);
+-  if (maskneeded)
+-    appendOp(CPUI_INT_AND,res,mask,finalsize);
++  if (maskneeded) {
++    uintb mask = 0;
++    if (numbits - 1 < sizeof(mask) * 8)
++      mask = static_cast<uintb>(2) << (numbits - 1);
++    --mask;
++    appendOp(CPUI_INT_AND, res, mask, finalsize);
++  }
+   force_size(res->outvn,ConstTpl(ConstTpl::real,finalsize),*res->ops);
+   return res;
+ }
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
+index 2a5d92040..d65ae2918 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
+@@ -974,7 +974,12 @@ int4 RulePullsubIndirect::applyOp(PcodeOp *op,Funcdata &data)
+   Varnode *outvn = op->getOut();
+   if (outvn->isPrecisLo()||outvn->isPrecisHi()) return 0; // Don't pull apart double precision object
+ 
+-  uintb consume = calc_mask(newSize) << 8 * minByte;
++  uintb consume = calc_mask(newSize);
++  if (8 * minByte < sizeof(consume)) {
++    consume <<= 8 * minByte;
++  } else {
++    consume = 0;
++  }
+   consume = ~consume;
+   if ((consume & indir->getIn(0)->getConsume())!=0) return 0;
+ 
+@@ -6767,8 +6772,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
+ {
+   Varnode *sb = op->getIn(0);
+   if (sb->getType()->getMetatype() != TYPE_PTR) return 0;
+-  TypeSpacebase *sbtype = (TypeSpacebase *)((TypePointer *)sb->getType())->getPtrTo();
+-  if (sbtype->getMetatype() != TYPE_SPACEBASE) return 0;
++  Datatype *sbTypePtr = ((TypePointer *)sb->getType())->getPtrTo();
++  if (sbTypePtr->getMetatype() != TYPE_SPACEBASE) return 0;
++  TypeSpacebase *sbtype = (TypeSpacebase *)sbTypePtr;
+   Varnode *vn1 = op->getIn(1);
+   if (!vn1->isConstant()) return 0;
+   Varnode *outvn = op->getOut();
+@@ -7781,7 +7787,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
+   Varnode *outvn = op->getOut();
+   int4 flowsize = outvn->getSize();
+   uintb mask = calc_mask( flowsize );
+-  mask <<= 8*((int4)op->getIn(1)->getOffset());
++  if (8*((int4)op->getIn(1)->getOffset()) < sizeof(mask)) {
++    mask <<= 8*((int4)op->getIn(1)->getOffset());
++  } else {
++    mask = 0;
++  }
+   bool aggressive = outvn->isPtrFlow();
+   if (!aggressive) {
+     if ((vn->getConsume() & mask) != vn->getConsume()) return 0;
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
+index f8c1580a8..8ae5ff293 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
+@@ -20,6 +20,7 @@ ConstTpl::ConstTpl(const_type tp)
+ 
+ {				// Constructor for relative jump constants and uniques
+   type = tp;
++  select = v_space;
+ }
+ 
+ ConstTpl::ConstTpl(const_type tp,uintb val)
+@@ -54,6 +55,7 @@ ConstTpl::ConstTpl(AddrSpace *sid)
+ {
+   type = spaceid;
+   value.spaceid = sid;
++  select = v_space;
+ }
+ 
+ bool ConstTpl::isConstSpace(void) const
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
+index dccf0437d..f7f598667 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
+@@ -46,7 +46,7 @@ private:
+   static void printHandleSelector(ostream &s,v_field val);
+   static v_field readHandleSelector(const string &name);
+ public:
+-  ConstTpl(void) { type = real; value_real = 0; }
++  ConstTpl(void) { type = real; value_real = 0; select = v_space; }
+   ConstTpl(const ConstTpl &op2) {
+     type=op2.type; value=op2.value; value_real=op2.value_real; select=op2.select; }
+   ConstTpl(const_type tp,uintb val);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
+index 40d775b2d..5535d4108 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
+@@ -2150,8 +2150,8 @@ string SleighCompile::checkSymbols(SymbolScope *scope)
+   ostringstream msg;
+   SymbolTree::const_iterator iter;
+   for(iter=scope->begin();iter!=scope->end();++iter) {
++    if ((*iter)->getType() != SleighSymbol::label_symbol) continue;
+     LabelSymbol *sym = (LabelSymbol *)*iter;
+-    if (sym->getType() != SleighSymbol::label_symbol) continue;
+     if (sym->getRefCount() == 0)
+       msg << "   Label <" << sym->getName() << "> was placed but not used" << endl;
+     else if (!sym->isPlaced())
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
+index 5f4a8fe32..50bc33b8b 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
+@@ -2499,7 +2499,7 @@ void ContextOp::restoreXml(const Element *el,SleighBase *trans)
+   const List &list(el->getChildren());
+   List::const_iterator iter;
+   iter = list.begin();
+-  patexp = (PatternValue *)PatternExpression::restoreExpression(*iter,trans);
++  patexp = PatternExpression::restoreExpression(*iter,trans);
+   patexp->layClaim();
+ }
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
+index 75b74d465..f478f19a4 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
+@@ -2392,8 +2392,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
+   top.submeta = sub;			// Search on the incorrect submeta
+   iter = tree.lower_bound(&top);
+   while(iter != tree.end()) {
++    if ((*iter)->getMetatype() != TYPE_PTR) break;
+     TypePointer *ptr = (TypePointer *)*iter;
+-    if (ptr->getMetatype() != TYPE_PTR) break;
+     if (ptr->ptrto != base) break;
+     ++iter;
+     if (ptr->submeta == sub) {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc b/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
+index ab99382a3..67d92c573 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
+@@ -338,7 +338,7 @@ TEST(float_opTrunc_to_int) {
+ 
+     for(float f:float_test_values) {
+         // avoid undefined behavior
+-        if((int64_t)f > std::numeric_limits<int>::max() || (int64_t)f < std::numeric_limits<int>::min())
++        if(f > std::numeric_limits<int>::max() || f < std::numeric_limits<int>::min() || std::isnan(f))
+             continue;
+         uintb true_result = ((uintb)(int32_t)f) & 0xffffffff;
+         uintb encoding = format.getEncoding(f);
+-- 
+2.32.1 (Apple Git-133)
+
