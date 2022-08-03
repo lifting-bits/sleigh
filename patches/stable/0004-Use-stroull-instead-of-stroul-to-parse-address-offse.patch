@@ -1,6 +1,6 @@
-From 773dda85b84a03c8795e27f1df87e6024bdb208a Mon Sep 17 00:00:00 2001
+From b719ae7f3716b303ec0c3d8c79e7d55c7e7cbfdf Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
-Date: Wed, 3 Aug 2022 20:01:18 +1000
+Date: Wed, 3 Aug 2022 20:39:30 +1000
 Subject: [PATCH] Use `stroull` instead of `stroul` to parse address offsets
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] Use `stroull` instead of `stroul` to parse address offsets
  1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
-index c51e58560..c5cc7541d 100644
+index 5f07edf8e..b86c9beae 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
 @@ -16,6 +16,8 @@
@@ -17,10 +17,10 @@ index c51e58560..c5cc7541d 100644
  
 +#include <climits>
 +
- AttributeId ATTRIB_BASE = AttributeId("base",89);
- AttributeId ATTRIB_DEADCODEDELAY = AttributeId("deadcodedelay",90);
- AttributeId ATTRIB_DELAY = AttributeId("delay", 91);
-@@ -268,7 +270,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
+ /// Calculate \e highest based on \e addressSize, and \e wordsize.
+ /// This also calculates the default pointerLowerBound
+ void AddrSpace::calcScaleMask(void)
+@@ -260,7 +262,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
      }
    }
    catch(LowlevelError &err) {	// Name doesn't exist
