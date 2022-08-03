@@ -10,9 +10,7 @@ This repository provides a CMake-based build project for Sleigh so that it can b
 | ---- | ------- |
 | Linux | Yes |
 | macOS | Yes |
-| Windows | *Yes |
-
-\* Not all tests work on Windows. See issue [#92](https://github.com/lifting-bits/sleigh/issues/92).
+| Windows | Yes |
 
 ## Dependencies and Prerequisites
 
