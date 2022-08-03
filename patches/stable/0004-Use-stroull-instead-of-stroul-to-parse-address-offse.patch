@@ -1,0 +1,37 @@
+From b719ae7f3716b303ec0c3d8c79e7d55c7e7cbfdf Mon Sep 17 00:00:00 2001
+From: Alex Cameron <asc@tetsuo.sh>
+Date: Wed, 3 Aug 2022 20:39:30 +1000
+Subject: [PATCH] Use `stroull` instead of `stroul` to parse address offsets
+
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/space.cc | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
+index 5f07edf8e..b86c9beae 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
+@@ -16,6 +16,8 @@
+ #include "space.hh"
+ #include "translate.hh"
+ 
++#include <climits>
++
+ /// Calculate \e highest based on \e addressSize, and \e wordsize.
+ /// This also calculates the default pointerLowerBound
+ void AddrSpace::calcScaleMask(void)
+@@ -260,7 +262,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
+     }
+   }
+   catch(LowlevelError &err) {	// Name doesn't exist
+-    offset = strtoul(s.c_str(),&tmpdata,0);
++    offset = strtoull(s.c_str(),&tmpdata,0);
++    if (offset == ULLONG_MAX) {
++      throw LowlevelError("Offset outside of valid range");
++    }
+     offset = addressToByte(offset,wordsize);
+     enddata = (const char *) tmpdata;
+     if (enddata - s.c_str() == s.size()) { // If no size or offset override
+-- 
+2.32.1 (Apple Git-133)
+
