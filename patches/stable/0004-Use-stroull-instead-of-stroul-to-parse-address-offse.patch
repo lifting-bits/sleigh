@@ -1,0 +1,28 @@
+From 8b5909221ebca0f9bc58546ecf4cd6e5ec088657 Mon Sep 17 00:00:00 2001
+From: Alex Cameron <asc@tetsuo.sh>
+Date: Wed, 3 Aug 2022 20:01:18 +1000
+Subject: [PATCH] Use `stroull` instead of `stroul` to parse address offsets
+
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/space.cc | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
+index c51e58560..b00d94e3d 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
+@@ -268,7 +268,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
+     }
+   }
+   catch(LowlevelError &err) {	// Name doesn't exist
+-    offset = strtoul(s.c_str(),&tmpdata,0);
++    offset = strtoull(s.c_str(),&tmpdata,0);
++    if (offset == ULLONG_MAX) {
++      throw LowlevelError("Offset outside of valid range");
++    }
+     offset = addressToByte(offset,wordsize);
+     enddata = (const char *) tmpdata;
+     if (enddata - s.c_str() == s.size()) { // If no size or offset override
+-- 
+2.32.1 (Apple Git-133)
+
