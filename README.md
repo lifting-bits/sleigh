@@ -10,7 +10,7 @@ This repository provides a CMake-based build project for SLEIGH so that it can b
 | ---- | ------- |
 | Linux | Yes |
 | macOS | Yes |
-| Windows | Not yet |
+| Windows | Yes |
 
 ## Dependencies and Prerequisites
 
