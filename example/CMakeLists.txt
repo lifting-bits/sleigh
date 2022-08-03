@@ -19,6 +19,7 @@ if(PROJECT_IS_TOP_LEVEL)
   endif()
 endif()
 
+# Build from source if we don't have targets
 if(NOT TARGET sleigh::sla)
   add_subdirectory(.. sleigh EXCLUDE_FROM_ALL)
 endif()

@@ -13,7 +13,20 @@ project(sleighLift CXX)
 include(../../cmake/project-is-top-level.cmake)
 
 if(PROJECT_IS_TOP_LEVEL)
-  find_package(sleigh REQUIRED COMPONENTS Support)
+  find_package(sleigh)
+  if(NOT sleigh_FOUND)
+    message(WARNING "Could not find sleigh, building from source")
+  else()
+    find_package(sleigh REQUIRED COMPONENTS Support)
+  endif()
+endif()
+
+# Build from source if we don't have targets
+if(NOT TARGET sleigh::sla OR
+    NOT TARGET sleigh::decomp OR
+    NOT TARGET sleigh::support)
+  set(sleigh_BUILD_EXTRATOOLS OFF CACHE BOOL "" FORCE)
+  add_subdirectory(../.. sleigh EXCLUDE_FROM_ALL)
 endif()
 
 add_executable(sleigh_lift
