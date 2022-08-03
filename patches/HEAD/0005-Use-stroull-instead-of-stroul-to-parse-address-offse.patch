@@ -1,17 +1,26 @@
-From 8b5909221ebca0f9bc58546ecf4cd6e5ec088657 Mon Sep 17 00:00:00 2001
+From 773dda85b84a03c8795e27f1df87e6024bdb208a Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Wed, 3 Aug 2022 20:01:18 +1000
 Subject: [PATCH] Use `stroull` instead of `stroul` to parse address offsets
 
 ---
- Ghidra/Features/Decompiler/src/decompile/cpp/space.cc | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ Ghidra/Features/Decompiler/src/decompile/cpp/space.cc | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
-index c51e58560..b00d94e3d 100644
+index c51e58560..c5cc7541d 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
-@@ -268,7 +268,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
+@@ -16,6 +16,8 @@
+ #include "space.hh"
+ #include "translate.hh"
+ 
++#include <climits>
++
+ AttributeId ATTRIB_BASE = AttributeId("base",89);
+ AttributeId ATTRIB_DEADCODEDELAY = AttributeId("deadcodedelay",90);
+ AttributeId ATTRIB_DELAY = AttributeId("delay", 91);
+@@ -268,7 +270,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
      }
    }
    catch(LowlevelError &err) {	// Name doesn't exist
