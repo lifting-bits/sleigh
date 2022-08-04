@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.18)
 
 include(../cmake/prelude.cmake)
+
+# We include this because the source code for this example is in upstream
 include(../src/setup-ghidra-source.cmake)
 
 project(sleigh_example
@@ -12,16 +14,14 @@ project(sleigh_example
 
 include(../cmake/project-is-top-level.cmake)
 
-if(PROJECT_IS_TOP_LEVEL)
+if(NOT TARGET sleigh::sla)
   find_package(sleigh)
   if(NOT sleigh_FOUND)
-    message(WARNING "Could not find sleigh, building from source")
+    message(WARNING "Could not find sleigh library, building from source")
+    # Exclude from all because there are no install rules for the example
+    # See sleighLift for example with install rules
+    add_subdirectory(.. sleigh EXCLUDE_FROM_ALL)
   endif()
-endif()
-
-# Build from source if we don't have targets
-if(NOT TARGET sleigh::sla)
-  add_subdirectory(.. sleigh EXCLUDE_FROM_ALL)
 endif()
 
 add_executable(sleigh_example
@@ -34,6 +34,10 @@ target_link_libraries(sleigh_example PRIVATE
   sleigh::sla
 )
 
+set_target_properties(sleigh_example PROPERTIES
+  OUTPUT_NAME sleighexample
+)
+
 #
 # Compile our required sleigh spec file
 #
@@ -43,25 +47,41 @@ if(CMAKE_CROSSCOMPILING)
   find_program(
     SLEIGH_EXECUTABLE sleigh
     DOC "Path to host system sleigh compiler"
+    REQUIRED
   )
+  set(sleigh_compiler "${SLEIGH_EXECUTABLE}")
 else()
+  # Try to find/acquire or bootstrap the sleigh spec compiler
+  # Logic is repeated in sleighspecs/CMakeLists.txt
   if(NOT TARGET sleigh::sleigh)
-    add_subdirectory(../tools/spec-compiler)
+    find_package(sleigh QUIET)
+    if(NOT sleigh_FOUND OR NOT TARGET sleigh::sleigh)
+      find_program(
+        SLEIGH_EXECUTABLE sleigh
+        DOC "Path to host system sleigh compiler"
+      )
+      if(NOT SLEIGH_EXECUTABLE)
+        message(WARNING "Could not find sleigh compiler, building from source")
+        set(saved_skip_install_rules "${CMAKE_SKIP_INSTALL_RULES}")
+        set(CMAKE_SKIP_INSTALL_RULES TRUE)
+        add_subdirectory(../tools/spec-compiler spec-compiler EXCLUDE_FROM_ALL)
+        set(CMAKE_SKIP_INSTALL_RULES "${saved_skip_install_rules}")
+      endif()
+    endif()
   endif()
-  set(
-    SLEIGH_EXECUTABLE "$<TARGET_FILE:sleigh::sleigh>"
-    CACHE FILEPATH "Path to host system sleigh compiler"
-  )
 endif()
-
-if(NOT DEFINED sleigh_compile)
-  include(../cmake/modules/sleighCompile.cmake)
+if(SLEIGH_EXECUTABLE)
+  set(sleigh_compiler "${SLEIGH_EXECUTABLE}")
+else()
+  set(sleigh_compiler "$<TARGET_FILE:sleigh::sleigh>")
 endif()
 
 # Compile the sla file
+include(../cmake/modules/sleighCompile.cmake)
+
 sleigh_compile(
   TARGET sleigh_example_sleigh_spec_x86
-  COMPILER "${SLEIGH_EXECUTABLE}"
+  COMPILER "${sleigh_compiler}"
   SLASPEC "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/x86/data/languages/x86.slaspec"
   LOG_FILE "${CMAKE_CURRENT_BINARY_DIR}/specfiles/x86.sla.log"
   OUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/specfiles/x86.sla"

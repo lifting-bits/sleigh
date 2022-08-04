@@ -246,6 +246,9 @@ if(PROJECT_IS_TOP_LEVEL)
   endif()
 endif()
 
+#
+# Support library provided by Trail of Bits
+#
 if(sleigh_BUILD_SUPPORT)
   # Add support library before configuring install targets
   add_subdirectory(support)

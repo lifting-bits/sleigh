@@ -10,23 +10,17 @@ cmake_minimum_required(VERSION 3.18)
 
 project(sleighLift CXX)
 
-include(../../cmake/project-is-top-level.cmake)
-
-if(PROJECT_IS_TOP_LEVEL)
+set(build_from_source FALSE)
+if(NOT TARGET sleigh::support)
   find_package(sleigh)
   if(NOT sleigh_FOUND)
     message(WARNING "Could not find sleigh, building from source")
+    set(sleigh_BUILD_SUPPORT ON CACHE BOOL "" FORCE)
+    set(sleigh_BUILD_SLEIGHSPECS ON CACHE BOOL "" FORCE)
+    add_subdirectory(../.. sleigh)
   else()
-    find_package(sleigh REQUIRED COMPONENTS Support)
+    find_package(sleigh REQUIRED COMPONENTS Support Specs)
   endif()
-endif()
-
-# Build from source if we don't have targets
-if(NOT TARGET sleigh::sla OR
-    NOT TARGET sleigh::decomp OR
-    NOT TARGET sleigh::support)
-  set(sleigh_BUILD_EXTRATOOLS OFF CACHE BOOL "" FORCE)
-  add_subdirectory(../.. sleigh EXCLUDE_FROM_ALL)
 endif()
 
 add_executable(sleigh_lift

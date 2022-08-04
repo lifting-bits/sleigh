@@ -28,12 +28,12 @@ endif()
 include(CMakeDependentOption)
 
 # Optional project target building
-option(sleigh_BUILD_TOOLS "Build and install executable tools" ON)
-option(sleigh_BUILD_SLEIGHSPECS "Build and install sleigh spec files" ON)
+option(sleigh_BUILD_TOOLS "Build and install executable tools" "${PROJECT_IS_TOP_LEVEL}")
+option(sleigh_BUILD_SLEIGHSPECS "Build and install sleigh spec files" "${PROJECT_IS_TOP_LEVEL}")
 
 # Add-ons by ToB
-option(sleigh_BUILD_SUPPORT "Build ToB support libraries" ON)
-cmake_dependent_option(sleigh_BUILD_EXTRATOOLS "Build extra ToB sleigh tools" ON "sleigh_BUILD_SUPPORT" OFF)
+option(sleigh_BUILD_SUPPORT "Build ToB support libraries" "${PROJECT_IS_TOP_LEVEL}")
+cmake_dependent_option(sleigh_BUILD_EXTRATOOLS "Build extra ToB sleigh tools" "${PROJECT_IS_TOP_LEVEL}" "sleigh_BUILD_SUPPORT" OFF)
 
 # ---- Warning guard ----
 

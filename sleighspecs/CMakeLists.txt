@@ -7,7 +7,8 @@ project(sleigh_specs
     VERSION "${ghidra_version}"
     DESCRIPTION "Sleigh specifications"
     HOMEPAGE_URL "https://github.com/lifting-bits/sleigh"
-    LANGUAGES NONE
+    # Language is for installing the helper CMake file
+    LANGUAGES CXX
 )
 
 include(../cmake/project-is-top-level.cmake)
@@ -35,23 +36,32 @@ if(CMAKE_CROSSCOMPILING)
   find_program(
     SLEIGH_EXECUTABLE sleigh
     DOC "Path to host system sleigh compiler"
+    REQUIRED
   )
 else()
-  if(PROJECT_IS_TOP_LEVEL)
+  # Try to find/acquire or bootstrap the sleigh spec compiler
+  # Logic is repeated in example/CMakeLists.txt
+  if(NOT TARGET sleigh::sleigh)
     find_package(sleigh QUIET)
-    if(NOT sleigh_FOUND)
-      message(WARNING "Could not find sleigh, building from source")
+    if(NOT sleigh_FOUND OR NOT TARGET sleigh::sleigh)
+      find_program(
+        SLEIGH_EXECUTABLE sleigh
+        DOC "Path to host system sleigh compiler"
+      )
+      if(NOT SLEIGH_EXECUTABLE)
+        message(WARNING "Could not find sleigh compiler, building from source")
+        set(saved_skip_install_rules "${CMAKE_SKIP_INSTALL_RULES}")
+        set(CMAKE_SKIP_INSTALL_RULES TRUE)
+        add_subdirectory(../tools/spec-compiler spec-compiler EXCLUDE_FROM_ALL)
+        set(CMAKE_SKIP_INSTALL_RULES "${saved_skip_install_rules}")
+      endif()
     endif()
   endif()
-
-  if(NOT TARGET sleigh::sleigh)
-    add_subdirectory(../tools/spec-compiler spec-compiler EXCLUDE_FROM_ALL)
-  endif()
-
-  set(
-    SLEIGH_EXECUTABLE "$<TARGET_FILE:sleigh::sleigh>"
-    CACHE FILEPATH "Path to host system sleigh compiler"
-  )
+endif()
+if(SLEIGH_EXECUTABLE)
+  set(sleigh_compiler "${SLEIGH_EXECUTABLE}")
+else()
+  set(sleigh_compiler "$<TARGET_FILE:sleigh::sleigh>")
 endif()
 
 # Start processing all `.slaspec` files individually
@@ -96,7 +106,7 @@ foreach(spec_file ${spec_file_list})
   # Compile the sla file
   sleigh_compile(
     TARGET "${spec_target}"
-    COMPILER "${SLEIGH_EXECUTABLE}"
+    COMPILER "${sleigh_compiler}"
     SLASPEC "${spec_file}"
     LOG_FILE "${spec_build_log}"
     OUT_FILE "${spec_out}"
@@ -139,7 +149,7 @@ add_custom_target(sleigh_all_sla_specs ALL DEPENDS
 )
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
-  include("GNUInstallDirs")
+  include(GNUInstallDirs)
 
   # Specfiles installation setup
   set(sleigh_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/sleigh"
