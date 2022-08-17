@@ -18,7 +18,7 @@ This repository provides a CMake-based build project for Sleigh so that it can b
 
 | Name | Version | Linux Package to Install | macOS Homebrew Package to Install |
 | ---- | ------- | ------------------------ | --------------------------------- |
-| [Git](https://git-scm.com/) | Latest | git | git |
+| [Git](https://git-scm.com/) | Latest | git | N/A |
 | [CMake](https://cmake.org/) | 3.18+ | cmake | cmake |
 
 **NOTE**: This CMake project pulls the Ghidra source code from the internet during configuration. See the [note on Ghidra source code section](#note-on-ghidra-source-code) for more details.
@@ -68,23 +68,23 @@ cmake --build build --target package
 
 ## API Usage
 
-An example program called `sleighLift` has been included to demonstrate how to use the Sleigh API. It takes a hexadecimal string of bytes and can disassemble it or lift it to p-code. The program can be invoked as follows, where the `action` argument must be either `disassemble` or `pcode`:
+An example program called `sleigh-lift` has been included to demonstrate how to use the Sleigh API. It takes a hexadecimal string of bytes and can disassemble it or lift it to p-code. The program can be invoked as follows, where the `action` argument must be either `disassemble` or `pcode`:
 
 ```sh
-sleighLift [action] [sla_file] [bytes] [-a address] [-p root_sla_dir] [-s pspec_file]
+sleigh-lift [action] [sla_file] [bytes] [-a address] [-p root_sla_dir] [-s pspec_file]
 ```
 
 For example, to disassemble the following byte string:
 
 ```sh
-$ sleighLift disassemble x86-64.sla 4881ecc00f0000
+$ sleigh-lift disassemble x86-64.sla 4881ecc00f0000
 0x00000000: SUB RSP,0xfc0
 ```
 
 And to lift it to p-code:
 
 ```sh
-$ sleighLift pcode x86-64.sla 4881ecc00f0000
+$ sleigh-lift pcode x86-64.sla 4881ecc00f0000
 (register,0x200,1) = INT_LESS (register,0x20,8) (const,0xfc0,8)
 (register,0x20b,1) = INT_SBORROW (register,0x20,8) (const,0xfc0,8)
 (register,0x20,8) = INT_SUB (register,0x20,8) (const,0xfc0,8)
@@ -96,7 +96,7 @@ $ sleighLift pcode x86-64.sla 4881ecc00f0000
 (register,0x202,1) = INT_EQUAL (unique,0x12d00,1) (const,0x0,1)
 ```
 
-If you do not want to build `sleighLift`, you must set the CMake variable `sleigh_BUILD_EXTRATOOLS` option to `OFF` during CMake configuration.
+If you do not want to build `sleigh-lift`, you must set the CMake variable `sleigh_BUILD_EXTRATOOLS` option to `OFF` during CMake configuration.
 
 ## Helpers
 

@@ -132,7 +132,7 @@ jobs:
         --prefix install
 
     - name: Smoketest sleigh lift
-      run: ./install/bin/sleighLift disassemble x86-64.sla 4881ecc00f0000
+      run: ./install/bin/sleigh-lift disassemble x86-64.sla 4881ecc00f0000
 
     - name: Test install directory
       working-directory: tests/find_package
@@ -148,8 +148,8 @@ jobs:
         cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         cmake --build build -j 2 --config ${{ matrix.build_type }}
         cmake --install build --config ${{ matrix.build_type }} --prefix install
-        ./install/bin/sleighLift --version
-        ./install/bin/sleighLift disassemble x86-64.sla 4881ecc00f0000
+        ./install/bin/sleigh-lift --version
+        ./install/bin/sleigh-lift disassemble x86-64.sla 4881ecc00f0000
 
     - name: Create the packages
       run: cmake

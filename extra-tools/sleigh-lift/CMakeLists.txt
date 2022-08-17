@@ -36,7 +36,7 @@ target_link_libraries(sleigh_lift PRIVATE
 target_compile_features(sleigh_lift PRIVATE cxx_std_17)
 set_target_properties(sleigh_lift PROPERTIES
   EXPORT_NAME lift
-  OUTPUT_NAME sleighLift
+  OUTPUT_NAME sleigh-lift
 )
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)

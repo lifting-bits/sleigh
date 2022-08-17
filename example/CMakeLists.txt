@@ -19,7 +19,7 @@ if(NOT TARGET sleigh::sla)
   if(NOT sleigh_FOUND)
     message(WARNING "Could not find sleigh library, building from source")
     # Exclude from all because there are no install rules for the example
-    # See sleighLift for example with install rules
+    # See sleigh-lift for example with install rules
     add_subdirectory(.. sleigh EXCLUDE_FROM_ALL)
   endif()
 endif()
