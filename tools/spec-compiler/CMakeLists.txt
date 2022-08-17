@@ -4,10 +4,10 @@ include(../../cmake/prelude.cmake)
 include(../../src/setup-ghidra-source.cmake)
 
 project(sleigh_sleigh
-    VERSION "${ghidra_version}"
-    DESCRIPTION "Sleigh spec compiler"
-    HOMEPAGE_URL "https://github.com/lifting-bits/sleigh"
-    LANGUAGES CXX
+  VERSION "${ghidra_version}"
+  DESCRIPTION "Sleigh spec compiler"
+  HOMEPAGE_URL "https://github.com/lifting-bits/sleigh"
+  LANGUAGES CXX
 )
 
 include(../../cmake/project-is-top-level.cmake)
