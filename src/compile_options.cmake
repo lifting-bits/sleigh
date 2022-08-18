@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2022-present, Trail of Bits, Inc.
+# All rights reserved.
+#
+# This source code is licensed in accordance with the terms specified in
+# the LICENSE file found in the root directory of this source tree.
+#
+
 # Internal settings
 option(sleigh_CPUI_RULECOMPILE "Allow user defined dynamic rules")
 option(sleigh_CPUI_STATISTICS "Turn on collection of cover and cast statistics")
