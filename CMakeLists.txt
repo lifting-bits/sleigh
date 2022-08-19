@@ -21,7 +21,7 @@ endif()
 
 project(sleigh
   VERSION "${ghidra_version}"
-  DESCRIPTION "Unofficial CMake build for Ghidra SLEIGH"
+  DESCRIPTION "Unofficial CMake build for Ghidra Sleigh"
   HOMEPAGE_URL "https://github.com/lifting-bits/sleigh"
   LANGUAGES CXX
 )

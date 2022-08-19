@@ -32,7 +32,7 @@ For building documentation:
 | [Doxygen](https://www.doxygen.nl/) | Latest | doxygen | doxygen |
 | [GraphViz](https://graphviz.org/) | Latest | graphviz | graphviz |
 
-## Build and Install the SLEIGH Library
+## Build and Install the Sleigh Library
 
 ```sh
 # Clone this repository (CMake project for sleigh)
@@ -42,10 +42,10 @@ cd sleigh
 # Configure CMake
 cmake -B build -S .
 
-# Build SLEIGH
+# Build Sleigh
 cmake --build build --parallel 8
 
-# Install SLEIGH
+# Install Sleigh
 cmake --install build --prefix ./install
 ```
 
@@ -57,12 +57,12 @@ Please see [`src/README.md`](src/README.md) for more information on how to custo
 
 ## Packaging
 
-The CMake configuration also supports building packages for SLEIGH.
+The CMake configuration also supports building packages for Sleigh.
 
 For example:
 
 ```sh
-# Package SLEIGH
+# Package Sleigh
 cmake --build build --target package
 ```
 

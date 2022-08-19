@@ -11,7 +11,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   set(PACKAGE_VERSION "DEV.${ghidra_short_commit}")
 endif()
 
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SLEIGH was designed for the GHIDRA reverse engineering platform built by the National Security Agency and is used to describe microprocessors with enough detail to facilitate two major components of GHIDRA, the disassembly and decompilation engines. This is an unofficial release by Trail of Bits.")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Sleigh was designed for the Ghidra reverse engineering platform built by the National Security Agency and is used to describe microprocessors with enough detail to facilitate two major components of Ghidra, the disassembly and decompilation engines. This is an unofficial release by Trail of Bits.")
 set(CPACK_PACKAGE_NAME "sleigh")
 set(CPACK_PACKAGE_VENDOR "Trail of Bits")
 set(CPACK_PACKAGE_CONTACT "info@trailofbits.com")
