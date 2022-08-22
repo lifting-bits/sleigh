@@ -30,16 +30,15 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "10.2")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "aad60ecdd319f4db6e5cbafc0516db218e56988b")
+  set(ghidra_head_git_tag "03bd4b45d00c2bdd46632b01408de2544d87287c")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
     PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
     "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
-    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0002-Initialize-ID-lookup-tables-to-fix-sleighexample.patch"
-    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0003-Add-include-guards-to-decompiler-C-headers.patch"
-    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0004-Fix-UBSAN-errors-in-decompiler.patch"
-    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0005-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0002-Add-include-guards-to-decompiler-C-headers.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0003-Fix-UBSAN-errors-in-decompiler.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0004-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
