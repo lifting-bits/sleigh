@@ -37,21 +37,15 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y \
-          clang \
-          rpm \
+        sudo apt-get install -y rpm
+
+        # Use Homebrew for latest build tools for use in CI
+        brew install \
+          cmake \
+          ccache \
           doxygen \
           xdot \
           graphviz
-
-        # Minimum supported CMake version testing
-        curl -L "https://github.com/Kitware/CMake/releases/download/v3.18.0/cmake-3.18.0-Linux-$(uname -m).sh" -o /tmp/cmake-install.sh
-        mkdir -p "${HOME}/.local"
-        bash /tmp/cmake-install.sh --skip-license --exclude-subdir "--prefix=${HOME}/.local"
-
-        # Use Homebrew for latest build tool version for use in CI
-        brew install \
-          ccache
 
     - name: Install macOS system dependencies
       if: runner.os == 'macOS'
@@ -65,7 +59,7 @@ jobs:
 
     - name: Install Windows system dependencies
       if: runner.os == 'Windows'
-      run: choco install ccache
+      run: choco install ccache doxygen.install graphviz
 
     - name: Generate cache key
       id: cache_key
@@ -96,6 +90,9 @@ jobs:
         # This should be multiplied by the number of compilation jobs and be no
         # larger than 5G, which is the cache max size
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_MAXSIZE=400M\n")
+        # Tell CMake to use ccache
+        file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_CXX_COMPILER_LAUNCHER=ccache\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_C_COMPILER_LAUNCHER=ccache\n")
         # Clear stats before every build
         execute_process(COMMAND ccache -z)
 
@@ -103,17 +100,10 @@ jobs:
       run: cmake --version
 
     - name: Configure the project
-      run: cmake
-        -S .
-        -B build
-        -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-        -DCMAKE_C_COMPILER_LAUNCHER=ccache
+      shell: pwsh
+      run: cmake "--preset=ci-$("${{ matrix.os }}".split("-")[0])"
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -Dsleigh_RELEASE_TYPE=${{ matrix.release }}
-        -Dsleigh_ENABLE_TESTS=ON
-        -Dsleigh_ENABLE_EXAMPLES=ON
-        -Dsleigh_ENABLE_PACKAGING=ON
-        -Dsleigh_ENABLE_DOCUMENTATION=ON
 
     - name: Build the project
       run: cmake
@@ -122,17 +112,27 @@ jobs:
         -j 2
         -v
 
+    - name: Build the docs
+      run: cmake
+        --build build
+        --config ${{ matrix.build_type }}
+        --target docs
+        -v
+
     - name: Run the example
       run: cmake
         --build build
         -j 2
         --config ${{ matrix.build_type }}
-        --target sleighexample_runner
+        --target sleigh_example_runner
 
     - name: Run the install target
       run: cmake --install build
         --config ${{ matrix.build_type }}
         --prefix install
+
+    - name: Smoketest sleigh lift
+      run: ./install/bin/sleigh-lift disassemble x86-64.sla 4881ecc00f0000
 
     - name: Test install directory
       working-directory: tests/find_package
@@ -141,6 +141,15 @@ jobs:
         cmake --build build -j 2 --config ${{ matrix.build_type }}
         cd build
         ctest -V -C ${{ matrix.build_type }}
+
+    - name: Test tool install directory
+      working-directory: extra-tools/sleigh-lift
+      run: |
+        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --build build -j 2 --config ${{ matrix.build_type }}
+        cmake --install build --config ${{ matrix.build_type }} --prefix install
+        ./install/bin/sleigh-lift --version
+        ./install/bin/sleigh-lift disassemble x86-64.sla 4881ecc00f0000
 
     - name: Create the packages
       run: cmake
@@ -224,7 +233,7 @@ jobs:
     # failure state
     - name: Run the tests
       working-directory: build
-      run: ctest -V -C ${{ matrix.build_type }}
+      run: ctest -VV -C ${{ matrix.build_type }}
 
     - name: ccache stats
       run: ccache -s --verbose

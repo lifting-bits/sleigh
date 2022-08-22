@@ -1,45 +1,45 @@
 # Ghidra Source code
 
-This project uses CMake's [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) module to set up the Ghidra source tree. This means we can apply [patches](../patches) that live only in this repo for small changes to features like packaging or running tests.
+This project uses CMake's [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) module to set up the Ghidra source tree. Using `FetchContent` means we can apply [patches](patches) that live only in this repo for minor changes that affect usage, packaging, or running tests.
 
-By default, CMake pulls a stable version of Ghidra. You may use a more recent commit by specifying `-Dsleigh_GHIDRA_RELEASE_TYPE=HEAD` during CMake configuration.
-
-See the `sleigh_GHIDRA_*` CMake cache variable comments for more details on how to customize your Ghidra source checkout.
+By default, CMake pulls a stable version of Ghidra. During CMake configuration, you may use a more recent commit by specifying `-Dsleigh_RELEASE_TYPE=HEAD`.
 
 ## Advanced Usage Notes
 
-Always reference the [CMake Documentation](https://cmake.org/cmake/help/latest/) for explanation of features and cache variable usages/effects.
+Always reference the [CMake Documentation](https://cmake.org/cmake/help/latest/) and check CMake cache variables with `ccmake build` to discover all available options.
 
 ### Using your own Ghidra checkout
 
-This method is useful for developing new features on top of the latest commits in Ghidra's default branch. If the commit(s) at the tip of Ghidra's default branch are not supported by this repo, we welcome pull requests to update support and pin that commit.
+This method helps develop new features on top of the latest commits in Ghidra's default branch. Please open an issue or pull request if the commit at the tip of Ghidra's default branch does not build.
 
-**Arbitrary Ghidra checkouts are not officially supported.**
+**Arbitrary Ghidra checkouts/commits are not officially supported.**
 
-If you want to use your own Ghidra source checkout, then set the following during CMake configuration:
+Set the following during CMake configuration if you want to use your own Ghidra source checkout:
 
-* `-Dsleigh_GHIDRA_RELEASE_TYPE=HEAD` if using commits on Ghidra's default branch (`master`) or any branch that may be incompatible with the current stable version.
+* `-Dsleigh_RELEASE_TYPE=HEAD` if using commits on Ghidra's default branch (`master`) or any branch that may be incompatible with the current stable version.
 
-* `-DFETCHCONTENT_SOURCE_DIR_GHIDRASOURCE=<path to your own Ghidra source>`. Remember, no existing [patches](../patches/HEAD) will be applied to your own source directory.
+* `-DFETCHCONTENT_SOURCE_DIR_GHIDRASOURCE=<path to your own Ghidra source>`. Remember, CMake will not apply any [patches](patches/HEAD) to the specified source directory.
 
 ```bash
 git clone https://github.com/NationalSecurityAgency/ghidra src/ghidra
 
 cmake -B build-dev-head -S . \
-  -Dsleigh_GHIDRA_RELEASE_TYPE=HEAD \
-  -DFETCHCONTENT_SOURCE_DIR_GHIDRASOURCE="$(pwd)/src/ghidra"
+  -Dsleigh_RELEASE_TYPE=HEAD \
+  "-DFETCHCONTENT_SOURCE_DIR_GHIDRASOURCE=$PWD/src/ghidra"
 ```
 
 ### Reusing Downloaded Ghidra Source
 
-If you want to share a single Ghidra source checkout/clone for multiple build directories, the [_FetchContent Base Directory_](https://cmake.org/cmake/help/latest/module/FetchContent.html#variable:FETCHCONTENT_BASE_DIR) (`FETCHCONTENT_BASE_DIR`) should encode the build generator name and be located outside of the build directory (the name would look something like `cmake_fc_ghidra_${sleigh_GHIDRA_RELEASE_TYPE}_${CMAKE_GENERATOR}`).
+The following scenario is discouraged. It can be brittle if everything does not match up. It is only helpful if you do not want to apply Ghidra source patches yourself.
 
-Initially, this means that every new build generator used for building the project will have to re-download the ghidra source tree, but any subsequent run with an already-initialize generator should be faster and skip the download.
+Suppose you want to share a single Ghidra source checkout/clone for multiple build directories. In that case, the _FetchContent Base Directory_ (`FETCHCONTENT_BASE_DIR`) should encode the build generator name and be located outside of the build directory (the name would look something like `cmake_fc_ghidra_${sleigh_RELEASE_TYPE}_${CMAKE_GENERATOR}`).
+
+Initially, this means that every new build generator used for building the project will have to re-download the Ghidra source tree. Still, any subsequent run with an already-initialize generator should be faster and skip the download.
 
 ```bash
 $ cmake -B build-release -S . -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
-    -DFETCHCONTENT_BASE_DIR=./src/cmake_fc_ghidra_stable_Ninja
+    "-DFETCHCONTENT_BASE_DIR=$PWD/src/cmake_fc_ghidra_stable_Ninja"
 -- Using Ghidra version 10.0.4 at commit 5b07797
 -- Populating ghidrasource
 -- Configuring done
@@ -69,7 +69,7 @@ HEAD is now at 5b07797cb Updated 10.0.4 Change History
 
 $ cmake -B build-debug -S . -G Ninja \
     -DCMAKE_BUILD_TYPE=Debug \
-    -DFETCHCONTENT_BASE_DIR=./src/cmake_fc_ghidra_stable_Ninja
+    "-DFETCHCONTENT_BASE_DIR=$PWD/src/cmake_fc_ghidra_stable_Ninja"
 -- Using Ghidra version 10.0.4 at commit 5b07797
 -- Populating ghidrasource
 -- Configuring done
@@ -88,19 +88,19 @@ $ cmake -B build-debug -S . -G Ninja \
 ...
 ```
 
-The above also works when using `HEAD` commit of Ghidra.
+The above also works when using the `HEAD` commit of Ghidra.
 
 ```bash
 $ cmake -B build-head-release -S . -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
-    -Dsleigh_GHIDRA_RELEASE_TYPE=HEAD \
-    -DFETCHCONTENT_BASE_DIR=./src/cmake_fc_ghidra_HEAD_Ninja
+    -Dsleigh_RELEASE_TYPE=HEAD \
+    "-DFETCHCONTENT_BASE_DIR=$PWD/src/cmake_fc_ghidra_HEAD_Ninja"
 ...
 
 $ cmake -B build-head-debug -S . -G Ninja \
     -DCMAKE_BUILD_TYPE=Debug \
-    -Dsleigh_GHIDRA_RELEASE_TYPE=HEAD \
-    -DFETCHCONTENT_BASE_DIR=./src/cmake_fc_ghidra_HEAD_Ninja
+    -Dsleigh_RELEASE_TYPE=HEAD \
+    "-DFETCHCONTENT_BASE_DIR=$PWD/src/cmake_fc_ghidra_HEAD_Ninja"
 ...
 ```
 

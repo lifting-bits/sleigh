@@ -6,28 +6,34 @@
 # the LICENSE file found in the root directory of this source tree.
 #
 
-option(sleigh_ENABLE_TESTS "Set to true to enable tests" ON)
-option(sleigh_ENABLE_EXAMPLES "Set to true to build examples" ON)
-option(sleigh_ENABLE_DOCUMENTATION "Set to true to enable the documentation")
-option(sleigh_ENABLE_PACKAGING "Set to true to enable packaging")
-option(sleigh_ENABLE_SANITIZERS "Set to true to enable sanitizers")
-set(sleigh_ADDITIONAL_PATCHES "" CACHE STRING
-  "The accepted patch format is git patch files, to be applied via git am. The format of the list is a CMake semicolon separated list.")
+# ---- Developer mode ----
 
-# Internal debug settings
-option(sleigh_OPACTION_DEBUG "Turns on all the action tracing facilities")
-option(sleigh_MERGEMULTI_DEBUG "Check for MULTIEQUAL and INDIRECT intersections")
-option(sleigh_BLOCKCONSISTENT_DEBUG "Check that block graph structure is consistent")
-option(sleigh_DFSVERIFY_DEBUG "Make sure that the block ordering algorithm produces a true depth first traversal of the dominator tree")
-
-# Additional internal settings
-option(sleigh_CPUI_STATISTICS "Turn on collection of cover and cast statistics")
-option(sleigh_CPUI_RULECOMPILE "Allow user defined dynamic rules")
-
-# Sanity checking
-if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-  set(sleigh_ENABLE_DOCUMENTATION OFF CACHE BOOL "Unsupported on Windows" FORCE)
+# Developer mode enables targets and code paths in the CMake scripts that are
+# only relevant for the developer(s) of sleigh
+# Targets necessary to build the project must be provided unconditionally, so
+# consumers can trivially build and package the project
+if(PROJECT_IS_TOP_LEVEL)
+  option(sleigh_DEVELOPER_MODE "Enable developer mode")
+  option(BUILD_SHARED_LIBS "Build shared libs. (Untested and not supported)")
 endif()
+
+if(sleigh_DEVELOPER_MODE)
+  option(sleigh_BUILD_DOCUMENTATION "Build documentation using Doxygen")
+  set(
+    DOXYGEN_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/docs"
+    CACHE PATH "Path for the generated Doxygen documentation"
+  )
+endif()
+
+include(CMakeDependentOption)
+
+# Optional project target building
+option(sleigh_BUILD_TOOLS "Build and install executable tools" "${PROJECT_IS_TOP_LEVEL}")
+option(sleigh_BUILD_SLEIGHSPECS "Build and install sleigh spec files" "${PROJECT_IS_TOP_LEVEL}")
+
+# Add-ons by ToB
+option(sleigh_BUILD_SUPPORT "Build ToB support libraries" "${PROJECT_IS_TOP_LEVEL}")
+cmake_dependent_option(sleigh_BUILD_EXTRATOOLS "Build extra ToB sleigh tools" "${PROJECT_IS_TOP_LEVEL}" "sleigh_BUILD_SUPPORT" OFF)
 
 # ---- Warning guard ----
 

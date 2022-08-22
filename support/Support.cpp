@@ -6,9 +6,9 @@
   the LICENSE file found in the root directory of this source tree.
 */
 
-#include "SpecFilePaths.h"
+#include "sleigh/Support.h"
 
-#include "Support.h"
+#include "sleigh/SpecFilePaths.h"
 
 namespace sleigh {
 
@@ -18,7 +18,7 @@ std::optional<std::filesystem::path>
 FindSpecFileInSearchPath(std::string_view file_name,
                          std::filesystem::path search_path) {
   search_path.append("Ghidra").append("Processors");
-  // Check whether a SLEIGH installation exists at this path
+  // Check whether a Sleigh installation exists at this path
   if (!std::filesystem::is_directory(search_path)) {
     return {};
   }

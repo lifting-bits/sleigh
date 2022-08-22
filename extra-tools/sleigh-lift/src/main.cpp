@@ -256,7 +256,7 @@ int main(int argc, char *argv[]) {
               << std::endl;
     return EXIT_FAILURE;
   }
-  // Put together SLEIGH components
+  // Put together Sleigh components
 #ifdef sleigh_RELEASE_IS_HEAD
   AttributeId::initialize();
   ElementId::initialize();
@@ -328,7 +328,7 @@ int main(int argc, char *argv[]) {
   }
 
   // In order to parse and validate the byte string properly, we need to get the
-  // address size from SLEIGH. Therefore this needs to happen after
+  // address size from Sleigh. Therefore this needs to happen after
   // initialization.
   //
   // Ensure that we don't start disassembling until we've set the image buffer.

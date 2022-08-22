@@ -8,7 +8,7 @@ import tempfile
 from typing import AnyStr, Union
 
 PROJECT_ROOT = pathlib.Path(__file__).parent.parent.resolve()
-HEAD_SPEC_FILE = PROJECT_ROOT / "spec-files-list" / "spec_files_HEAD.cmake"
+HEAD_SPEC_FILE = PROJECT_ROOT / "src" / "spec_files_HEAD.cmake"
 assert HEAD_SPEC_FILE.exists()
 SETUP_GHIDRA_FILE = PROJECT_ROOT / "src" / "setup-ghidra-source.cmake"
 assert SETUP_GHIDRA_FILE.exists()

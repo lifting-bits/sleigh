@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2022-present, Trail of Bits, Inc.
+# All rights reserved.
+#
+# This source code is licensed in accordance with the terms specified in
+# the LICENSE file found in the root directory of this source tree.
+#
+
 set(spec_file_list
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/6502/data/languages/6502.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/6502/data/languages/65c02.slaspec"
