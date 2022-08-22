@@ -36,10 +36,9 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   set(ghidra_patches
     PATCH_COMMAND git am --ignore-space-change --ignore-whitespace --no-gpg-sign
     "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
-    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0002-Initialize-ID-lookup-tables-to-fix-sleighexample.patch"
-    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0003-Add-include-guards-to-decompiler-C-headers.patch"
-    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0004-Fix-UBSAN-errors-in-decompiler.patch"
-    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0005-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0002-Add-include-guards-to-decompiler-C-headers.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0003-Fix-UBSAN-errors-in-decompiler.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/patches/HEAD/0004-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
