@@ -46,7 +46,7 @@ FindSpecFileInSearchPath(std::string_view file_name,
 
 const std::vector<std::filesystem::path> gDefaultSearchPaths = {
     // Derived from the installation
-    kSleighSpecInstallDir,
+    kSleighFullSpecInstallDir,
     // Derived from the build
     kSleighSpecBuildDir,
     // Common install locations
