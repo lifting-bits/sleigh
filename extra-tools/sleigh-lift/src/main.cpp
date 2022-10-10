@@ -88,7 +88,7 @@ static std::string ParseHexBytes(std::string_view bytes, uint64_t addr,
                 << "' specified in bytes arg." << std::endl;
       exit(EXIT_FAILURE);
     }
-    const uint64_t addr_mask = ~0ULL >> (64UL - addr_size);
+    const uint64_t addr_mask = ~0ULL >> (64UL - addr_size * 8);
     auto byte_addr = addr + (i / 2);
     auto masked_addr = byte_addr & addr_mask;
     // Make sure that if a really big number is specified for `address`,
