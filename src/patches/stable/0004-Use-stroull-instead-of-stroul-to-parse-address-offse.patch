@@ -1,7 +1,8 @@
-From b719ae7f3716b303ec0c3d8c79e7d55c7e7cbfdf Mon Sep 17 00:00:00 2001
+From e7e6917d138a483a3d50b7262865cda0ad58ed66 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Wed, 3 Aug 2022 20:39:30 +1000
-Subject: [PATCH] Use `stroull` instead of `stroul` to parse address offsets
+Subject: [PATCH 4/4] Use `stroull` instead of `stroul` to parse address
+ offsets
 
 ---
  Ghidra/Features/Decompiler/src/decompile/cpp/space.cc | 7 ++++++-
@@ -33,5 +34,5 @@ index 5f07edf8e..b86c9beae 100644
      enddata = (const char *) tmpdata;
      if (enddata - s.c_str() == s.size()) { // If no size or offset override
 -- 
-2.32.1 (Apple Git-133)
+2.38.1
 

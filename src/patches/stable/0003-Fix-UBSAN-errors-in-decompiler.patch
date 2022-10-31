@@ -1,7 +1,7 @@
-From 33ff58323d84c0ba57091b5bd408907a7646fd67 Mon Sep 17 00:00:00 2001
+From 3d76488739c9655c32b939d9a2cd0f8e433f65a6 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Tue, 2 Aug 2022 17:04:19 +1000
-Subject: [PATCH] Fix UBSAN errors in decompiler
+Subject: [PATCH 3/4] Fix UBSAN errors in decompiler
 
 ---
  .../Decompiler/src/decompile/cpp/address.cc    |  4 ++--
@@ -159,7 +159,7 @@ index 7927becec..4987e37ec 100644
    return res;
  }
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index 2a5d92040..d65ae2918 100644
+index 2a5d92040..314863b95 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 @@ -974,7 +974,12 @@ int4 RulePullsubIndirect::applyOp(PcodeOp *op,Funcdata &data)
@@ -225,7 +225,7 @@ diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh b/Ghidra/
 index dccf0437d..f7f598667 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
-@@ -46,7 +46,7 @@ private:
+@@ -46,7 +46,7 @@ class ConstTpl {
    static void printHandleSelector(ostream &s,v_field val);
    static v_field readHandleSelector(const string &name);
  public:
@@ -289,5 +289,5 @@ index ab99382a3..67d92c573 100644
          uintb true_result = ((uintb)(int32_t)f) & 0xffffffff;
          uintb encoding = format.getEncoding(f);
 -- 
-2.32.1 (Apple Git-133)
+2.38.1
 

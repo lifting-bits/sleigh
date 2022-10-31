@@ -7,6 +7,10 @@ These patches primarily support packaging and testing, or fixing critical issues
 The two directories are detailed below:
 
 * [`stable`](./stable) --- Patches applied to the officially released _stable_ version of Ghidra.
-* [`HEAD`](./HEAD) --- Patches applied to Ghidra's newer _HEAD_ commit (as listed in [`../src/setup-ghidra-source.cmake`](../src/setup-ghidra-source.cmake) file).
+* [`HEAD`](./HEAD) --- Patches applied to Ghidra's newer _HEAD_ commit (as listed in [`../setup-ghidra-source.cmake`](../setup-ghidra-source.cmake) file).
 
-See the [`../src/README.md`](../src/README.md) for more details on how these patches are used/applied.
+See the [`../README.md`](../README.md) for more details on how these patches are used/applied.
+
+## Patch Generation
+
+These patches are generated from a forked Ghidra repository with a specified branching scheme and directions for generating these patches. During the event of patch conflicts, the hope is that working on those branches will make managing patches easier.
