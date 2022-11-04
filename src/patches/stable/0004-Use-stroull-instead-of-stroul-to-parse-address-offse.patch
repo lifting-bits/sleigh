@@ -1,14 +1,15 @@
-From b719ae7f3716b303ec0c3d8c79e7d55c7e7cbfdf Mon Sep 17 00:00:00 2001
+From 0891ecb91231978ef912c3215925bcdea6f14ce7 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
-Date: Wed, 3 Aug 2022 20:39:30 +1000
-Subject: [PATCH] Use `stroull` instead of `stroul` to parse address offsets
+Date: Wed, 3 Aug 2022 20:01:18 +1000
+Subject: [PATCH 4/4] Use `stroull` instead of `stroul` to parse address
+ offsets
 
 ---
  Ghidra/Features/Decompiler/src/decompile/cpp/space.cc | 7 ++++++-
  1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
-index 5f07edf8e..b86c9beae 100644
+index 40a3e3bfe..ff6f282ca 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
 @@ -16,6 +16,8 @@
@@ -17,10 +18,10 @@ index 5f07edf8e..b86c9beae 100644
  
 +#include <climits>
 +
- /// Calculate \e highest based on \e addressSize, and \e wordsize.
- /// This also calculates the default pointerLowerBound
- void AddrSpace::calcScaleMask(void)
-@@ -260,7 +262,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
+ AttributeId ATTRIB_BASE = AttributeId("base",89);
+ AttributeId ATTRIB_DEADCODEDELAY = AttributeId("deadcodedelay",90);
+ AttributeId ATTRIB_DELAY = AttributeId("delay", 91);
+@@ -268,7 +270,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
      }
    }
    catch(LowlevelError &err) {	// Name doesn't exist
@@ -33,5 +34,5 @@ index 5f07edf8e..b86c9beae 100644
      enddata = (const char *) tmpdata;
      if (enddata - s.c_str() == s.size()) { // If no size or offset override
 -- 
-2.32.1 (Apple Git-133)
+2.38.1
 

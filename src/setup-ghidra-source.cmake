@@ -22,7 +22,7 @@ set_property(CACHE sleigh_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 find_package(Git REQUIRED)
 
 # Ghidra pinned stable version commit
-set(ghidra_version "10.1.5")
+set(ghidra_version "10.2")
 set(ghidra_git_tag "Ghidra_${ghidra_version}_build")
 set(ghidra_shallow TRUE)
 
@@ -97,12 +97,12 @@ set(sleigh_core_source_list
   "${library_root}/translate.cc"
   "${library_root}/opcodes.cc"
   "${library_root}/globalcontext.cc"
+  "${library_root}/marshal.cc"
 )
-if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-  list(APPEND sleigh_core_source_list
-    "${library_root}/marshal.cc"
-  )
-endif()
+#if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+#  list(APPEND sleigh_core_source_list
+#  )
+#endif()
 
 set(sleigh_deccore_source_list
   "${library_root}/capability.cc"
@@ -157,12 +157,12 @@ set(sleigh_deccore_source_list
   "${library_root}/memstate.cc"
   "${library_root}/opbehavior.cc"
   "${library_root}/paramid.cc"
+  "${library_root}/unionresolve.cc"
 )
-if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-  list(APPEND sleigh_deccore_source_list
-    "${library_root}/unionresolve.cc"
-  )
-endif()
+#if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+#  list(APPEND sleigh_deccore_source_list
+#  )
+#endif()
 
 set(sleigh_extra_source_list
   "${library_root}/callgraph.cc"

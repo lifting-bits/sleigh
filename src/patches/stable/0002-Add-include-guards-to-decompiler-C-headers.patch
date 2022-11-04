@@ -1,7 +1,7 @@
-From 143296b212e6c3c8bc8cc1e0d88511f5bbc858ff Mon Sep 17 00:00:00 2001
+From 5189064a0b81b74b5844b461f2f2b4d1a398ab59 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Thu, 28 Jul 2022 09:20:03 -0400
-Subject: [PATCH] Add include guards to decompiler C++ headers
+Subject: [PATCH 2/4] Add include guards to decompiler C++ headers
 
 ---
  Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh    | 5 +++++
@@ -13,7 +13,7 @@ Subject: [PATCH] Add include guards to decompiler C++ headers
  6 files changed, 32 insertions(+)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh
-index 9d1f21d04..4f5c8ac2b 100644
+index 875d3bb78..6ade01ecc 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh
 @@ -17,6 +17,9 @@
@@ -26,7 +26,7 @@ index 9d1f21d04..4f5c8ac2b 100644
  #include "sleigh_arch.hh"
  #include "loadimage_bfd.hh"
  
-@@ -45,3 +48,5 @@ class BfdArchitecture : public SleighArchitecture {
+@@ -47,3 +50,5 @@ class BfdArchitecture : public SleighArchitecture {
    BfdArchitecture(const string &fname,const string &targ,ostream *estream);	///< Constructor
    virtual ~BfdArchitecture(void) {}
  };
@@ -72,7 +72,7 @@ index 3ca912dd6..0b70d8b22 100644
 +
 +#endif
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.hh
-index 7457a6303..a99fcbcd8 100644
+index 2245840a0..490abf901 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.hh
 @@ -15,6 +15,10 @@
@@ -86,13 +86,13 @@ index 7457a6303..a99fcbcd8 100644
  #include "sleigh_arch.hh"
  #include "loadimage.hh"
  
-@@ -44,3 +48,4 @@ class RawBinaryArchitecture : public SleighArchitecture {
+@@ -46,3 +50,4 @@ class RawBinaryArchitecture : public SleighArchitecture {
    virtual ~RawBinaryArchitecture(void) {}
  };
  
 +#endif
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.hh
-index edb19aed3..78c8ad21c 100644
+index e7ab19185..8fd9ba2fd 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.hh
 @@ -16,6 +16,9 @@
@@ -112,7 +112,7 @@ index edb19aed3..78c8ad21c 100644
 +
 +#endif
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.hh
-index 4d404e6ad..0154582b0 100644
+index d395fb8a3..6371148b0 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.hh
 @@ -15,6 +15,10 @@
@@ -126,12 +126,12 @@ index 4d404e6ad..0154582b0 100644
  #include "sleigh_arch.hh"
  #include "loadimage_xml.hh"
  
-@@ -43,3 +47,5 @@ class XmlArchitecture : public SleighArchitecture {
+@@ -45,3 +49,5 @@ class XmlArchitecture : public SleighArchitecture {
    XmlArchitecture(const string &fname,const string &targ,ostream *estream);	///< Constructor
    virtual ~XmlArchitecture(void) {}
  };
 +
 +#endif
 -- 
-2.37.1
+2.38.1
 

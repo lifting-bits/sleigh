@@ -1,11 +1,3 @@
-#
-# Copyright (c) 2022-present, Trail of Bits, Inc.
-# All rights reserved.
-#
-# This source code is licensed in accordance with the terms specified in
-# the LICENSE file found in the root directory of this source tree.
-#
-
 set(spec_file_list
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/6502/data/languages/6502.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/6502/data/languages/65c02.slaspec"
@@ -60,7 +52,9 @@ set(spec_file_list
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/HCS08/data/languages/HC05.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/HCS08/data/languages/HC08.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/HCS08/data/languages/HCS08.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/HCS12/data/languages/HC12.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/HCS12/data/languages/HCS12.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/HCS12/data/languages/HCS12X.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/JVM/data/languages/JVM.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/M8C/data/languages/m8c.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/MC6800/data/languages/6805.slaspec"
@@ -90,6 +84,8 @@ set(spec_file_list
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_4xx_be.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_4xx_le.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_be.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_e500_be.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_e500_le.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_le.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_quicciii_be.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_quicciii_le.slaspec"

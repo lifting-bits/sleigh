@@ -115,11 +115,8 @@
 #include <sleigh/varnode.hh>
 #include <sleigh/xml.hh>
 #include <sleigh/xml_arch.hh>
-
-#ifdef sleigh_RELEASE_IS_HEAD
 #include <sleigh/unionresolve.hh>
 #include <sleigh/marshal.hh>
-#endif
 
 #ifndef _MSC_VER
 #pragma GCC diagnostic pop
