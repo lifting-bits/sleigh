@@ -37,17 +37,7 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y rpm
-
-        # Use Homebrew for latest build tools for use in CI
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-        echo "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin" >> $GITHUB_PATH
-        brew install \
-          cmake \
-          ccache \
-          doxygen \
-          xdot \
-          graphviz
+        sudo apt-get install -y rpm ccache doxygen graphviz xdot
 
     - name: Install macOS system dependencies
       if: runner.os == 'macOS'
@@ -61,7 +51,11 @@ jobs:
 
     - name: Install Windows system dependencies
       if: runner.os == 'Windows'
-      run: choco install ccache doxygen.install graphviz
+      uses: nick-fields/retry@v2
+      with:
+        timeout_minutes: 10
+        max_attempts: 3
+        command: choco install ccache doxygen.install graphviz
 
     - name: Generate cache key
       id: cache_key
@@ -238,4 +232,4 @@ jobs:
       run: ctest -VV -C ${{ matrix.build_type }}
 
     - name: ccache stats
-      run: ccache -s --verbose
+      run: ccache -s
