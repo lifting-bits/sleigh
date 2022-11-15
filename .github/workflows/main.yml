@@ -61,8 +61,8 @@ jobs:
       shell: cmake -P {0}
       run: |
         string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_KEY=build_${{ matrix.os }}_type-${{ matrix.build_type }}-${{ matrix.release }}")
-        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_TIMESTAMP=${current_date}")
+        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_KEY=build_${{ matrix.os }}_type-${{ matrix.build_type }}-${{ matrix.release }}\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_TIMESTAMP=${current_date}\n")
 
     - name: Update the cache (ccache)
       uses: actions/cache@v3
