@@ -1,7 +1,7 @@
-From 42dd4d97396e7769bbbaca78c7a546835d72d974 Mon Sep 17 00:00:00 2001
+From e2eb3c6789bb5e84720174f9c3652165174c5c3a Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Mon, 7 Feb 2022 02:02:03 +1100
-Subject: [PATCH 3/4] Fix UBSAN errors in decompiler
+Subject: [PATCH 3/5] Fix UBSAN errors in decompiler
 
 ---
  .../Decompiler/src/decompile/cpp/address.cc    |  4 ++--
@@ -61,7 +61,7 @@ index 19ed41c63..d1bd842d8 100644
  
  void ParameterBasic::setTypeLock(bool val)
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
-index 2b26961f0..117518e24 100644
+index 0c4275f15..bdbda0ae6 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 @@ -501,7 +501,13 @@ void Funcdata::setHighLevel(void)
@@ -159,7 +159,7 @@ index 49128f7e6..133da8178 100644
    return res;
  }
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index 9701f642b..7e8030ae8 100644
+index 973a7a31d..3955b836b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 @@ -974,7 +974,12 @@ int4 RulePullsubIndirect::applyOp(PcodeOp *op,Funcdata &data)
@@ -176,7 +176,7 @@ index 9701f642b..7e8030ae8 100644
    consume = ~consume;
    if ((consume & indir->getIn(0)->getConsume())!=0) return 0;
  
-@@ -6788,8 +6793,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
+@@ -6805,8 +6810,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *sb = op->getIn(0);
    Datatype *sbType = sb->getTypeReadFacing(op);
    if (sbType->getMetatype() != TYPE_PTR) return 0;
@@ -188,7 +188,7 @@ index 9701f642b..7e8030ae8 100644
    Varnode *vn1 = op->getIn(1);
    if (!vn1->isConstant()) return 0;
    Varnode *outvn = op->getOut();
-@@ -8272,7 +8278,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
+@@ -8289,7 +8295,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *outvn = op->getOut();
    int4 flowsize = outvn->getSize();
    uintb mask = calc_mask( flowsize );
@@ -289,5 +289,5 @@ index ab99382a3..67d92c573 100644
          uintb true_result = ((uintb)(int32_t)f) & 0xffffffff;
          uintb encoding = format.getEncoding(f);
 -- 
-2.38.1
+2.39.0
 

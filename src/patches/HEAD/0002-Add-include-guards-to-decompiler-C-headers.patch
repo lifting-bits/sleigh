@@ -1,7 +1,7 @@
-From 44c439d879c18c2873d5605821132957680a4405 Mon Sep 17 00:00:00 2001
+From 112345bb83fc3a487dac69bc1b772be0659cdf54 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Thu, 28 Jul 2022 09:20:03 -0400
-Subject: [PATCH] Add include guards to decompiler C++ headers
+Subject: [PATCH 2/5] Add include guards to decompiler C++ headers
 
 ---
  Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh    | 5 +++++
@@ -133,5 +133,5 @@ index d395fb8a3..6371148b0 100644
 +
 +#endif
 -- 
-2.37.1
+2.39.0
 

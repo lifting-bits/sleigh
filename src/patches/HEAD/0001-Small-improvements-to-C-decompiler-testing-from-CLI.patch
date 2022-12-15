@@ -1,7 +1,7 @@
-From 031d9830abe8517540389672fd22dc479e46d696 Mon Sep 17 00:00:00 2001
+From 1b1e2f4b7c4a15d667fe16bcf954e669ff548875 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Sun, 13 Feb 2022 12:59:42 -0500
-Subject: [PATCH] Small improvements to C++ decompiler testing from CLI
+Subject: [PATCH 1/5] Small improvements to C++ decompiler testing from CLI
 
 * Fixes argument parsing to accept more than one option for specifying
   paths.
@@ -129,7 +129,7 @@ index 8b762c5b1..a138f511d 100644
  
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.cc
-index 66f8d3fa2..c136a964b 100644
+index 6311dba06..4f7110bb4 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.cc
 @@ -304,7 +304,7 @@ void FunctionTestCollection::runTests(list<string> &lateStream)
@@ -161,5 +161,5 @@ index 52125b401..46abd6bce 100644
  
  #endif
 -- 
-2.35.1
+2.39.0
 

@@ -42,6 +42,7 @@ set(ghidra_patches
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0002-Add-include-guards-to-decompiler-C-headers.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0003-Fix-UBSAN-errors-in-decompiler.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0004-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-Remove-using-namespace-std-from-headers.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
@@ -50,7 +51,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "10.3")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "db932d222804311f08ee3c10273100395d58a082")
+  set(ghidra_head_git_tag "4e1fcb6a305ac25accf7df7774b5054b3148261a")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
@@ -61,6 +62,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Add-include-guards-to-decompiler-C-headers.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Fix-UBSAN-errors-in-decompiler.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-Remove-using-namespace-std-from-headers.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
