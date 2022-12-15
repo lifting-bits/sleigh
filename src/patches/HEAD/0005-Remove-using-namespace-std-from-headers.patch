@@ -1,4 +1,4 @@
-From b4d101990c25d5bf2506741836afefa98d997fc4 Mon Sep 17 00:00:00 2001
+From 8b678368185b180f0d59b14c870ad04e2971d1a2 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Wed, 2 Nov 2022 19:41:19 -0400
 Subject: [PATCH 5/5] Remove 'using namespace std' from headers
@@ -67,7 +67,7 @@ necessary.
  .../Decompiler/src/decompile/cpp/fspec.cc     |   2 +
  .../Decompiler/src/decompile/cpp/fspec.hh     | 154 ++---
  .../Decompiler/src/decompile/cpp/funcdata.cc  |   2 +
- .../Decompiler/src/decompile/cpp/funcdata.hh  |  84 +--
+ .../Decompiler/src/decompile/cpp/funcdata.hh  |  86 +--
  .../src/decompile/cpp/funcdata_block.cc       |   2 +
  .../src/decompile/cpp/funcdata_op.cc          |   2 +
  .../src/decompile/cpp/funcdata_varnode.cc     |   2 +
@@ -114,7 +114,7 @@ necessary.
  .../Decompiler/src/decompile/cpp/memstate.cc  |   2 +
  .../Decompiler/src/decompile/cpp/memstate.hh  |  12 +-
  .../Decompiler/src/decompile/cpp/merge.cc     |   2 +
- .../Decompiler/src/decompile/cpp/merge.hh     |  26 +-
+ .../Decompiler/src/decompile/cpp/merge.hh     |  30 +-
  .../Decompiler/src/decompile/cpp/op.cc        |   2 +
  .../Decompiler/src/decompile/cpp/op.hh        |  56 +-
  .../src/decompile/cpp/opbehavior.cc           |   2 +
@@ -192,7 +192,7 @@ necessary.
  .../Decompiler/src/decompile/cpp/transform.cc |   2 +
  .../Decompiler/src/decompile/cpp/transform.hh |  16 +-
  .../Decompiler/src/decompile/cpp/translate.cc |   2 +
- .../Decompiler/src/decompile/cpp/translate.hh |  46 +-
+ .../Decompiler/src/decompile/cpp/translate.hh |  48 +-
  .../Decompiler/src/decompile/cpp/type.cc      |   2 +
  .../Decompiler/src/decompile/cpp/type.hh      | 126 ++--
  .../src/decompile/cpp/typegrp_ghidra.cc       |   2 +
@@ -206,11 +206,11 @@ necessary.
  .../Decompiler/src/decompile/cpp/userop.cc    |   2 +
  .../Decompiler/src/decompile/cpp/userop.hh    |  48 +-
  .../Decompiler/src/decompile/cpp/variable.cc  |   2 +
- .../Decompiler/src/decompile/cpp/variable.hh  |   8 +-
+ .../Decompiler/src/decompile/cpp/variable.hh  |  12 +-
  .../Decompiler/src/decompile/cpp/varmap.cc    |   2 +
  .../Decompiler/src/decompile/cpp/varmap.hh    |  38 +-
  .../Decompiler/src/decompile/cpp/varnode.cc   |   2 +
- .../Decompiler/src/decompile/cpp/varnode.hh   |  22 +-
+ .../Decompiler/src/decompile/cpp/varnode.hh   |  24 +-
  .../Decompiler/src/decompile/cpp/xml.cc       |   2 +
  .../Decompiler/src/decompile/cpp/xml.hh       | 148 +++--
  .../Decompiler/src/decompile/cpp/xml.y        |   2 +
@@ -220,7 +220,7 @@ necessary.
  .../src/decompile/unittests/testfloatemu.cc   |   2 +
  .../src/decompile/unittests/testmarshal.cc    |   2 +
  .../src/decompile/unittests/testtypes.cc      |   2 +
- 212 files changed, 2848 insertions(+), 2634 deletions(-)
+ 212 files changed, 2855 insertions(+), 2641 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/action.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/action.cc
 index 7b1b2062a..76fc27d72 100644
@@ -4275,7 +4275,7 @@ index 2412d35bb..602910d36 100644
  
  ElementId ELEM_AST = ElementId("ast",115);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.hh
-index ccdcd8ae3..9c6f23faa 100644
+index ccdcd8ae3..1fe83e46c 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.hh
 @@ -76,13 +76,13 @@ class Funcdata {
@@ -4367,6 +4367,15 @@ index ccdcd8ae3..9c6f23faa 100644
    const LoadGuard *getStoreGuard(PcodeOp *op) const { return heritage.getStoreGuard(op); }	///< Get LoadGuard associated with STORE op
  
    // Function prototype and call specification routines
+@@ -357,7 +357,7 @@ class Funcdata {
+     return vbank.endLoc(s,addr,pc,uniq); }
+ 
+   /// \brief Given start, return maximal range of overlapping Varnodes
+-  uint4 overlapLoc(VarnodeLocSet::const_iterator iter,vector<VarnodeLocSet::const_iterator> &bounds) const {
++  uint4 overlapLoc(VarnodeLocSet::const_iterator iter,std::vector<VarnodeLocSet::const_iterator> &bounds) const {
+     return vbank.overlapLoc(iter,bounds); }
+ 
+   /// \brief Start of all Varnodes sorted by definition address
 @@ -379,11 +379,11 @@ class Funcdata {
    VarnodeDefSet::const_iterator endDef(uint4 fl,const Address &addr) const { return vbank.endDef(fl,addr); }
  
@@ -7459,7 +7468,7 @@ index 26458054c..c027c2d54 100644
  /// cached to facilitate quick sorting.
  /// \param v is the given Varnode
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/merge.hh
-index 65349af17..09a071ec9 100644
+index 65349af17..b10890cc7 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/merge.hh
 @@ -49,7 +49,7 @@ class BlockVarnode {
@@ -7471,7 +7480,7 @@ index 65349af17..09a071ec9 100644
  };
  
  class Funcdata;
-@@ -79,8 +79,8 @@ class Funcdata;
+@@ -79,41 +79,41 @@ class Funcdata;
  ///   - Merging Varnodes that hold the same data-type
  class Merge {
    Funcdata &data;		///< The function containing the Varnodes to be merged
@@ -7481,8 +7490,12 @@ index 65349af17..09a071ec9 100644
 +  std::vector<PcodeOp *> copyTrims;	///< COPY ops inserted to facilitate merges
    bool updateHigh(HighVariable *a); ///< Make sure given HighVariable's Cover is up-to-date
    void purgeHigh(HighVariable *high); ///< Remove cached intersection tests for a given HighVariable
-   static void gatherBlockVarnodes(HighVariable *a,int4 blk,const Cover &cover,vector<Varnode *> &res);
-@@ -90,30 +90,30 @@ class Merge {
+-  static void gatherBlockVarnodes(HighVariable *a,int4 blk,const Cover &cover,vector<Varnode *> &res);
+-  static bool testBlockIntersection(HighVariable *a,int4 blk,const Cover &cover,int4 relOff,const vector<Varnode *> &blist);
++  static void gatherBlockVarnodes(HighVariable *a,int4 blk,const Cover &cover,std::vector<Varnode *> &res);
++  static bool testBlockIntersection(HighVariable *a,int4 blk,const Cover &cover,int4 relOff,const std::vector<Varnode *> &blist);
+   bool blockIntersection(HighVariable *a,HighVariable *b,int4 blk);
+   static bool mergeTestRequired(HighVariable *high_out,HighVariable *high_in);
    static bool mergeTestAdjacent(HighVariable *high_out,HighVariable *high_in);
    static bool mergeTestSpeculative(HighVariable *high_out,HighVariable *high_in);
    static bool mergeTestBasic(Varnode *vn);
@@ -14034,7 +14047,7 @@ index 6e379031a..689583858 100644
  AttributeId ATTRIB_CONTAIN = AttributeId("contain",44);
  AttributeId ATTRIB_DEFAULTSPACE = AttributeId("defaultspace",45);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/translate.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/translate.hh
-index 34a4709a8..e651aa800 100644
+index 34a4709a8..3d9476b87 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/translate.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/translate.hh
 @@ -54,7 +54,7 @@ struct UnimplError : public LowlevelError {
@@ -14148,6 +14161,15 @@ index 34a4709a8..e651aa800 100644
    JoinRecord *findJoin(uintb offset) const; ///< Find JoinRecord for \e offset in the join space
    void setDeadcodeDelay(AddrSpace *spc,int4 delaydelta); ///< Set the deadcodedelay for a specific space
    void truncateSpace(const TruncationTag &tag);	///< Mark a space as truncated from its original size
+@@ -280,7 +280,7 @@ class AddrSpaceManager {
+   void renormalizeJoinAddress(Address &addr,int4 size);
+ 
+   /// \brief Parse a string with just an \e address \e space name and a hex offset
+-  Address parseAddressSimple(const string &val);
++  Address parseAddressSimple(const std::string &val);
+ };
+ 
+ /// \brief The interface to a translation engine for a processor.
 @@ -309,7 +309,7 @@ class Translate : public AddrSpaceManager {
    uint4 unique_base;		///< Starting offset into unique space
  protected:
@@ -15729,9 +15751,27 @@ index 0155b2a88..c8720d840 100644
  AttributeId ATTRIB_REPREF = AttributeId("repref",67);
  AttributeId ATTRIB_SYMREF = AttributeId("symref",68);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh
-index f8fb0e433..e622baa71 100644
+index f8fb0e433..b132a0102 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh
+@@ -64,7 +64,7 @@ class VariablePiece {
+   HighVariable *high;			///< HighVariable owning \b this piece
+   int4 groupOffset;			///< Byte offset of \b this piece within the group
+   int4 size;				///< Number of bytes in \b this piece
+-  mutable vector<const VariablePiece *> intersection;	///< List of VariablePieces \b this piece intersects with
++  mutable std::vector<const VariablePiece *> intersection;	///< List of VariablePieces \b this piece intersects with
+   mutable Cover cover;			///< Extended cover for the piece, taking into account intersections
+ public:
+   VariablePiece(HighVariable *h,int4 offset,HighVariable *grp=(HighVariable *)0);
+@@ -83,7 +83,7 @@ class VariablePiece {
+   void adjustOffset(int4 amt);	///< Adjust every piece's offset by the given amount
+   void transferGroup(VariableGroup *newGroup);	///< Transfer \b this piece to another VariableGroup
+   void setHigh(HighVariable *newHigh) { high = newHigh; }	///< Move ownership of \b this to another HighVariable
+-  void combineOtherGroup(VariablePiece *op2,vector<HighVariable *> &mergePairs);	///< Combine two VariableGroups
++  void combineOtherGroup(VariablePiece *op2,std::vector<HighVariable *> &mergePairs);	///< Combine two VariableGroups
+ };
+ 
+ /// \brief A high-level variable modeled as a list of low-level variables, each written once
 @@ -122,7 +122,7 @@ class HighVariable {
    friend class Varnode;
    friend class Merge;
@@ -15905,7 +15945,7 @@ index 7d9acb78f..60b6ab5bd 100644
  AttributeId ATTRIB_GRP = AttributeId("grp",31);
  AttributeId ATTRIB_INPUT = AttributeId("input",32);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.hh
-index 9f2598301..9228b497b 100644
+index 9f2598301..5878a3cd8 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.hh
 @@ -47,10 +47,10 @@ struct VarnodeCompareDefLoc {
@@ -15974,6 +16014,15 @@ index 9f2598301..9228b497b 100644
  };
  
  /// \brief A container for Varnode objects from a specific function
+@@ -390,7 +390,7 @@ class VarnodeBank {
+   VarnodeLocSet::const_iterator endLoc(int4 s,const Address &addr,uint4 fl) const;
+   VarnodeLocSet::const_iterator beginLoc(int4 s,const Address &addr,const Address &pc,uintm uniq) const;
+   VarnodeLocSet::const_iterator endLoc(int4 s,const Address &addr,const Address &pc,uintm uniq) const;
+-  uint4 overlapLoc(VarnodeLocSet::const_iterator iter,vector<VarnodeLocSet::const_iterator> &bounds) const;
++  uint4 overlapLoc(VarnodeLocSet::const_iterator iter,std::vector<VarnodeLocSet::const_iterator> &bounds) const;
+   VarnodeDefSet::const_iterator beginDef(void) const { return def_tree.begin(); }	///< Beginning of Varnodes sorted by definition
+   VarnodeDefSet::const_iterator endDef(void) const { return def_tree.end(); }	///< End of Varnodes sorted by definition
+   VarnodeDefSet::const_iterator beginDef(uint4 fl) const;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc
 index fc4d1bf61..68778c5ca 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc
