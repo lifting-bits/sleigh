@@ -58,20 +58,19 @@ jobs:
         command: choco install ccache doxygen.install graphviz
 
     - name: Generate cache key
-      id: cache_key
       shell: cmake -P {0}
       run: |
         string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-        message("::set-output name=VALUE::build_${{ matrix.os }}_type-${{ matrix.build_type }}-${{ matrix.release }}")
-        message("::set-output name=timestamp::${current_date}")
+        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_KEY=build_${{ matrix.os }}_type-${{ matrix.build_type }}-${{ matrix.release }}\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_TIMESTAMP=${current_date}\n")
 
     - name: Update the cache (ccache)
       uses: actions/cache@v3
       with:
         path: "${{ github.workspace }}/ccache"
-        key: ${{ steps.cache_key.outputs.VALUE }}_ccache_${{ steps.cache_key.outputs.timestamp }}
+        key: ${{ env.CACHE_KEY }}_ccache_${{ env.CACHE_TIMESTAMP }}
         restore-keys: |
-          ${{ steps.cache_key.outputs.VALUE }}_ccache_
+          ${{ env.CACHE_KEY }}_ccache_
 
     - name: Setup ccache
       working-directory: "${{ github.workspace }}"
@@ -165,62 +164,61 @@ jobs:
     - name: Locate the packages (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo'
       shell: bash
-      id: package_locations
       run: |
-        echo ::set-output name=DEB_PACKAGE_PATH::$(ls build/*.deb)
-        echo ::set-output name=DEB_PACKAGE_NAME::$(cd build && ls *.deb)
+        echo "DEB_PACKAGE_PATH=$(ls build/*.deb)" >> $GITHUB_ENV
+        echo "DEB_PACKAGE_NAME=$(cd build && ls *.deb)" >> $GITHUB_ENV
 
-        echo ::set-output name=RPM_PACKAGE_PATH::$(ls build/*.rpm)
-        echo ::set-output name=RPM_PACKAGE_NAME::$(cd build && ls *.rpm)
+        echo "RPM_PACKAGE_PATH=$(ls build/*.rpm)" >> $GITHUB_ENV
+        echo "RPM_PACKAGE_NAME=$(cd build && ls *.rpm)" >> $GITHUB_ENV
 
         # Rename .tar.gz files for OS
         pushd build
         for f in *.tar.gz; do mv "$f" "${{ runner.os }}-$f"; done
         popd
 
-        echo ::set-output name=TGZ_PACKAGE_PATH::$(ls build/*.tar.gz)
-        echo ::set-output name=TGZ_PACKAGE_NAME::$(cd build && ls *.tar.gz)
+        echo "TGZ_PACKAGE_PATH=$(ls build/*.tar.gz)" >> $GITHUB_ENV
+        echo "TGZ_PACKAGE_NAME=$(cd build && ls *.tar.gz)" >> $GITHUB_ENV
 
     # DEB Package
     - name: Upload the DEB package artifact (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux'
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ steps.package_locations.outputs.DEB_PACKAGE_NAME }}
-        path: ${{ steps.package_locations.outputs.DEB_PACKAGE_PATH }}
+        name: ${{ env.DEB_PACKAGE_NAME }}
+        path: ${{ env.DEB_PACKAGE_PATH }}
 
     - name: Release DEB package artifact (RelWithDebInfo only)
-      uses: softprops/action-gh-release@v0.1.14
+      uses: softprops/action-gh-release@v0.1.15
       if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux' && startsWith(github.ref, 'refs/tags/') && matrix.release == 'stable'
       with:
-        files: ${{ steps.package_locations.outputs.DEB_PACKAGE_PATH }}
+        files: ${{ env.DEB_PACKAGE_PATH }}
 
     # RPM Package
     - name: Upload the RPM package artifact (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux'
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ steps.package_locations.outputs.RPM_PACKAGE_NAME }}
-        path: ${{ steps.package_locations.outputs.RPM_PACKAGE_PATH }}
+        name: ${{ env.RPM_PACKAGE_NAME }}
+        path: ${{ env.RPM_PACKAGE_PATH }}
     - name: Release RPM package artifact (RelWithDebInfo only)
-      uses: softprops/action-gh-release@v0.1.14
+      uses: softprops/action-gh-release@v0.1.15
       if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux' && startsWith(github.ref, 'refs/tags/') && matrix.release == 'stable'
       with:
-        files: ${{ steps.package_locations.outputs.RPM_PACKAGE_PATH }}
+        files: ${{ env.RPM_PACKAGE_PATH }}
 
     # TGZ Package
     - name: Upload the TGZ package artifact (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo'
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ steps.package_locations.outputs.TGZ_PACKAGE_NAME }}
-        path: ${{ steps.package_locations.outputs.TGZ_PACKAGE_PATH }}
+        name: ${{ env.TGZ_PACKAGE_NAME }}
+        path: ${{ env.TGZ_PACKAGE_PATH }}
 
     - name: Release TGZ package artifact (RelWithDebInfo only)
-      uses: softprops/action-gh-release@v0.1.14
+      uses: softprops/action-gh-release@v0.1.15
       if: matrix.build_type == 'RelWithDebInfo' && startsWith(github.ref, 'refs/tags/') && matrix.release == 'stable'
       with:
-        files: ${{ steps.package_locations.outputs.TGZ_PACKAGE_PATH }}
+        files: ${{ env.TGZ_PACKAGE_PATH }}
 
     # This step is down at the bottom because Windows fails but we still want
     # to upload the built binaries, regardless. We also want to see if/when

@@ -22,16 +22,22 @@ set_property(CACHE sleigh_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 find_package(Git REQUIRED)
 
 # Ghidra pinned stable version commit
-set(ghidra_version "10.2")
+set(ghidra_version "10.2.2")
 set(ghidra_git_tag "Ghidra_${ghidra_version}_build")
 set(ghidra_shallow TRUE)
 
 set(sleigh_ADDITIONAL_PATCHES "" CACHE STRING
   "The accepted patch format is git patch files, to be applied via git am. The format of the list is a CMake semicolon separated list.")
 
+# See this thread for more details https://github.community/t/github-actions-bot-email-address/17204/5
+set(ghidra_patch_user "github-actions[bot]")
+set(ghidra_patch_email "41898282+github-actions[bot]@users.noreply.github.com")
+
 # pinned stable patches list
 set(ghidra_patches
-  PATCH_COMMAND "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
+  PATCH_COMMAND "${GIT_EXECUTABLE}" config user.name "${ghidra_patch_user}" &&
+  "${GIT_EXECUTABLE}" config user.email "${ghidra_patch_email}" &&
+  "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0002-Add-include-guards-to-decompiler-C-headers.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0003-Fix-UBSAN-errors-in-decompiler.patch"
@@ -45,11 +51,13 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "10.3")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "0bd1c24b944d77f811bc009a6763ff576779bb1f")
+  set(ghidra_head_git_tag "db932d222804311f08ee3c10273100395d58a082")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
-    PATCH_COMMAND "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
+    PATCH_COMMAND "${GIT_EXECUTABLE}" config user.name "${ghidra_patch_user}" &&
+    "${GIT_EXECUTABLE}" config user.email "${ghidra_patch_email}" &&
+    "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Add-include-guards-to-decompiler-C-headers.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Fix-UBSAN-errors-in-decompiler.patch"
