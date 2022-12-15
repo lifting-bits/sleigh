@@ -1,4 +1,4 @@
-From 8b678368185b180f0d59b14c870ad04e2971d1a2 Mon Sep 17 00:00:00 2001
+From 64bc3df3dfad876224ad7b6bc95df14217841a8c Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Wed, 2 Nov 2022 19:41:19 -0400
 Subject: [PATCH 5/5] Remove 'using namespace std' from headers
@@ -206,7 +206,7 @@ necessary.
  .../Decompiler/src/decompile/cpp/userop.cc    |   2 +
  .../Decompiler/src/decompile/cpp/userop.hh    |  48 +-
  .../Decompiler/src/decompile/cpp/variable.cc  |   2 +
- .../Decompiler/src/decompile/cpp/variable.hh  |  12 +-
+ .../Decompiler/src/decompile/cpp/variable.hh  |  14 +-
  .../Decompiler/src/decompile/cpp/varmap.cc    |   2 +
  .../Decompiler/src/decompile/cpp/varmap.hh    |  38 +-
  .../Decompiler/src/decompile/cpp/varnode.cc   |   2 +
@@ -220,7 +220,7 @@ necessary.
  .../src/decompile/unittests/testfloatemu.cc   |   2 +
  .../src/decompile/unittests/testmarshal.cc    |   2 +
  .../src/decompile/unittests/testtypes.cc      |   2 +
- 212 files changed, 2855 insertions(+), 2641 deletions(-)
+ 212 files changed, 2856 insertions(+), 2642 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/action.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/action.cc
 index 7b1b2062a..76fc27d72 100644
@@ -15751,9 +15751,18 @@ index 0155b2a88..c8720d840 100644
  AttributeId ATTRIB_REPREF = AttributeId("repref",67);
  AttributeId ATTRIB_SYMREF = AttributeId("symref",68);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh
-index f8fb0e433..b132a0102 100644
+index f8fb0e433..499103f79 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh
+@@ -47,7 +47,7 @@ class VariableGroup {
+     bool operator()(const VariablePiece *a,const VariablePiece *b) const;	///< Comparison operator
+   };
+ 
+-  set<VariablePiece *,PieceCompareByOffset> pieceSet;	///< The set of VariablePieces making up \b this group
++  std::set<VariablePiece *,PieceCompareByOffset> pieceSet;	///< The set of VariablePieces making up \b this group
+ public:
+   bool empty(void) const { return pieceSet.empty(); }	///< Return \b true if \b this group has no pieces
+   void addPiece(VariablePiece *piece);		///< Add a new piece to \b this group
 @@ -64,7 +64,7 @@ class VariablePiece {
    HighVariable *high;			///< HighVariable owning \b this piece
    int4 groupOffset;			///< Byte offset of \b this piece within the group
