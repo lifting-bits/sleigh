@@ -1,4 +1,4 @@
-From 18a58946918611ea5632ec4cab46fdc027c367ef Mon Sep 17 00:00:00 2001
+From 1b1e2f4b7c4a15d667fe16bcf954e669ff548875 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Sun, 13 Feb 2022 12:59:42 -0500
 Subject: [PATCH 1/5] Small improvements to C++ decompiler testing from CLI
@@ -161,5 +161,5 @@ index 52125b401..46abd6bce 100644
  
  #endif
 -- 
-2.38.1
+2.39.0
 

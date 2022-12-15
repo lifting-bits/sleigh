@@ -1,4 +1,4 @@
-From 1f55e134b04389a0be28947369982f43b48399bb Mon Sep 17 00:00:00 2001
+From 9b8d25a25cfc2f47853f844282e89a786b4df65f Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Wed, 2 Nov 2022 19:41:19 -0400
 Subject: [PATCH 5/5] Remove 'using namespace std' from headers
@@ -823,7 +823,7 @@ index 6ade01ecc..ed206737b 100644
  };
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
-index 5584dbf4d..96f141e5d 100644
+index 611009333..fff1a5cfe 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
 @@ -17,6 +17,8 @@
@@ -4524,7 +4524,7 @@ index d546e58b6..6a4d8be41 100644
  
  /// \param op is the given PcodeOp
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
-index 117518e24..d89d35888 100644
+index bdbda0ae6..0c6bf2214 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 @@ -15,6 +15,8 @@
@@ -5235,7 +5235,7 @@ index edd6ce865..09467394f 100644
  
  #endif
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc
-index c0347663e..804d90f2c 100644
+index e8af0c939..8ce556c80 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc
 @@ -17,6 +17,8 @@
@@ -5244,11 +5244,11 @@ index c0347663e..804d90f2c 100644
  
 +using namespace std;
 +
- /// Update disjoint cover making sure (addr,size) is contained in a single element
- /// and return iterator to this element. Pass back \b intersect value:
- ///   - 0 if the only intersection is with range from the same pass
+ /// Update disjoint cover making sure (addr,size) is contained in a single element and return
+ /// an iterator to this element. The element's \b pass number is set to be the smallest value
+ /// of any previous intersecting element. Additionally an \b intersect code is passed back:
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.hh
-index e3609d42f..69b49906a 100644
+index 76f731a58..4f5fed417 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.hh
 @@ -24,7 +24,7 @@
@@ -5319,7 +5319,7 @@ index e3609d42f..69b49906a 100644
    void clearInfoList(void);	 ///< Reset heritage status for all address spaces
  
    /// \brief Get the heritage status for the given address space
-@@ -223,47 +223,47 @@ class Heritage {
+@@ -223,48 +223,48 @@ class Heritage {
    const HeritageInfo *getInfo(AddrSpace *spc) const { return &(infolist[spc->getIndex()]); }
  
    void clearStackPlaceholders(HeritageInfo *info);	///< Clear remaining stack placeholder LOADs on any call
@@ -5352,12 +5352,13 @@ index e3609d42f..69b49906a 100644
 -  bool protectFreeStores(AddrSpace *spc,vector<PcodeOp *> &freeStores);
 -  bool discoverIndexedStackPointers(AddrSpace *spc,vector<PcodeOp *> &freeStores,bool checkFreeStores);
 -  void reprocessFreeStores(AddrSpace *spc,vector<PcodeOp *> &freeStores);
--  void guard(const Address &addr,int4 size,vector<Varnode *> &read,vector<Varnode *> &write,vector<Varnode *> &inputvars);
--  void guardInput(const Address &addr,int4 size,vector<Varnode *> &input);
 +  bool protectFreeStores(AddrSpace *spc,std::vector<PcodeOp *> &freeStores);
 +  bool discoverIndexedStackPointers(AddrSpace *spc,std::vector<PcodeOp *> &freeStores,bool checkFreeStores);
 +  void reprocessFreeStores(AddrSpace *spc,std::vector<PcodeOp *> &freeStores);
-+  void guard(const Address &addr,int4 size,std::vector<Varnode *> &read,std::vector<Varnode *> &write,std::vector<Varnode *> &inputvars);
+   void guard(const Address &addr,int4 size,bool guardPerformed,
+-	     vector<Varnode *> &read,vector<Varnode *> &write,vector<Varnode *> &inputvars);
+-  void guardInput(const Address &addr,int4 size,vector<Varnode *> &input);
++	     std::vector<Varnode *> &read,std::vector<Varnode *> &write,std::vector<Varnode *> &inputvars);
 +  void guardInput(const Address &addr,int4 size,std::vector<Varnode *> &input);
    void guardCallOverlappingInput(FuncCallSpecs *fc,const Address &addr,const Address &transAddr,int4 size);
 -  bool guardCallOverlappingOutput(FuncCallSpecs *fc,const Address &addr,int4 size,vector<Varnode *> &write);
@@ -5389,9 +5390,9 @@ index e3609d42f..69b49906a 100644
 -  void calcMultiequals(const vector<Varnode *> &write);
 +  void calcMultiequals(const std::vector<Varnode *> &write);
    void renameRecurse(BlockBasic *bl,VariableStack &varstack);
-   void bumpDeadcodeDelay(Varnode *vn);
+   void bumpDeadcodeDelay(AddrSpace *spc);
    void placeMultiequals(void);
-@@ -288,8 +288,8 @@ class Heritage {
+@@ -289,8 +289,8 @@ class Heritage {
    void forceRestructure(void) { maxdepth = -1; }    ///< Force regeneration of basic block structures
    void clear(void);				    ///< Reset all analysis of heritage
    void heritage(void);				    ///< Perform one pass of heritage
@@ -9581,7 +9582,7 @@ index 490abf901..23580df2f 100644
  };
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index 7e8030ae8..01fd7b8c1 100644
+index 3955b836b..81d62ac2a 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 @@ -18,6 +18,8 @@
@@ -16448,5 +16449,5 @@ index 4ce7cdde6..1ac3c3d5f 100644
  static TypeFactory *types;
  static CastStrategy *strategy;
 -- 
-2.38.1
+2.39.0
 

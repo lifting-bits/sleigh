@@ -1,4 +1,4 @@
-From 4a5f05cb1bbad802c1f36ae4951dd649475fecaa Mon Sep 17 00:00:00 2001
+From b4d101990c25d5bf2506741836afefa98d997fc4 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Wed, 2 Nov 2022 19:41:19 -0400
 Subject: [PATCH 5/5] Remove 'using namespace std' from headers
@@ -498,7 +498,7 @@ index 0b3bf04c8..9a58ea4ef 100644
  AttributeId ATTRIB_LAST = AttributeId("last",28);
  AttributeId ATTRIB_UNIQ = AttributeId("uniq",29);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
-index ace26f175..084a78b1b 100644
+index 46f73910b..4f843998b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
 @@ -72,8 +72,8 @@ class Address {
@@ -594,7 +594,7 @@ index ace26f175..084a78b1b 100644
  }
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.cc
-index cb96bbbbc..18b379314 100644
+index 14c4c337c..a43cf5387 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.cc
 @@ -24,6 +24,8 @@
@@ -607,7 +607,7 @@ index cb96bbbbc..18b379314 100644
  
  const uint4 ArchitectureCapability::majorversion = 5;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.hh
-index 300721274..638445c03 100644
+index 20cb06f0d..1da109f31 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.hh
 @@ -54,7 +54,7 @@ class Statistics {
@@ -619,7 +619,7 @@ index 300721274..638445c03 100644
  };
  
  #endif
-@@ -114,11 +114,11 @@ extern ElementId ELEM_VOLATILE;			///< Marshaling element \<volatile>
+@@ -115,11 +115,11 @@ extern ElementId ELEM_VOLATILE;			///< Marshaling element \<volatile>
  class ArchitectureCapability : public CapabilityPoint {
    static const uint4 majorversion;			///< Current major version of decompiler
    static const uint4 minorversion;			///< Current minor version of decompiler
@@ -634,7 +634,7 @@ index 300721274..638445c03 100644
    virtual void initialize(void);			///< Do specialized initialization
  
    /// \brief Build an Architecture given a raw file or data
-@@ -129,13 +129,13 @@ class ArchitectureCapability : public CapabilityPoint {
+@@ -130,13 +130,13 @@ class ArchitectureCapability : public CapabilityPoint {
    /// \param filename is the path to the executable file to examine
    /// \param target if non-empty is a language id string
    /// \param estream is an output stream for error messages
@@ -650,7 +650,7 @@ index 300721274..638445c03 100644
  
    /// \brief Determine is this extension can handle this XML document
    ///
-@@ -145,9 +145,9 @@ class ArchitectureCapability : public CapabilityPoint {
+@@ -146,9 +146,9 @@ class ArchitectureCapability : public CapabilityPoint {
    /// \return \b true if \b this extension understands the XML
    virtual bool isXmlMatch(Document *doc) const=0;
  
@@ -662,7 +662,7 @@ index 300721274..638445c03 100644
    static void sortCapabilities(void);					///< Sort extensions
    static uint4 getMajorVersion(void) { return majorversion; }		///< Get \e major decompiler version
    static uint4 getMinorVersion(void) { return minorversion; }		///< Get \e minor decompiler version
-@@ -161,7 +161,7 @@ class ArchitectureCapability : public CapabilityPoint {
+@@ -162,7 +162,7 @@ class ArchitectureCapability : public CapabilityPoint {
  /// This class also holds numerous configuration parameters for the analysis process
  class Architecture : public AddrSpaceManager {
  public:
@@ -671,7 +671,7 @@ index 300721274..638445c03 100644
  
  				// Configuration data
    int4 trim_recurse_max;	///< How many levels to let parameter trims recurse
-@@ -173,16 +173,16 @@ class Architecture : public AddrSpaceManager {
+@@ -174,16 +174,16 @@ class Architecture : public AddrSpaceManager {
    bool readonlypropagate;	///< true if readonly values should be treated as constants
    bool infer_pointers;		///< True if we should infer pointers from constants that are likely addresses
    bool analyze_for_loops;	///< True if we should attempt conversion of \e whiledo loops to \e for loops
@@ -691,7 +691,7 @@ index 300721274..638445c03 100644
    ProtoModel *defaultfp;	///< Parsed form of default prototype
    VarnodeData defaultReturnAddr;	///< Default storage location of return address (for current function)
    ProtoModel *evalfp_current;	///< Function proto to use when evaluating current function
-@@ -196,58 +196,58 @@ class Architecture : public AddrSpaceManager {
+@@ -197,58 +197,58 @@ class Architecture : public AddrSpaceManager {
    StringManager *stringManager;	///< Manager of decoded strings
    ConstantPool *cpool;		///< Deferred constant values
    PrintLanguage *print;	        ///< Current high-level language printer
@@ -767,7 +767,7 @@ index 300721274..638445c03 100644
  		    int4 truncSize,bool isreversejustified,bool stackGrowth,bool isFormal);
    void addNoHighPtr(const Range &rng); ///< Add a new region where pointers do not exist
  
-@@ -302,7 +302,7 @@ class Architecture : public AddrSpaceManager {
+@@ -338,7 +338,7 @@ class Architecture : public AddrSpaceManager {
    void fillinReadOnlyFromLoader(void);			///< Load info about read-only sections
    void initializeSegments();				///< Set up segment resolvers
    void cacheAddrSpaceProperties(void);			///< Calculate some frequently used space properties and cache them
@@ -776,7 +776,7 @@ index 300721274..638445c03 100644
  
    void parseProcessorConfig(DocumentStorage &store);	///< Apply processor specific configuration
    void parseCompilerConfig(DocumentStorage &store);	///< Apply compiler specific configuration
-@@ -312,7 +312,7 @@ class Architecture : public AddrSpaceManager {
+@@ -348,7 +348,7 @@ class Architecture : public AddrSpaceManager {
    ProtoModel *decodeProto(Decoder &decoder);		///< Parse a proto-type model from a stream
    void decodeProtoEval(Decoder &decoder);		///< Apply prototype evaluation configuration
    void decodeDefaultProto(Decoder &decoder);		///< Apply default prototype model configuration
@@ -823,7 +823,7 @@ index 6ade01ecc..ed206737b 100644
  };
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
-index 5584dbf4d..96f141e5d 100644
+index 611009333..fff1a5cfe 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
 @@ -17,6 +17,8 @@
@@ -2805,7 +2805,7 @@ index 2881ab711..3c68cb3ba 100644
  uint4 crc32tab[] = {
    0x0,0x77073096,0xee0e612c,0x990951ba,0x76dc419,0x706af48f,
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/database.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/database.cc
-index 4704eb1d3..2e0b74fb0 100644
+index 17127fe23..75d54f3bd 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/database.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/database.cc
 @@ -18,6 +18,8 @@
@@ -2818,7 +2818,7 @@ index 4704eb1d3..2e0b74fb0 100644
  AttributeId ATTRIB_FIELD = AttributeId("field",62);
  AttributeId ATTRIB_MERGE = AttributeId("merge",63);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/database.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/database.hh
-index 8da3a41fa..787b1ca8b 100644
+index 67f42a265..d8e4b8e7a 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/database.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/database.hh
 @@ -155,7 +155,7 @@ class SymbolEntry {
@@ -3221,7 +3221,7 @@ index 8da3a41fa..787b1ca8b 100644
    const Scope *mapScope(const Scope *qpoint,const Address &addr,const Address &usepoint) const;
    Scope *mapScope(Scope *qpoint,const Address &addr,const Address &usepoint);
    uint4 getProperty(const Address &addr) const { return flagbase.getValue(addr); }	///< Get boolean properties at the given address
-@@ -935,7 +935,7 @@ class Database {
+@@ -936,7 +936,7 @@ class Database {
  /// \param sc is the scope containing the new symbol
  /// \param nm is the local name of the symbol
  /// \param ct is the data-type of the symbol
@@ -4275,7 +4275,7 @@ index 2412d35bb..602910d36 100644
  
  ElementId ELEM_AST = ElementId("ast",115);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.hh
-index 892883c0d..90c98d096 100644
+index ccdcd8ae3..9c6f23faa 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.hh
 @@ -76,13 +76,13 @@ class Funcdata {
@@ -4367,7 +4367,7 @@ index 892883c0d..90c98d096 100644
    const LoadGuard *getStoreGuard(PcodeOp *op) const { return heritage.getStoreGuard(op); }	///< Get LoadGuard associated with STORE op
  
    // Function prototype and call specification routines
-@@ -375,11 +375,11 @@ class Funcdata {
+@@ -379,11 +379,11 @@ class Funcdata {
    VarnodeDefSet::const_iterator endDef(uint4 fl,const Address &addr) const { return vbank.endDef(fl,addr); }
  
    void checkForLanedRegister(int4 sz,const Address &addr);	///< Check for a potential laned register
@@ -4382,7 +4382,7 @@ index 892883c0d..90c98d096 100644
    void mapGlobals(void);			///< Make sure there is a Symbol entry for all global Varnodes
    void prepareThisPointer(void);		///< Prepare for recovery of the "this" pointer
    bool checkCallDoubleUse(const PcodeOp *opmatch,const PcodeOp *op,const Varnode *vn,uint4 fl,const ParamTrial &trial) const;
-@@ -414,7 +414,7 @@ class Funcdata {
+@@ -417,7 +417,7 @@ class Funcdata {
    Symbol *linkSymbol(Varnode *vn);				///< Find or create Symbol associated with given Varnode
    Symbol *linkSymbolReference(Varnode *vn);			///< Discover and attach Symbol to a constant reference
    Varnode *findLinkedVarnode(SymbolEntry *entry) const;	///< Find a Varnode matching the given Symbol mapping
@@ -4391,7 +4391,7 @@ index 892883c0d..90c98d096 100644
    void buildDynamicSymbol(Varnode *vn);				///< Build a \e dynamic Symbol associated with the given Varnode
    bool attemptDynamicMapping(SymbolEntry *entry,DynamicHash &dhash);
    bool attemptDynamicMappingLate(SymbolEntry *entry,DynamicHash &dhash);
-@@ -446,13 +446,13 @@ class Funcdata {
+@@ -449,13 +449,13 @@ class Funcdata {
    void opSetInput(PcodeOp *op,Varnode *vn,int4 slot);		///< Set a specific input operand for the given PcodeOp
    void opSwapInput(PcodeOp *op,int4 slot1,int4 slot2);		///< Swap two input operands in the given PcodeOp
    void opUnsetInput(PcodeOp *op,int4 slot);			///< Clear an input operand slot for the given PcodeOp
@@ -4407,7 +4407,7 @@ index 892883c0d..90c98d096 100644
    void opRemoveInput(PcodeOp *op,int4 slot);			///< Remove a specific input slot for the given PcodeOp
    void opInsertInput(PcodeOp *op,Varnode *vn,int4 slot);	///< Insert a new Varnode into the operand list for the given PcodeOp
    void opMarkStartBasic(PcodeOp *op) { op->setFlag(PcodeOp::startbasic); }	///< Mark PcodeOp as starting a basic block
-@@ -472,22 +472,22 @@ class Funcdata {
+@@ -475,22 +475,22 @@ class Funcdata {
    void opUndoPtradd(PcodeOp *op,bool finalize);	///< Convert a CPUI_PTRADD back into a CPUI_INT_ADD
  
    /// \brief Start of PcodeOp objects with the given op-code
@@ -4436,7 +4436,7 @@ index 892883c0d..90c98d096 100644
  
    /// \brief Start of all (alive) PcodeOp objects sorted by sequence number
    PcodeOpTree::const_iterator beginOpAll(void) const { return obank.beginAll(); }
-@@ -548,24 +548,24 @@ class Funcdata {
+@@ -551,24 +551,24 @@ class Funcdata {
  
  #ifdef OPACTION_DEBUG
    void (*jtcallback)(Funcdata &orig,Funcdata &fd);	///< Hook point debugging the jump-table simplification process
@@ -4468,7 +4468,7 @@ index 892883c0d..90c98d096 100644
    bool debugBreak(void) const { return opactdbg_on&&opactdbg_breakon; }	///< Has a breakpoint been hit
    int4 debugSize(void) const { return opactdbg_pclow.size(); }	///< Number of code ranges being debug traced
    void debugEnable(void) { opactdbg_on = true; opactdbg_count = 0; }	///< Turn on debugging
-@@ -649,8 +649,8 @@ class AncestorRealistic {
+@@ -652,8 +652,8 @@ class AncestorRealistic {
      pop_failkill	///< Backtracking, from path with a bad ancestor, specifically killedbycall
    };
    ParamTrial *trial;			///< Current trial being analyzed for suitability
@@ -4479,7 +4479,7 @@ index 892883c0d..90c98d096 100644
    int4 multiDepth;			///< Number of MULTIEQUAL ops along current traversal path
    bool allowFailingPath;		///< True if we allow and test for failing paths due to conditional execution
  
-@@ -669,13 +669,13 @@ class AncestorRealistic {
+@@ -672,13 +672,13 @@ class AncestorRealistic {
    bool execute(PcodeOp *op,int4 slot,ParamTrial *t,bool allowFail);
  };
  
@@ -4524,7 +4524,7 @@ index d546e58b6..6a4d8be41 100644
  
  /// \param op is the given PcodeOp
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
-index 117518e24..d89d35888 100644
+index ff8bb6a23..4a19d6809 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 @@ -15,6 +15,8 @@
@@ -4537,7 +4537,7 @@ index 117518e24..d89d35888 100644
  
  /// Properties of a given storage location are gathered from symbol information and
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.cc
-index ce67e2cc8..4e7cc5318 100644
+index b5dd6c469..68e33edff 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.cc
 @@ -23,6 +23,8 @@
@@ -4550,7 +4550,7 @@ index ce67e2cc8..4e7cc5318 100644
  
  ElementId ELEM_COMMAND_ISNAMEUSED = ElementId("command_isnameused",239);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.hh
-index bd0fc3afe..261bebe05 100644
+index 20dabcb6c..e2056337e 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.hh
 @@ -51,8 +51,8 @@ extern ElementId ELEM_COMMAND_GETUSEROPNAME;		///< Marshaling element \<command_
@@ -4585,7 +4585,7 @@ index bd0fc3afe..261bebe05 100644
    bool sendsyntaxtree;		///< True if the syntax tree should be sent with function output
    bool sendCcode;		///< True if C code should be sent with function output
    bool sendParamMeasures;       ///< True if measurements for argument and return parameters should be sent
-@@ -102,25 +102,25 @@ class ArchitectureGhidra : public Architecture {
+@@ -103,25 +103,25 @@ class ArchitectureGhidra : public Architecture {
    virtual void postSpecFile(void);
    virtual void resolveArchitecture(void);
  public:
@@ -4622,7 +4622,7 @@ index bd0fc3afe..261bebe05 100644
    //  Document *getScopeProperties(Scope *newscope);
  
    /// \brief Toggle whether the data-flow and control-flow is emitted as part of the main decompile action
-@@ -148,21 +148,21 @@ class ArchitectureGhidra : public Architecture {
+@@ -149,21 +149,21 @@ class ArchitectureGhidra : public Architecture {
  
    bool getSendParamMeasures(void) const { return sendParamMeasures; }	///< Get the current setting for emitting parameter info
  
@@ -5235,7 +5235,7 @@ index edd6ce865..09467394f 100644
  
  #endif
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc
-index c0347663e..804d90f2c 100644
+index e8af0c939..8ce556c80 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc
 @@ -17,6 +17,8 @@
@@ -5244,11 +5244,11 @@ index c0347663e..804d90f2c 100644
  
 +using namespace std;
 +
- /// Update disjoint cover making sure (addr,size) is contained in a single element
- /// and return iterator to this element. Pass back \b intersect value:
- ///   - 0 if the only intersection is with range from the same pass
+ /// Update disjoint cover making sure (addr,size) is contained in a single element and return
+ /// an iterator to this element. The element's \b pass number is set to be the smallest value
+ /// of any previous intersecting element. Additionally an \b intersect code is passed back:
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.hh
-index e3609d42f..69b49906a 100644
+index 76f731a58..4f5fed417 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.hh
 @@ -24,7 +24,7 @@
@@ -5319,7 +5319,7 @@ index e3609d42f..69b49906a 100644
    void clearInfoList(void);	 ///< Reset heritage status for all address spaces
  
    /// \brief Get the heritage status for the given address space
-@@ -223,47 +223,47 @@ class Heritage {
+@@ -223,48 +223,48 @@ class Heritage {
    const HeritageInfo *getInfo(AddrSpace *spc) const { return &(infolist[spc->getIndex()]); }
  
    void clearStackPlaceholders(HeritageInfo *info);	///< Clear remaining stack placeholder LOADs on any call
@@ -5352,12 +5352,13 @@ index e3609d42f..69b49906a 100644
 -  bool protectFreeStores(AddrSpace *spc,vector<PcodeOp *> &freeStores);
 -  bool discoverIndexedStackPointers(AddrSpace *spc,vector<PcodeOp *> &freeStores,bool checkFreeStores);
 -  void reprocessFreeStores(AddrSpace *spc,vector<PcodeOp *> &freeStores);
--  void guard(const Address &addr,int4 size,vector<Varnode *> &read,vector<Varnode *> &write,vector<Varnode *> &inputvars);
--  void guardInput(const Address &addr,int4 size,vector<Varnode *> &input);
 +  bool protectFreeStores(AddrSpace *spc,std::vector<PcodeOp *> &freeStores);
 +  bool discoverIndexedStackPointers(AddrSpace *spc,std::vector<PcodeOp *> &freeStores,bool checkFreeStores);
 +  void reprocessFreeStores(AddrSpace *spc,std::vector<PcodeOp *> &freeStores);
-+  void guard(const Address &addr,int4 size,std::vector<Varnode *> &read,std::vector<Varnode *> &write,std::vector<Varnode *> &inputvars);
+   void guard(const Address &addr,int4 size,bool guardPerformed,
+-	     vector<Varnode *> &read,vector<Varnode *> &write,vector<Varnode *> &inputvars);
+-  void guardInput(const Address &addr,int4 size,vector<Varnode *> &input);
++	     std::vector<Varnode *> &read,std::vector<Varnode *> &write,std::vector<Varnode *> &inputvars);
 +  void guardInput(const Address &addr,int4 size,std::vector<Varnode *> &input);
    void guardCallOverlappingInput(FuncCallSpecs *fc,const Address &addr,const Address &transAddr,int4 size);
 -  bool guardCallOverlappingOutput(FuncCallSpecs *fc,const Address &addr,int4 size,vector<Varnode *> &write);
@@ -5389,9 +5390,9 @@ index e3609d42f..69b49906a 100644
 -  void calcMultiequals(const vector<Varnode *> &write);
 +  void calcMultiequals(const std::vector<Varnode *> &write);
    void renameRecurse(BlockBasic *bl,VariableStack &varstack);
-   void bumpDeadcodeDelay(Varnode *vn);
+   void bumpDeadcodeDelay(AddrSpace *spc);
    void placeMultiequals(void);
-@@ -288,8 +288,8 @@ class Heritage {
+@@ -289,8 +289,8 @@ class Heritage {
    void forceRestructure(void) { maxdepth = -1; }    ///< Force regeneration of basic block structures
    void clear(void);				    ///< Reset all analysis of heritage
    void heritage(void);				    ///< Perform one pass of heritage
@@ -7137,7 +7138,7 @@ index 018cc06bb..5f0707e5b 100644
  };
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.cc
-index 20e51c1a9..c8f2af0ec 100644
+index cd1e7acde..49b57b6a3 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.cc
 @@ -17,6 +17,7 @@
@@ -7149,7 +7150,7 @@ index 20e51c1a9..c8f2af0ec 100644
  unordered_map<string,uint4> AttributeId::lookupAttributeId;
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.hh
-index c2eae63e0..7951c373c 100644
+index a6cf0fb26..5f97090a8 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.hh
 @@ -20,8 +20,6 @@
@@ -7243,7 +7244,7 @@ index c2eae63e0..7951c373c 100644
  
    /// \brief Write an address space reference into the encoding
    ///
-@@ -314,17 +312,17 @@ class Encoder {
+@@ -314,10 +312,10 @@ class Encoder {
  class XmlDecode : public Decoder {
    Document *document;				///< An ingested XML document, owned by \b this decoder
    const Element *rootElement;			///< The root XML element to be decoded
@@ -7257,15 +7258,16 @@ index c2eae63e0..7951c373c 100644
  public:
    XmlDecode(const AddrSpaceManager *spc,const Element *root) : Decoder(spc) {
      document = (Document *)0; rootElement = root; attributeIndex = -1; }	///< Constructor with preparsed root
-   XmlDecode(const AddrSpaceManager *spc) : Decoder(spc) {
+@@ -325,7 +323,7 @@ class XmlDecode : public Decoder {
      document = (Document *)0; rootElement = (const Element *)0; attributeIndex = -1; }	///< Constructor for use with ingestStream
+   const Element *getCurrentXmlElement(void) const { return elStack.back(); }	///< Get pointer to underlying XML element object
    virtual ~XmlDecode(void);
 -  virtual void ingestStream(istream &s);
 +  virtual void ingestStream(std::istream &s);
    virtual uint4 peekElement(void);
    virtual uint4 openElement(void);
    virtual uint4 openElement(const ElementId &elemId);
-@@ -338,8 +336,8 @@ class XmlDecode : public Decoder {
+@@ -339,8 +337,8 @@ class XmlDecode : public Decoder {
    virtual intb readSignedInteger(const AttributeId &attribId);
    virtual uintb readUnsignedInteger(void);
    virtual uintb readUnsignedInteger(const AttributeId &attribId);
@@ -7276,7 +7278,7 @@ index c2eae63e0..7951c373c 100644
    virtual AddrSpace *readSpace(void);
    virtual AddrSpace *readSpace(const AttributeId &attribId);
  };
-@@ -350,16 +348,16 @@ class XmlDecode : public Decoder {
+@@ -351,16 +349,16 @@ class XmlDecode : public Decoder {
  /// receive the XML document as calls are made on the encoder.
  class XmlEncode : public Encoder {
    friend class XmlDecode;
@@ -7296,7 +7298,7 @@ index c2eae63e0..7951c373c 100644
    virtual void writeSpace(const AttributeId &attribId,const AddrSpace *spc);
  };
  
-@@ -436,11 +434,11 @@ class PackedDecode : public Decoder {
+@@ -437,11 +435,11 @@ class PackedDecode : public Decoder {
    /// \brief An iterator into input stream
    class Position {
      friend class PackedDecode;
@@ -7310,7 +7312,7 @@ index c2eae63e0..7951c373c 100644
    Position startPos;			///< Position at the start of the current open element
    Position curPos;			///< Position of the next attribute as returned by getNextAttributeId
    Position endPos;			///< Ending position after all attributes in current open element
-@@ -457,7 +455,7 @@ class PackedDecode : public Decoder {
+@@ -458,7 +456,7 @@ class PackedDecode : public Decoder {
  public:
    PackedDecode(const AddrSpaceManager *spcManager) : Decoder(spcManager) {}	///< Constructor
    virtual ~PackedDecode(void);
@@ -7319,7 +7321,7 @@ index c2eae63e0..7951c373c 100644
    virtual uint4 peekElement(void);
    virtual uint4 openElement(void);
    virtual uint4 openElement(const ElementId &elemId);
-@@ -471,8 +469,8 @@ class PackedDecode : public Decoder {
+@@ -472,8 +470,8 @@ class PackedDecode : public Decoder {
    virtual intb readSignedInteger(const AttributeId &attribId);
    virtual uintb readUnsignedInteger(void);
    virtual uintb readUnsignedInteger(const AttributeId &attribId);
@@ -7330,7 +7332,7 @@ index c2eae63e0..7951c373c 100644
    virtual AddrSpace *readSpace(void);
    virtual AddrSpace *readSpace(const AttributeId &attribId);
  };
-@@ -481,17 +479,17 @@ class PackedDecode : public Decoder {
+@@ -482,17 +480,17 @@ class PackedDecode : public Decoder {
  ///
  /// See PackedDecode for details of the encoding format.
  class PackedEncode : public Encoder {
@@ -7351,7 +7353,7 @@ index c2eae63e0..7951c373c 100644
    virtual void writeSpace(const AttributeId &attribId,const AddrSpace *spc);
  };
  
-@@ -503,7 +501,7 @@ inline uint1 PackedDecode::getBytePlus1(Position &pos)
+@@ -504,7 +502,7 @@ inline uint1 PackedDecode::getBytePlus1(Position &pos)
  {
    uint1 *ptr = pos.current + 1;
    if (ptr == pos.end) {
@@ -7360,7 +7362,7 @@ index c2eae63e0..7951c373c 100644
      ++iter;
      if (iter == inStream.end())
        throw DecoderError("Unexpected end of stream");
-@@ -573,10 +571,10 @@ extern AttributeId ATTRIB_CONTENT;	///< Special attribute for XML text content o
+@@ -574,10 +572,10 @@ extern AttributeId ATTRIB_CONTENT;	///< Special attribute for XML text content o
  /// placeholder attribute, ATTRIB_UNKNOWN, is returned as a placeholder for attributes with unrecognized names.
  /// \param nm is the name of the attribute
  /// \return the associated id
@@ -7373,7 +7375,7 @@ index c2eae63e0..7951c373c 100644
    if (iter != lookupAttributeId.end())
      return (*iter).second;
    return ATTRIB_UNKNOWN.id;
-@@ -586,10 +584,10 @@ inline uint4 AttributeId::find(const string &nm)
+@@ -587,10 +585,10 @@ inline uint4 AttributeId::find(const string &nm)
  /// placeholder element, ELEM_UNKNOWN, is returned as a placeholder for elements with unrecognized names.
  /// \param nm is the name of the element
  /// \return the associated id
@@ -7444,7 +7446,7 @@ index 6a260c466..273d66cab 100644
    uintb getValue(const VarnodeData *vn) const; ///< Get a value from a \b varnode
    void getChunk(uint1 *res,AddrSpace *spc,uintb off,int4 size) const; ///< Get a chunk of data from memory state
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc
-index cb41351e2..3a856760e 100644
+index 26458054c..c027c2d54 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc
 @@ -16,6 +16,8 @@
@@ -7457,7 +7459,7 @@ index cb41351e2..3a856760e 100644
  /// cached to facilitate quick sorting.
  /// \param v is the given Varnode
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/merge.hh
-index 18c9e0b15..df33d998f 100644
+index 65349af17..09a071ec9 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/merge.hh
 @@ -49,7 +49,7 @@ class BlockVarnode {
@@ -7479,8 +7481,8 @@ index 18c9e0b15..df33d998f 100644
 +  std::vector<PcodeOp *> copyTrims;	///< COPY ops inserted to facilitate merges
    bool updateHigh(HighVariable *a); ///< Make sure given HighVariable's Cover is up-to-date
    void purgeHigh(HighVariable *high); ///< Remove cached intersection tests for a given HighVariable
-   bool blockIntersection(HighVariable *a,HighVariable *b,int4 blk);
-@@ -88,29 +88,29 @@ class Merge {
+   static void gatherBlockVarnodes(HighVariable *a,int4 blk,const Cover &cover,vector<Varnode *> &res);
+@@ -90,30 +90,30 @@ class Merge {
    static bool mergeTestAdjacent(HighVariable *high_out,HighVariable *high_in);
    static bool mergeTestSpeculative(HighVariable *high_out,HighVariable *high_in);
    static bool mergeTestBasic(Varnode *vn);
@@ -7496,6 +7498,7 @@ index 18c9e0b15..df33d998f 100644
 +  void collectCovering(std::vector<Varnode *> &vlist,HighVariable *high,PcodeOp *op);
 +  bool collectCorrectable(const std::vector<Varnode *> &vlist,std::list<PcodeOp *> &oplist,std::vector<int4> &slotlist,
  			   PcodeOp *op);
+   void moveIntersectTests(HighVariable *high1,HighVariable *high2);
    PcodeOp *allocateCopyTrim(Varnode *inVn,const Address &addr,PcodeOp *trimOp);
 -  void snipReads(Varnode *vn,list<PcodeOp *> &markedop);
 +  void snipReads(Varnode *vn,std::list<PcodeOp *> &markedop);
@@ -7519,7 +7522,7 @@ index 18c9e0b15..df33d998f 100644
    void processHighDominantCopy(HighVariable *high);
    void processHighRedundantCopy(HighVariable *high);
  public:
-@@ -118,7 +118,7 @@ class Merge {
+@@ -121,7 +121,7 @@ class Merge {
    bool intersection(HighVariable *a,HighVariable *b);
    bool inflateTest(Varnode *a,HighVariable *high);
    void inflate(Varnode *a,HighVariable *high);
@@ -9581,7 +9584,7 @@ index 490abf901..23580df2f 100644
  };
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index 7e8030ae8..01fd7b8c1 100644
+index 3955b836b..81d62ac2a 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 @@ -18,6 +18,8 @@
@@ -11715,7 +11718,7 @@ index 74fc5cbf8..c003c55f4 100644
    };
    \endcode
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.cc
-index c0518ec0e..5660525e2 100644
+index aebec0e4c..4ff7b336d 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.cc
 @@ -16,6 +16,8 @@
@@ -11728,7 +11731,7 @@ index c0518ec0e..5660525e2 100644
  AttributeId ATTRIB_ENDIAN = AttributeId("endian",137);
  AttributeId ATTRIB_PROCESSOR = AttributeId("processor",138);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.hh
-index 6bb57b81a..0f0535d22 100644
+index 203a33ee6..467675555 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.hh
 @@ -42,15 +42,15 @@ extern ElementId ELEM_LANGUAGE_DEFINITIONS;	///< Marshaling element \<language_d
@@ -11803,7 +11806,7 @@ index 6bb57b81a..0f0535d22 100644
    int4 numCompilers(void) const { return compilers.size(); }	///< Get the number of compiler records
    const CompilerTag &getCompiler(int4 i) const { return compilers[i]; }	///< Get the i-th compiler record
    int4 numTruncations(void) const { return truncations.size(); }	///< Get the number of truncation records
-@@ -104,38 +104,38 @@ class LanguageDescription {
+@@ -104,17 +104,17 @@ class LanguageDescription {
  /// Generally a \e language \e id (i.e. x86:LE:64:default) is provided, then this
  /// object is able to automatically load in configuration and construct the Translate object.
  class SleighArchitecture : public Architecture {
@@ -11827,7 +11830,8 @@ index 6bb57b81a..0f0535d22 100644
 +  static void collectSpecFiles(std::ostream &errs);		///< Gather specification files in normal locations
    virtual Translate *buildTranslator(DocumentStorage &store);
    virtual PcodeInjectLibrary *buildPcodeInjectLibrary(void);
-   virtual void buildSpecFile(DocumentStorage &store);
+   virtual void buildTypegrp(DocumentStorage &store);
+@@ -127,21 +127,21 @@ class SleighArchitecture : public Architecture {
    virtual void modifySpaces(Translate *trans);
    virtual void resolveArchitecture(void);
  public:
@@ -11957,7 +11961,7 @@ index 87a4d7980..3ed0c3390 100644
  // These bytes are loaded at address 0x80483b4
  static uint1 myprog[] = {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-index 40d731480..2c8eefab7 100644
+index 7229e6ba8..d39dff5ec 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 @@ -17,6 +17,8 @@
@@ -14017,7 +14021,7 @@ index fa26f0bd1..107e701fc 100644
  public:
    TransformManager(Funcdata *f) { fd = f; }	///< Constructor
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/translate.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/translate.cc
-index ec3ec9a01..1d1c89275 100644
+index 6e379031a..689583858 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/translate.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/translate.cc
 @@ -15,6 +15,8 @@
@@ -14030,7 +14034,7 @@ index ec3ec9a01..1d1c89275 100644
  AttributeId ATTRIB_CONTAIN = AttributeId("contain",44);
  AttributeId ATTRIB_DEFAULTSPACE = AttributeId("defaultspace",45);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/translate.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/translate.hh
-index 4f296ee10..baec0079a 100644
+index 34a4709a8..e651aa800 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/translate.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/translate.hh
 @@ -54,7 +54,7 @@ struct UnimplError : public LowlevelError {
@@ -14144,7 +14148,7 @@ index 4f296ee10..baec0079a 100644
    JoinRecord *findJoin(uintb offset) const; ///< Find JoinRecord for \e offset in the join space
    void setDeadcodeDelay(AddrSpace *spc,int4 delaydelta); ///< Set the deadcodedelay for a specific space
    void truncateSpace(const TruncationTag &tag);	///< Mark a space as truncated from its original size
-@@ -306,7 +306,7 @@ class Translate : public AddrSpaceManager {
+@@ -309,7 +309,7 @@ class Translate : public AddrSpaceManager {
    uint4 unique_base;		///< Starting offset into unique space
  protected:
    int4 alignment;      ///< Byte modulo on which instructions are aligned
@@ -14153,7 +14157,7 @@ index 4f296ee10..baec0079a 100644
  
    void setBigEndian(bool val);	///< Set general endianness to \b big if val is \b true
    void setUniqueBase(uint4 val); ///< Set the base offset for new temporary registers
-@@ -336,7 +336,7 @@ class Translate : public AddrSpaceManager {
+@@ -339,7 +339,7 @@ class Translate : public AddrSpaceManager {
    /// \param name is the name of the new context variable
    /// \param sbit is the first bit of the variable in the packed state
    /// \param ebit is the last bit of the variable in the packed state
@@ -14162,7 +14166,7 @@ index 4f296ee10..baec0079a 100644
  
    /// \brief Set the default value for a particular context variable
    ///
-@@ -345,7 +345,7 @@ class Translate : public AddrSpaceManager {
+@@ -348,7 +348,7 @@ class Translate : public AddrSpaceManager {
    /// for the variable.
    /// \param name is the name of the context variable
    /// \param val is the value to be considered default
@@ -14171,7 +14175,7 @@ index 4f296ee10..baec0079a 100644
  
    /// \brief Toggle whether disassembly is allowed to affect context
    ///
-@@ -362,7 +362,7 @@ class Translate : public AddrSpaceManager {
+@@ -365,7 +365,7 @@ class Translate : public AddrSpaceManager {
    /// Retrieve the location and size of a register given its name
    /// \param nm is the name of the register
    /// \return the VarnodeData for the register
@@ -14180,7 +14184,7 @@ index 4f296ee10..baec0079a 100644
  
    /// \brief Get the name of a register given its location
    ///
-@@ -374,7 +374,7 @@ class Translate : public AddrSpaceManager {
+@@ -377,7 +377,7 @@ class Translate : public AddrSpaceManager {
    /// \param off is the offset of the location
    /// \param size is the size of the location
    /// \return the name of the register, or an empty string
@@ -14189,7 +14193,7 @@ index 4f296ee10..baec0079a 100644
  
    /// \brief Get a list of all register names and the corresponding location
    ///
-@@ -382,7 +382,7 @@ class Translate : public AddrSpaceManager {
+@@ -385,7 +385,7 @@ class Translate : public AddrSpaceManager {
    /// that are specific to it.  This function populates a map from the location information
    /// to the name, for every named location known by the translator
    /// \param reglist is the map which will be populated by the call
@@ -14198,7 +14202,7 @@ index 4f296ee10..baec0079a 100644
  
    /// \brief Get a list of all \e user-defined pcode ops
    ///
-@@ -392,7 +392,7 @@ class Translate : public AddrSpaceManager {
+@@ -395,7 +395,7 @@ class Translate : public AddrSpaceManager {
    /// and an index.  This method returns a list of these ops
    /// in index order.
    /// \param res is the resulting vector of user op names
@@ -15712,7 +15716,7 @@ index a283255cb..d99f16029 100644
  
  #endif
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc
-index ff5678c04..d8d010b27 100644
+index 0155b2a88..c8720d840 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc
 @@ -17,6 +17,8 @@
@@ -15725,31 +15729,31 @@ index ff5678c04..d8d010b27 100644
  AttributeId ATTRIB_REPREF = AttributeId("repref",67);
  AttributeId ATTRIB_SYMREF = AttributeId("symref",68);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh
-index 25f6f8361..f26e0c6b6 100644
+index f8fb0e433..e622baa71 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh
-@@ -62,7 +62,7 @@ class HighVariable {
- private:
+@@ -122,7 +122,7 @@ class HighVariable {
    friend class Varnode;
    friend class Merge;
+   friend class VariablePiece;
 -  vector<Varnode *> inst;		///< The member Varnode objects making up \b this HighVariable
 +  std::vector<Varnode *> inst;		///< The member Varnode objects making up \b this HighVariable
    int4 numMergeClasses;			///< Number of different speculative merge classes in \b this
    mutable uint4 highflags;		///< Dirtiness flags
    mutable uint4 flags;			///< Boolean properties inherited from Varnode members
-@@ -102,9 +102,9 @@ class HighVariable {
+@@ -171,9 +171,9 @@ class HighVariable {
    /// \brief Print details of the cover for \b this (for debug purposes)
    ///
    /// \param s is the output stream
--  void printCover(ostream &s) const { if ((highflags&HighVariable::coverdirty)==0) wholecover.print(s); else s << "Cover dirty"; }
-+  void printCover(std::ostream &s) const { if ((highflags&HighVariable::coverdirty)==0) wholecover.print(s); else s << "Cover dirty"; }
+-  void printCover(ostream &s) const { if ((highflags&HighVariable::coverdirty)==0) internalCover.print(s); else s << "Cover dirty"; }
++  void printCover(std::ostream &s) const { if ((highflags&HighVariable::coverdirty)==0) internalCover.print(s); else s << "Cover dirty"; }
  
 -  void printInfo(ostream &s) const;		///< Print information about \b this HighVariable to stream
 +  void printInfo(std::ostream &s) const;		///< Print information about \b this HighVariable to stream
    bool hasName(void) const;			///< Check if \b this HighVariable can be named
    Varnode *getTiedVarnode(void) const;		///< Find the first address tied member Varnode
    Varnode *getInputVarnode(void) const;		///< Find (the) input member Varnode
-@@ -143,7 +143,7 @@ class HighVariable {
+@@ -212,7 +212,7 @@ class HighVariable {
    //  Varnode *findGlobalRep(void) const;
    static bool compareName(Varnode *vn1,Varnode *vn2);	///< Determine which given Varnode is most nameable
    static bool compareJustLoc(const Varnode *a,const Varnode *b);	///< Compare based on storage location
@@ -15757,7 +15761,7 @@ index 25f6f8361..f26e0c6b6 100644
 +  static int4 markExpression(Varnode *vn,std::vector<HighVariable *> &highList);	///< Mark and collect variables in expression
  };
  
- #endif
+ /// The internal cover is marked as dirty. If \b this is a piece of a VariableGroup, it and all the other
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc
 index 76f4ed86f..9674c5dfe 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc
@@ -15888,7 +15892,7 @@ index 5267b0a3a..dba5351fa 100644
  				   Datatype *ct,
  				   int4 &index,uint4 flags) const;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc
-index 4675e9ee8..e7041884b 100644
+index 7d9acb78f..60b6ab5bd 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc
 @@ -16,6 +16,8 @@
@@ -15901,7 +15905,7 @@ index 4675e9ee8..e7041884b 100644
  AttributeId ATTRIB_GRP = AttributeId("grp",31);
  AttributeId ATTRIB_INPUT = AttributeId("input",32);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.hh
-index c6f656478..d27b37f8c 100644
+index 9f2598301..9228b497b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.hh
 @@ -47,10 +47,10 @@ struct VarnodeCompareDefLoc {
@@ -15926,7 +15930,7 @@ index c6f656478..d27b37f8c 100644
    mutable Cover *cover;		///< Addresses covered by the def->use of this Varnode
    mutable union {
      Datatype *dataType;		///< Temporary data-type associated with \b this for use in type propagate algorithm
-@@ -195,8 +195,8 @@ class Varnode {
+@@ -196,8 +196,8 @@ class Varnode {
    ValueSet *getValueSet(void) const { return temp.valueSet; }	///< Get the temporary ValueSet record
    uint4 getCreateIndex(void) const { return create_index; } ///< Get the creation index
    Cover *getCover(void) const { updateCover(); return cover; } ///< Get Varnode coverage information
@@ -15937,7 +15941,7 @@ index c6f656478..d27b37f8c 100644
    uintb getConsume(void) const { return consumed; } ///< Get mask of consumed bits
    void setConsume(uintb val) { consumed = val; } ///< Set the mask of consumed bits (used by dead-code algorithm)
    bool isConsumeList(void) const { return ((addlflags&Varnode::lisconsume)!=0); } ///< Get marker used by dead-code algorithm
-@@ -207,10 +207,10 @@ class Varnode {
+@@ -208,10 +208,10 @@ class Varnode {
    void clearConsumeVacuous(void) { addlflags &= ~Varnode::vacconsume; } ///< Clear marker used by dead-code algorithm
    PcodeOp *loneDescend(void) const; ///< Return unique reading PcodeOp, or \b null if there are zero or more than 1
    Address getUsePoint(const Funcdata &fd) const; ///< Get Address when this Varnode first comes into scope
@@ -15952,7 +15956,7 @@ index c6f656478..d27b37f8c 100644
    Varnode(int4 s,const Address &m,Datatype *dt);	///< Construct a \e free Varnode
    bool operator<(const Varnode &op2) const; ///< Comparison operator on Varnode
    bool operator==(const Varnode &op2) const; ///< Equality operator
-@@ -224,7 +224,7 @@ class Varnode {
+@@ -225,7 +225,7 @@ class Varnode {
    int4 overlap(const Address &op2loc,int4 op2size) const;	///< Return relative point of overlap with Address range
    uintb getNZMask(void) const { return nzm; } ///< Get the mask of bits within \b this that are known to be zero
    int4 termOrder(const Varnode *op) const; ///< Compare two Varnodes based on their term order
@@ -15961,8 +15965,8 @@ index c6f656478..d27b37f8c 100644
    bool isAnnotation(void) const { return ((flags&Varnode::annotation)!=0); } ///< Is \b this an annotation?
    bool isImplied(void) const { return ((flags&Varnode::implied)!=0); } ///< Is \b this an implied variable?
    bool isExplicit(void) const { return ((flags&Varnode::explict)!=0); }	///< Is \b this an explicitly printed variable?
-@@ -332,7 +332,7 @@ class Varnode {
-   bool copyShadow(const Varnode *op2) const; ///< Are \b this and \b op2 copied from the same source?
+@@ -336,7 +336,7 @@ class Varnode {
+   bool partialCopyShadow(const Varnode *op2,int4 relOff) const;	///< Is one of \b this or \b op2 a partial copy of the other?
    void encode(Encoder &encoder) const; ///< Encode a description of \b this to a stream
    static bool comparePointers(const Varnode *a,const Varnode *b) { return (*a < *b); }	///< Compare Varnodes as pointers
 -  static void printRaw(ostream &s,const Varnode *vn);	///< Print raw info about a Varnode to stream
@@ -16448,5 +16452,5 @@ index 4ce7cdde6..1ac3c3d5f 100644
  static TypeFactory *types;
  static CastStrategy *strategy;
 -- 
-2.38.1
+2.39.0
 
