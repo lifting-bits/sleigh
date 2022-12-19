@@ -69,7 +69,7 @@ def git_get_changed_files(
         )
         .stdout.decode()
         .strip()
-        .split("\n")
+        .splitlines()
     )
     num_changed = len(changed_files)
     if num_changed > 0:
