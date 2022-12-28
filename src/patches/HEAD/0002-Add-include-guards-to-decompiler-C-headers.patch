@@ -1,4 +1,4 @@
-From 112345bb83fc3a487dac69bc1b772be0659cdf54 Mon Sep 17 00:00:00 2001
+From b504736d1fc5e467d66d2569460c6a02245a333a Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Thu, 28 Jul 2022 09:20:03 -0400
 Subject: [PATCH 2/5] Add include guards to decompiler C++ headers
@@ -26,7 +26,7 @@ index 875d3bb78..6ade01ecc 100644
  #include "sleigh_arch.hh"
  #include "loadimage_bfd.hh"
  
-@@ -47,3 +50,5 @@ class BfdArchitecture : public SleighArchitecture {
+@@ -47,3 +50,5 @@ public:
    BfdArchitecture(const string &fname,const string &targ,ostream *estream);	///< Constructor
    virtual ~BfdArchitecture(void) {}
  };
@@ -65,7 +65,7 @@ index 3ca912dd6..0b70d8b22 100644
  #include "interface.hh"
  
  #ifdef __TERMINAL__
-@@ -48,3 +51,5 @@ class IfaceTerm : public IfaceStatus {
+@@ -48,3 +51,5 @@ public:
    virtual void popScript(void);
    virtual bool isStreamFinished(void) const;
  };
@@ -86,7 +86,7 @@ index 2245840a0..490abf901 100644
  #include "sleigh_arch.hh"
  #include "loadimage.hh"
  
-@@ -46,3 +50,4 @@ class RawBinaryArchitecture : public SleighArchitecture {
+@@ -46,3 +50,4 @@ public:
    virtual ~RawBinaryArchitecture(void) {}
  };
  
@@ -105,7 +105,7 @@ index e7ab19185..8fd9ba2fd 100644
  #include "sleighbase.hh"
  #include "pcodecompile.hh"
  #include "filemanage.hh"
-@@ -446,3 +449,5 @@ class SleighCompile : public SleighBase {
+@@ -446,3 +449,5 @@ public:
  
  extern SleighCompile *slgh;		///< A global reference to the SLEIGH compiler accessible to the parse functions
  extern int yydebug;			///< Debug state for the SLEIGH parse functions
@@ -126,12 +126,12 @@ index d395fb8a3..6371148b0 100644
  #include "sleigh_arch.hh"
  #include "loadimage_xml.hh"
  
-@@ -45,3 +49,5 @@ class XmlArchitecture : public SleighArchitecture {
+@@ -45,3 +49,5 @@ public:
    XmlArchitecture(const string &fname,const string &targ,ostream *estream);	///< Constructor
    virtual ~XmlArchitecture(void) {}
  };
 +
 +#endif
 -- 
-2.39.0
+2.37.1 (Apple Git-137.1)
 

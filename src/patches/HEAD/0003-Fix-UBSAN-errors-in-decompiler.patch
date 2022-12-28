@@ -1,4 +1,4 @@
-From edeabead92d2de4aaa4cf432bd03a06d54d4d56d Mon Sep 17 00:00:00 2001
+From f46ae34037681564ebf8706c19e76d70823f7741 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Mon, 7 Feb 2022 02:02:03 +1100
 Subject: [PATCH 3/5] Fix UBSAN errors in decompiler
@@ -61,7 +61,7 @@ index 19ed41c63..d1bd842d8 100644
  
  void ParameterBasic::setTypeLock(bool val)
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
-index 63784131d..ff8bb6a23 100644
+index 0a641091b..70acfad8f 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 @@ -501,7 +501,13 @@ void Funcdata::setHighLevel(void)
@@ -80,7 +80,7 @@ index 63784131d..ff8bb6a23 100644
    uint4 vnFlags = vn->getFlags() & (Varnode::directwrite|Varnode::addrforce);
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
-index b4f8a3f8e..068393416 100644
+index 697e42372..6267ed750 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
 @@ -667,7 +667,11 @@ uintb PcodeOp::getNZMaskLocal(bool cliploop) const
@@ -159,7 +159,7 @@ index 49128f7e6..133da8178 100644
    return res;
  }
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index 973a7a31d..3955b836b 100644
+index 524eecfce..95b867459 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 @@ -974,7 +974,12 @@ int4 RulePullsubIndirect::applyOp(PcodeOp *op,Funcdata &data)
@@ -176,7 +176,7 @@ index 973a7a31d..3955b836b 100644
    consume = ~consume;
    if ((consume & indir->getIn(0)->getConsume())!=0) return 0;
  
-@@ -6805,8 +6810,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
+@@ -6719,8 +6724,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *sb = op->getIn(0);
    Datatype *sbType = sb->getTypeReadFacing(op);
    if (sbType->getMetatype() != TYPE_PTR) return 0;
@@ -188,7 +188,7 @@ index 973a7a31d..3955b836b 100644
    Varnode *vn1 = op->getIn(1);
    if (!vn1->isConstant()) return 0;
    Varnode *outvn = op->getOut();
-@@ -8289,7 +8295,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
+@@ -8448,7 +8454,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *outvn = op->getOut();
    int4 flowsize = outvn->getSize();
    uintb mask = calc_mask( flowsize );
@@ -225,7 +225,7 @@ diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh b/Ghidra/
 index 3b836244c..1fbd169c9 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
-@@ -46,7 +46,7 @@ class ConstTpl {
+@@ -46,7 +46,7 @@ private:
    static void printHandleSelector(ostream &s,v_field val);
    static v_field readHandleSelector(const string &name);
  public:
@@ -262,7 +262,7 @@ index dbb8f9e51..85bd54261 100644
  }
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index 316074389..91bf4bc77 100644
+index 844bb2776..1296b82dd 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 @@ -3233,8 +3233,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
@@ -289,5 +289,5 @@ index ab99382a3..67d92c573 100644
          uintb true_result = ((uintb)(int32_t)f) & 0xffffffff;
          uintb encoding = format.getEncoding(f);
 -- 
-2.39.0
+2.37.1 (Apple Git-137.1)
 
