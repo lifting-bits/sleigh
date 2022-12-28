@@ -1,4 +1,4 @@
-From 1b1e2f4b7c4a15d667fe16bcf954e669ff548875 Mon Sep 17 00:00:00 2001
+From 45bfbf4f241db2314e34f62557fc9b4ae51635e8 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Sun, 13 Feb 2022 12:59:42 -0500
 Subject: [PATCH 1/5] Small improvements to C++ decompiler testing from CLI
@@ -151,7 +151,7 @@ diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.hh b/Ghid
 index 52125b401..46abd6bce 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.hh
-@@ -91,7 +91,7 @@ class FunctionTestCollection {
+@@ -91,7 +91,7 @@ public:
    void restoreXml(DocumentStorage &store,const Element *el);	///< Load tests from a \<decompilertest> tag.
    void restoreXmlOldForm(DocumentStorage &store,const Element *el);	///< Load tests from \<binaryimage> tag.
    void runTests(list<string> &lateStream);	///< Run the script and perform the tests
@@ -161,5 +161,5 @@ index 52125b401..46abd6bce 100644
  
  #endif
 -- 
-2.39.0
+2.37.1 (Apple Git-137.1)
 
