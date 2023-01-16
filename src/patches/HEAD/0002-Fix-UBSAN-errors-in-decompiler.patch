@@ -1,7 +1,7 @@
-From f46ae34037681564ebf8706c19e76d70823f7741 Mon Sep 17 00:00:00 2001
+From 0f35ed587ed7eabed6e87be0a09c9f2fddefdd7e Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Mon, 7 Feb 2022 02:02:03 +1100
-Subject: [PATCH 3/5] Fix UBSAN errors in decompiler
+Subject: [PATCH 2/4] Fix UBSAN errors in decompiler
 
 ---
  .../Decompiler/src/decompile/cpp/address.cc    |  4 ++--
@@ -159,7 +159,7 @@ index 49128f7e6..133da8178 100644
    return res;
  }
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index 524eecfce..95b867459 100644
+index 652eefbe5..c84df0848 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 @@ -974,7 +974,12 @@ int4 RulePullsubIndirect::applyOp(PcodeOp *op,Funcdata &data)
@@ -176,7 +176,7 @@ index 524eecfce..95b867459 100644
    consume = ~consume;
    if ((consume & indir->getIn(0)->getConsume())!=0) return 0;
  
-@@ -6719,8 +6724,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
+@@ -6738,8 +6743,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *sb = op->getIn(0);
    Datatype *sbType = sb->getTypeReadFacing(op);
    if (sbType->getMetatype() != TYPE_PTR) return 0;
@@ -188,7 +188,7 @@ index 524eecfce..95b867459 100644
    Varnode *vn1 = op->getIn(1);
    if (!vn1->isConstant()) return 0;
    Varnode *outvn = op->getOut();
-@@ -8448,7 +8454,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
+@@ -8467,7 +8473,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *outvn = op->getOut();
    int4 flowsize = outvn->getSize();
    uintb mask = calc_mask( flowsize );
@@ -225,7 +225,7 @@ diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh b/Ghidra/
 index 3b836244c..1fbd169c9 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
-@@ -46,7 +46,7 @@ private:
+@@ -46,7 +46,7 @@ class ConstTpl {
    static void printHandleSelector(ostream &s,v_field val);
    static v_field readHandleSelector(const string &name);
  public:
@@ -235,7 +235,7 @@ index 3b836244c..1fbd169c9 100644
      type=op2.type; value=op2.value; value_real=op2.value_real; select=op2.select; }
    ConstTpl(const_type tp,uintb val);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-index a0cd141ae..7229e6ba8 100644
+index fb9e94d34..7d09dd209 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 @@ -2157,8 +2157,8 @@ string SleighCompile::checkSymbols(SymbolScope *scope)
@@ -289,5 +289,5 @@ index ab99382a3..67d92c573 100644
          uintb true_result = ((uintb)(int32_t)f) & 0xffffffff;
          uintb encoding = format.getEncoding(f);
 -- 
-2.37.1 (Apple Git-137.1)
+2.39.0
 
