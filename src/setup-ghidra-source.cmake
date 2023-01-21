@@ -61,7 +61,6 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Add-include-guards-to-decompiler-C-headers.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Fix-UBSAN-errors-in-decompiler.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Remove-using-namespace-std-from-headers.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
