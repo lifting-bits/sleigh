@@ -1,7 +1,7 @@
-From 0f35ed587ed7eabed6e87be0a09c9f2fddefdd7e Mon Sep 17 00:00:00 2001
+From ed3a91b07e6932f8cf4e490a468a089793a338d3 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Mon, 7 Feb 2022 02:02:03 +1100
-Subject: [PATCH 2/4] Fix UBSAN errors in decompiler
+Subject: [PATCH 2/5] Fix UBSAN errors in decompiler
 
 ---
  .../Decompiler/src/decompile/cpp/address.cc    |  4 ++--
@@ -249,10 +249,10 @@ index fb9e94d34..7d09dd209 100644
        msg << "   Label <" << sym->getName() << "> was placed but not used" << endl;
      else if (!sym->isPlaced())
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
-index dbb8f9e51..85bd54261 100644
+index 8516dbf10..352a0ae99 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
-@@ -2565,7 +2565,7 @@ void ContextOp::restoreXml(const Element *el,SleighBase *trans)
+@@ -2566,7 +2566,7 @@ void ContextOp::restoreXml(const Element *el,SleighBase *trans)
    const List &list(el->getChildren());
    List::const_iterator iter;
    iter = list.begin();
@@ -276,10 +276,10 @@ index 844bb2776..1296b82dd 100644
      ++iter;
      if (ptr->submeta == sub) {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc b/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
-index ab99382a3..67d92c573 100644
+index f88b4d000..3b16ed13c 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
-@@ -338,7 +338,7 @@ TEST(float_opTrunc_to_int) {
+@@ -343,7 +343,7 @@ TEST(float_opTrunc_to_int) {
  
      for(float f:float_test_values) {
          // avoid undefined behavior
@@ -289,5 +289,5 @@ index ab99382a3..67d92c573 100644
          uintb true_result = ((uintb)(int32_t)f) & 0xffffffff;
          uintb encoding = format.getEncoding(f);
 -- 
-2.39.0
+2.39.1
 

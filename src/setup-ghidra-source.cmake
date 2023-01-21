@@ -61,6 +61,8 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Add-include-guards-to-decompiler-C-headers.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Fix-UBSAN-errors-in-decompiler.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Add-missing-using-std-symbols-to-sleighexample.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-Add-missing-include-for-numeric_limits.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()

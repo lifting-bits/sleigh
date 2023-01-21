@@ -1,0 +1,25 @@
+From 73733582f14f499fee467582495caefd1a6d0983 Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.d.kilmer@gmail.com>
+Date: Sat, 21 Jan 2023 11:44:25 -0500
+Subject: [PATCH 5/5] Add missing include for numeric_limits
+
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/float.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/float.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/float.cc
+index 23bd6b385..4a4c06c9d 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/float.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/float.cc
+@@ -18,6 +18,8 @@
+ #include "address.hh"
+ 
+ #include <cmath>
++#include <limits>
++
+ using std::ldexp;
+ using std::frexp;
+ using std::signbit;
+-- 
+2.39.1
+

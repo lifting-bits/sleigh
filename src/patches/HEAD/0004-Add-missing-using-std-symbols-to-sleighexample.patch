@@ -1,0 +1,26 @@
+From 1f1f4a736c35c8c90719f988c2da21883058de36 Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.d.kilmer@gmail.com>
+Date: Sat, 21 Jan 2023 10:23:19 -0500
+Subject: [PATCH 4/5] Add missing 'using std::*' symbols to sleighexample
+
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
+index 87a4d7980..b90aea291 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
+@@ -22,6 +22,9 @@
+ #include "emulate.hh"
+ #include <iostream>
+ 
++using std::cout;
++using std::cerr;
++
+ // These are the bytes for an example x86 binary
+ // These bytes are loaded at address 0x80483b4
+ static uint1 myprog[] = {
+-- 
+2.39.1
+
