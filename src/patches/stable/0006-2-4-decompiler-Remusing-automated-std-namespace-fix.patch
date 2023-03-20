@@ -1,240 +1,111 @@
-From 9b8d25a25cfc2f47853f844282e89a786b4df65f Mon Sep 17 00:00:00 2001
+From 9e624c292572ff219dc5c17071fd84435127e4b2 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
-Date: Wed, 2 Nov 2022 19:41:19 -0400
-Subject: [PATCH 5/5] Remove 'using namespace std' from headers
+Date: Sun, 19 Mar 2023 15:44:23 -0400
+Subject: [PATCH 6/8] (2/4) decompiler: Remusing automated std namespace fix
 
-Still uses it in source files to reduce diff and ease transition.
-
-I did not regenerate the files because it would cause more diffs than
-necessary.
+The remusing tool uses a heuristic to search for and add a prefix to
+unqualified symbols that came from the C++ standard library.
 ---
- .../Decompiler/src/decompile/cpp/action.cc    |   2 +
  .../Decompiler/src/decompile/cpp/action.hh    | 122 ++--
- .../Decompiler/src/decompile/cpp/address.cc   |   2 +
  .../Decompiler/src/decompile/cpp/address.hh   |  24 +-
- .../src/decompile/cpp/architecture.cc         |   2 +
  .../src/decompile/cpp/architecture.hh         |  62 +-
- .../Decompiler/src/decompile/cpp/bfd_arch.cc  |   2 +
  .../Decompiler/src/decompile/cpp/bfd_arch.hh  |   6 +-
- .../Decompiler/src/decompile/cpp/block.cc     |   2 +
  .../Decompiler/src/decompile/cpp/block.hh     | 116 ++--
- .../src/decompile/cpp/blockaction.cc          |   2 +
  .../src/decompile/cpp/blockaction.hh          |  78 +--
- .../Decompiler/src/decompile/cpp/callgraph.cc |   2 +
  .../Decompiler/src/decompile/cpp/callgraph.hh |  20 +-
- .../src/decompile/cpp/capability.cc           |   2 +
  .../src/decompile/cpp/capability.hh           |   4 +-
- .../Decompiler/src/decompile/cpp/cast.cc      |   2 +
- .../Decompiler/src/decompile/cpp/codedata.cc  |   2 +
  .../Decompiler/src/decompile/cpp/codedata.hh  |  56 +-
- .../Decompiler/src/decompile/cpp/comment.cc   |   2 +
  .../Decompiler/src/decompile/cpp/comment.hh   |  28 +-
- .../src/decompile/cpp/comment_ghidra.cc       |   2 +
  .../src/decompile/cpp/comment_ghidra.hh       |   4 +-
- .../Decompiler/src/decompile/cpp/condexe.cc   |   2 +
  .../Decompiler/src/decompile/cpp/condexe.hh   |  12 +-
- .../src/decompile/cpp/consolemain.cc          |   2 +
- .../Decompiler/src/decompile/cpp/context.cc   |   2 +
  .../Decompiler/src/decompile/cpp/context.hh   |  14 +-
- .../src/decompile/cpp/coreaction.cc           |   2 +
- .../src/decompile/cpp/coreaction.hh           | 162 ++---
- .../Decompiler/src/decompile/cpp/cover.cc     |   2 +
+ .../src/decompile/cpp/coreaction.hh           | 156 ++---
  .../Decompiler/src/decompile/cpp/cover.hh     |  12 +-
- .../Decompiler/src/decompile/cpp/cpool.cc     |   2 +
  .../Decompiler/src/decompile/cpp/cpool.hh     |  22 +-
- .../src/decompile/cpp/cpool_ghidra.cc         |   2 +
  .../src/decompile/cpp/cpool_ghidra.hh         |   4 +-
- .../Decompiler/src/decompile/cpp/crc32.cc     |   2 +
- .../Decompiler/src/decompile/cpp/database.cc  |   2 +
  .../Decompiler/src/decompile/cpp/database.hh  | 152 ++---
- .../src/decompile/cpp/database_ghidra.cc      |   2 +
  .../src/decompile/cpp/database_ghidra.hh      |  32 +-
- .../Decompiler/src/decompile/cpp/double.cc    |   2 +
  .../Decompiler/src/decompile/cpp/double.hh    |  26 +-
- .../Decompiler/src/decompile/cpp/dynamic.cc   |   2 +
- .../Decompiler/src/decompile/cpp/dynamic.hh   |  12 +-
- .../Decompiler/src/decompile/cpp/emulate.cc   |   2 +
+ .../Decompiler/src/decompile/cpp/dynamic.hh   |  14 +-
  .../Decompiler/src/decompile/cpp/emulate.hh   |  22 +-
- .../src/decompile/cpp/emulateutil.cc          |   2 +
  .../src/decompile/cpp/emulateutil.hh          |   8 +-
  .../Decompiler/src/decompile/cpp/error.hh     |  10 +-
- .../src/decompile/cpp/filemanage.cc           |   2 +
  .../src/decompile/cpp/filemanage.hh           |  30 +-
- .../Decompiler/src/decompile/cpp/float.cc     |   2 +
  .../Decompiler/src/decompile/cpp/float.hh     |   2 +-
- .../Decompiler/src/decompile/cpp/flow.cc      |   2 +
  .../Decompiler/src/decompile/cpp/flow.hh      |  30 +-
- .../Decompiler/src/decompile/cpp/fspec.cc     |   2 +
  .../Decompiler/src/decompile/cpp/fspec.hh     | 154 ++---
- .../Decompiler/src/decompile/cpp/funcdata.cc  |   2 +
  .../Decompiler/src/decompile/cpp/funcdata.hh  |  84 +--
- .../src/decompile/cpp/funcdata_block.cc       |   2 +
- .../src/decompile/cpp/funcdata_op.cc          |   2 +
- .../src/decompile/cpp/funcdata_varnode.cc     |   2 +
- .../src/decompile/cpp/ghidra_arch.cc          |   2 +
- .../src/decompile/cpp/ghidra_arch.hh          |  64 +-
- .../src/decompile/cpp/ghidra_context.cc       |   2 +
+ .../src/decompile/cpp/ghidra_arch.hh          |  64 +--
  .../src/decompile/cpp/ghidra_context.hh       |  10 +-
- .../src/decompile/cpp/ghidra_process.cc       |   2 +
- .../src/decompile/cpp/ghidra_process.hh       |  26 +-
- .../src/decompile/cpp/ghidra_translate.cc     |   2 +
+ .../src/decompile/cpp/ghidra_process.hh       |  24 +-
  .../src/decompile/cpp/ghidra_translate.hh     |  14 +-
- .../src/decompile/cpp/globalcontext.cc        |   2 +
  .../src/decompile/cpp/globalcontext.hh        |  34 +-
- .../Decompiler/src/decompile/cpp/grammar.cc   |   2 +
  .../Decompiler/src/decompile/cpp/grammar.hh   | 140 ++---
- .../Decompiler/src/decompile/cpp/graph.cc     |   2 +
  .../Decompiler/src/decompile/cpp/graph.hh     |   6 +-
- .../Decompiler/src/decompile/cpp/heritage.cc  |   2 +
  .../Decompiler/src/decompile/cpp/heritage.hh  |  80 +--
- .../src/decompile/cpp/ifacedecomp.cc          |   2 +
  .../src/decompile/cpp/ifacedecomp.hh          | 238 ++++----
- .../Decompiler/src/decompile/cpp/ifaceterm.cc |   2 +
  .../Decompiler/src/decompile/cpp/ifaceterm.hh |  12 +-
- .../src/decompile/cpp/inject_ghidra.cc        |   2 +
  .../src/decompile/cpp/inject_ghidra.hh        |  28 +-
- .../src/decompile/cpp/inject_sleigh.cc        |   2 +
  .../src/decompile/cpp/inject_sleigh.hh        |  50 +-
- .../Decompiler/src/decompile/cpp/interface.cc |   2 +
- .../Decompiler/src/decompile/cpp/interface.hh | 104 ++--
- .../Decompiler/src/decompile/cpp/jumptable.cc |   2 +
+ .../Decompiler/src/decompile/cpp/interface.hh | 100 ++--
  .../Decompiler/src/decompile/cpp/jumptable.hh |  74 +--
- .../Decompiler/src/decompile/cpp/libdecomp.cc |   2 +
  .../Decompiler/src/decompile/cpp/libdecomp.hh |   4 +-
- .../Decompiler/src/decompile/cpp/loadimage.cc |   2 +
  .../Decompiler/src/decompile/cpp/loadimage.hh |  22 +-
- .../src/decompile/cpp/loadimage_bfd.cc        |   2 +
  .../src/decompile/cpp/loadimage_bfd.hh        |  12 +-
- .../src/decompile/cpp/loadimage_ghidra.cc     |   2 +
  .../src/decompile/cpp/loadimage_ghidra.hh     |   2 +-
- .../src/decompile/cpp/loadimage_xml.cc        |   2 +
  .../src/decompile/cpp/loadimage_xml.hh        |  14 +-
- .../Decompiler/src/decompile/cpp/marshal.cc   |   1 +
- .../Decompiler/src/decompile/cpp/marshal.hh   |  78 ++-
- .../Decompiler/src/decompile/cpp/memstate.cc  |   2 +
+ .../Decompiler/src/decompile/cpp/marshal.hh   |  90 ++-
  .../Decompiler/src/decompile/cpp/memstate.hh  |  12 +-
- .../Decompiler/src/decompile/cpp/merge.cc     |   2 +
  .../Decompiler/src/decompile/cpp/merge.hh     |  26 +-
- .../Decompiler/src/decompile/cpp/op.cc        |   2 +
  .../Decompiler/src/decompile/cpp/op.hh        |  56 +-
- .../src/decompile/cpp/opbehavior.cc           |   2 +
  .../src/decompile/cpp/opbehavior.hh           |   4 +-
- .../Decompiler/src/decompile/cpp/opcodes.cc   |   2 +
  .../Decompiler/src/decompile/cpp/opcodes.hh   |   4 +-
- .../Decompiler/src/decompile/cpp/options.cc   |   2 +
  .../Decompiler/src/decompile/cpp/options.hh   |  82 +--
- .../Decompiler/src/decompile/cpp/override.cc  |   2 +
  .../Decompiler/src/decompile/cpp/override.hh  |  22 +-
- .../Decompiler/src/decompile/cpp/paramid.cc   |   2 +
  .../Decompiler/src/decompile/cpp/paramid.hh   |  10 +-
- .../Decompiler/src/decompile/cpp/partmap.hh   |  11 +-
- .../src/decompile/cpp/pcodecompile.cc         |   2 +
+ .../Decompiler/src/decompile/cpp/partmap.hh   |  12 +-
  .../src/decompile/cpp/pcodecompile.hh         |  50 +-
- .../src/decompile/cpp/pcodeinject.cc          |   2 +
  .../src/decompile/cpp/pcodeinject.hh          |  84 +--
- .../src/decompile/cpp/pcodeparse.cc           |   2 +
  .../src/decompile/cpp/pcodeparse.hh           |  24 +-
- .../Decompiler/src/decompile/cpp/pcodeparse.y |   2 +
- .../Decompiler/src/decompile/cpp/pcoderaw.cc  |   2 +
  .../Decompiler/src/decompile/cpp/pcoderaw.hh  |   2 +-
- .../src/decompile/cpp/prefersplit.cc          |   2 +
  .../src/decompile/cpp/prefersplit.hh          |   8 +-
- .../src/decompile/cpp/prettyprint.cc          |   2 +
  .../src/decompile/cpp/prettyprint.hh          | 144 ++---
- .../Decompiler/src/decompile/cpp/printc.cc    |   2 +
  .../Decompiler/src/decompile/cpp/printc.hh    |  72 +--
- .../Decompiler/src/decompile/cpp/printjava.cc |   2 +
  .../Decompiler/src/decompile/cpp/printjava.hh |   4 +-
- .../src/decompile/cpp/printlanguage.cc        |   2 +
- .../src/decompile/cpp/printlanguage.hh        |  64 +-
- .../Decompiler/src/decompile/cpp/rangeutil.cc |   2 +
+ .../src/decompile/cpp/printlanguage.hh        |  64 +--
  .../Decompiler/src/decompile/cpp/rangeutil.hh |  38 +-
- .../Decompiler/src/decompile/cpp/raw_arch.cc  |   2 +
  .../Decompiler/src/decompile/cpp/raw_arch.hh  |   6 +-
- .../src/decompile/cpp/ruleaction.cc           |   2 +
- .../src/decompile/cpp/ruleaction.hh           | 564 +++++++++---------
- .../src/decompile/cpp/rulecompile.cc          |   2 +
+ .../src/decompile/cpp/ruleaction.hh           | 540 +++++++++---------
  .../src/decompile/cpp/rulecompile.hh          |  44 +-
- .../Decompiler/src/decompile/cpp/ruleparse.y  |   2 +
- .../Decompiler/src/decompile/cpp/semantics.cc |   2 +
  .../Decompiler/src/decompile/cpp/semantics.hh |  42 +-
- .../Decompiler/src/decompile/cpp/sleigh.cc    |   2 +
- .../Decompiler/src/decompile/cpp/sleigh.hh    |  22 +-
- .../src/decompile/cpp/sleigh_arch.cc          |   2 +
+ .../Decompiler/src/decompile/cpp/sleigh.hh    |  10 +-
  .../src/decompile/cpp/sleigh_arch.hh          |  82 +--
- .../src/decompile/cpp/sleighbase.cc           |   2 +
  .../src/decompile/cpp/sleighbase.hh           |  32 +-
- .../src/decompile/cpp/sleighexample.cc        |   2 +
- .../src/decompile/cpp/slgh_compile.cc         |   2 +
  .../src/decompile/cpp/slgh_compile.hh         | 144 ++---
- .../Decompiler/src/decompile/cpp/slghparse.cc |   2 +
  .../Decompiler/src/decompile/cpp/slghparse.hh |  14 +-
- .../Decompiler/src/decompile/cpp/slghparse.y  |   2 +
- .../src/decompile/cpp/slghpatexpress.cc       |   2 +
  .../src/decompile/cpp/slghpatexpress.hh       | 158 ++---
- .../src/decompile/cpp/slghpattern.cc          |   2 +
  .../src/decompile/cpp/slghpattern.hh          |  22 +-
- .../Decompiler/src/decompile/cpp/slghscan.cc  |   3 +
- .../Decompiler/src/decompile/cpp/slghscan.l   |   3 +
- .../src/decompile/cpp/slghsymbol.cc           |   2 +
  .../src/decompile/cpp/slghsymbol.hh           | 236 ++++----
- .../Decompiler/src/decompile/cpp/space.cc     |   2 +
  .../Decompiler/src/decompile/cpp/space.hh     |  44 +-
- .../src/decompile/cpp/string_ghidra.cc        |   2 +
  .../src/decompile/cpp/string_ghidra.hh        |   2 +-
- .../src/decompile/cpp/stringmanage.cc         |   2 +
  .../src/decompile/cpp/stringmanage.hh         |  12 +-
- .../Decompiler/src/decompile/cpp/subflow.cc   |   2 +
  .../Decompiler/src/decompile/cpp/subflow.hh   |  18 +-
- .../Decompiler/src/decompile/cpp/test.cc      |   2 +
- .../src/decompile/cpp/testfunction.cc         |   2 +
  .../src/decompile/cpp/testfunction.hh         |  34 +-
- .../Decompiler/src/decompile/cpp/transform.cc |   2 +
  .../Decompiler/src/decompile/cpp/transform.hh |  16 +-
- .../Decompiler/src/decompile/cpp/translate.cc |   2 +
- .../Decompiler/src/decompile/cpp/translate.hh |  46 +-
- .../Decompiler/src/decompile/cpp/type.cc      |   2 +
+ .../Decompiler/src/decompile/cpp/translate.hh |  48 +-
  .../Decompiler/src/decompile/cpp/type.hh      | 126 ++--
- .../src/decompile/cpp/typegrp_ghidra.cc       |   2 +
  .../src/decompile/cpp/typegrp_ghidra.hh       |   2 +-
- .../Decompiler/src/decompile/cpp/typeop.cc    |   2 +
  .../Decompiler/src/decompile/cpp/typeop.hh    |  82 +--
- .../Decompiler/src/decompile/cpp/unify.cc     |   2 +
  .../Decompiler/src/decompile/cpp/unify.hh     | 188 +++---
- .../src/decompile/cpp/unionresolve.cc         |   2 +
  .../src/decompile/cpp/unionresolve.hh         |  10 +-
- .../Decompiler/src/decompile/cpp/userop.cc    |   2 +
  .../Decompiler/src/decompile/cpp/userop.hh    |  48 +-
- .../Decompiler/src/decompile/cpp/variable.cc  |   2 +
  .../Decompiler/src/decompile/cpp/variable.hh  |   8 +-
- .../Decompiler/src/decompile/cpp/varmap.cc    |   2 +
  .../Decompiler/src/decompile/cpp/varmap.hh    |  38 +-
- .../Decompiler/src/decompile/cpp/varnode.cc   |   2 +
  .../Decompiler/src/decompile/cpp/varnode.hh   |  22 +-
- .../Decompiler/src/decompile/cpp/xml.cc       |   2 +
- .../Decompiler/src/decompile/cpp/xml.hh       | 148 +++--
- .../Decompiler/src/decompile/cpp/xml.y        |   2 +
- .../Decompiler/src/decompile/cpp/xml_arch.cc  |   2 +
+ .../Decompiler/src/decompile/cpp/xml.hh       | 134 +++--
  .../Decompiler/src/decompile/cpp/xml_arch.hh  |   6 +-
- .../decompile/unittests/testcirclerange.cc    |   2 +
- .../src/decompile/unittests/testfloatemu.cc   |   2 +
- .../src/decompile/unittests/testmarshal.cc    |   2 +
- .../src/decompile/unittests/testtypes.cc      |   2 +
- 212 files changed, 2848 insertions(+), 2634 deletions(-)
+ 98 files changed, 2596 insertions(+), 2612 deletions(-)
 
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/action.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/action.cc
-index 7b1b2062a..76fc27d72 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/action.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/action.cc
-@@ -18,6 +18,8 @@
- 
- #include "coreaction.hh"
- 
-+using namespace std;
-+
- /// Specify the name, group, and properties of the Action
- /// \param f is the collection of property flags
- /// \param nm is the Action name
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/action.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/action.hh
 index 645c81119..c9369c025 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/action.hh
@@ -484,19 +355,6 @@ index 645c81119..c9369c025 100644
    void universalAction(Architecture *glb);		///< Build the universal action
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
-index 0b3bf04c8..9a58ea4ef 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
-@@ -16,6 +16,8 @@
- #include "address.hh"
- #include "translate.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_FIRST = AttributeId("first",27);
- AttributeId ATTRIB_LAST = AttributeId("last",28);
- AttributeId ATTRIB_UNIQ = AttributeId("uniq",29);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
 index ace26f175..084a78b1b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
@@ -593,21 +451,8 @@ index ace26f175..084a78b1b 100644
    int4 sz; offset=base->read(s,sz); return sz;
  }
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.cc
-index cb96bbbbc..18b379314 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.cc
-@@ -24,6 +24,8 @@
- #include <cmath>
- #endif
- 
-+using namespace std;
-+
- vector<ArchitectureCapability *> ArchitectureCapability::thelist;
- 
- const uint4 ArchitectureCapability::majorversion = 5;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.hh
-index 300721274..638445c03 100644
+index 20cb06f0d..1da109f31 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.hh
 @@ -54,7 +54,7 @@ class Statistics {
@@ -619,7 +464,7 @@ index 300721274..638445c03 100644
  };
  
  #endif
-@@ -114,11 +114,11 @@ extern ElementId ELEM_VOLATILE;			///< Marshaling element \<volatile>
+@@ -115,11 +115,11 @@ extern ElementId ELEM_VOLATILE;			///< Marshaling element \<volatile>
  class ArchitectureCapability : public CapabilityPoint {
    static const uint4 majorversion;			///< Current major version of decompiler
    static const uint4 minorversion;			///< Current minor version of decompiler
@@ -634,7 +479,7 @@ index 300721274..638445c03 100644
    virtual void initialize(void);			///< Do specialized initialization
  
    /// \brief Build an Architecture given a raw file or data
-@@ -129,13 +129,13 @@ class ArchitectureCapability : public CapabilityPoint {
+@@ -130,13 +130,13 @@ class ArchitectureCapability : public CapabilityPoint {
    /// \param filename is the path to the executable file to examine
    /// \param target if non-empty is a language id string
    /// \param estream is an output stream for error messages
@@ -650,7 +495,7 @@ index 300721274..638445c03 100644
  
    /// \brief Determine is this extension can handle this XML document
    ///
-@@ -145,9 +145,9 @@ class ArchitectureCapability : public CapabilityPoint {
+@@ -146,9 +146,9 @@ class ArchitectureCapability : public CapabilityPoint {
    /// \return \b true if \b this extension understands the XML
    virtual bool isXmlMatch(Document *doc) const=0;
  
@@ -662,7 +507,7 @@ index 300721274..638445c03 100644
    static void sortCapabilities(void);					///< Sort extensions
    static uint4 getMajorVersion(void) { return majorversion; }		///< Get \e major decompiler version
    static uint4 getMinorVersion(void) { return minorversion; }		///< Get \e minor decompiler version
-@@ -161,7 +161,7 @@ class ArchitectureCapability : public CapabilityPoint {
+@@ -162,7 +162,7 @@ class ArchitectureCapability : public CapabilityPoint {
  /// This class also holds numerous configuration parameters for the analysis process
  class Architecture : public AddrSpaceManager {
  public:
@@ -671,7 +516,7 @@ index 300721274..638445c03 100644
  
  				// Configuration data
    int4 trim_recurse_max;	///< How many levels to let parameter trims recurse
-@@ -173,16 +173,16 @@ class Architecture : public AddrSpaceManager {
+@@ -174,16 +174,16 @@ class Architecture : public AddrSpaceManager {
    bool readonlypropagate;	///< true if readonly values should be treated as constants
    bool infer_pointers;		///< True if we should infer pointers from constants that are likely addresses
    bool analyze_for_loops;	///< True if we should attempt conversion of \e whiledo loops to \e for loops
@@ -691,7 +536,7 @@ index 300721274..638445c03 100644
    ProtoModel *defaultfp;	///< Parsed form of default prototype
    VarnodeData defaultReturnAddr;	///< Default storage location of return address (for current function)
    ProtoModel *evalfp_current;	///< Function proto to use when evaluating current function
-@@ -196,58 +196,58 @@ class Architecture : public AddrSpaceManager {
+@@ -197,58 +197,58 @@ class Architecture : public AddrSpaceManager {
    StringManager *stringManager;	///< Manager of decoded strings
    ConstantPool *cpool;		///< Deferred constant values
    PrintLanguage *print;	        ///< Current high-level language printer
@@ -767,7 +612,7 @@ index 300721274..638445c03 100644
  		    int4 truncSize,bool isreversejustified,bool stackGrowth,bool isFormal);
    void addNoHighPtr(const Range &rng); ///< Add a new region where pointers do not exist
  
-@@ -302,7 +302,7 @@ class Architecture : public AddrSpaceManager {
+@@ -338,7 +338,7 @@ class Architecture : public AddrSpaceManager {
    void fillinReadOnlyFromLoader(void);			///< Load info about read-only sections
    void initializeSegments();				///< Set up segment resolvers
    void cacheAddrSpaceProperties(void);			///< Calculate some frequently used space properties and cache them
@@ -776,7 +621,7 @@ index 300721274..638445c03 100644
  
    void parseProcessorConfig(DocumentStorage &store);	///< Apply processor specific configuration
    void parseCompilerConfig(DocumentStorage &store);	///< Apply compiler specific configuration
-@@ -312,7 +312,7 @@ class Architecture : public AddrSpaceManager {
+@@ -348,7 +348,7 @@ class Architecture : public AddrSpaceManager {
    ProtoModel *decodeProto(Decoder &decoder);		///< Parse a proto-type model from a stream
    void decodeProtoEval(Decoder &decoder);		///< Apply prototype evaluation configuration
    void decodeDefaultProto(Decoder &decoder);		///< Apply default prototype model configuration
@@ -785,19 +630,6 @@ index 300721274..638445c03 100644
    void addToGlobalScope(const RangeProperties &props);	///< Add a memory range to the set of addresses considered \e global
    void addOtherSpace(void);                         	///< Add OTHER space and all of its overlays to the symboltab
    void decodeReadOnly(Decoder &decoder);		///< Apply read-only region configuration
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.cc
-index b9a495500..a37960f9e 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.cc
-@@ -16,6 +16,8 @@
-  */
- #include "bfd_arch.hh"
- 
-+using namespace std;
-+
- // Constructing this object registers capability
- BfdArchitectureCapability BfdArchitectureCapability::bfdArchitectureCapability;
- 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh
 index 6ade01ecc..ed206737b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.hh
@@ -822,19 +654,6 @@ index 6ade01ecc..ed206737b 100644
    virtual ~BfdArchitecture(void) {}
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
-index 611009333..fff1a5cfe 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
-@@ -17,6 +17,8 @@
- #include "block.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_ALTINDEX = AttributeId("altindex",75);
- AttributeId ATTRIB_DEPTH = AttributeId("depth",76);
- AttributeId ATTRIB_END = AttributeId("end",77);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/block.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/block.hh
 index 556789694..9c49e4c51 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/block.hh
@@ -1179,19 +998,6 @@ index 556789694..9c49e4c51 100644
  
  {
    return 2;	// By default a block will not normalize
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/blockaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/blockaction.cc
-index 80265a458..9c9906f8f 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/blockaction.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/blockaction.cc
-@@ -16,6 +16,8 @@
- #include "blockaction.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- /// Retrieve the current edge (as a \e top FlowBlock and the index of the outgoing edge).
- /// If the end-points have been collapsed together, this returns NULL.
- /// The top and bottom nodes of the edge are updated to FlowBlocks in the current collapsed graph.
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/blockaction.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/blockaction.hh
 index 09b1779dc..0ae2b6234 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/blockaction.hh
@@ -1398,19 +1204,6 @@ index 09b1779dc..0ae2b6234 100644
    virtual Action *clone(const ActionGroupList &grouplist) const {
      if (!grouplist.contains(getGroup())) return (Action *)0;
      return new ActionNodeJoin(getGroup());
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/callgraph.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/callgraph.cc
-index 26406c288..6b6a8d34b 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/callgraph.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/callgraph.cc
-@@ -16,6 +16,8 @@
- #include "callgraph.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- ElementId ELEM_CALLGRAPH = ElementId("callgraph",226);
- ElementId ELEM_NODE = ElementId("node",227);
- 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/callgraph.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/callgraph.hh
 index f8419f15a..5ad32b66f 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/callgraph.hh
@@ -1469,19 +1262,6 @@ index f8419f15a..5ad32b66f 100644
    void buildAllNodes(void);
    void buildEdges(Funcdata *fd);
    void encode(Encoder &encoder) const;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/capability.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/capability.cc
-index 87e40dbbf..481cf3378 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/capability.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/capability.cc
-@@ -15,6 +15,8 @@
-  */
- #include "capability.hh"
- 
-+using namespace std;
-+
- /// Access static vector of CapabilityPoint objects that are registered during static initialization
- /// The list itself is created once on the first call to this method
- /// \e after all the static initializers have run
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/capability.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/capability.hh
 index 9ed07195d..4cbbf6aec 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/capability.hh
@@ -1504,32 +1284,6 @@ index 9ed07195d..4cbbf6aec 100644
  protected:
    CapabilityPoint(void);		///< Construct extension capability exactly once
  public:
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/cast.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/cast.cc
-index dc8baa764..0899dc5de 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/cast.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/cast.cc
-@@ -16,6 +16,8 @@
- #include "cast.hh"
- #include "op.hh"
- 
-+using namespace std;
-+
- /// Sets the TypeFactory used to produce data-types for the arithmeticOutputStandard() method
- /// \param t is the TypeFactory
- void CastStrategy::setTypeFactory(TypeFactory *t)
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/codedata.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/codedata.cc
-index 92690f422..1ba834bd6 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/codedata.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/codedata.cc
-@@ -17,6 +17,8 @@
- #include "codedata.hh"
- #include "loadimage_bfd.hh"
- 
-+using namespace std;
-+
- // Constructing this registers the capability
- IfaceCodeDataCapability IfaceCodeDataCapability::ifaceCodeDataCapability;
- 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/codedata.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/codedata.hh
 index 3b5a4b031..87db1807b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/codedata.hh
@@ -1668,19 +1422,6 @@ index 3b5a4b031..87db1807b 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/comment.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/comment.cc
-index b5bc0a16d..e495b734e 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/comment.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/comment.cc
-@@ -16,6 +16,8 @@
- #include "comment.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- ElementId ELEM_COMMENT = ElementId("comment",86);
- ElementId ELEM_COMMENTDB = ElementId("commentdb",87);
- ElementId ELEM_TEXT = ElementId("text",88);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/comment.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/comment.hh
 index b2be60f0f..49d4e1950 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/comment.hh
@@ -1771,19 +1512,6 @@ index b2be60f0f..49d4e1950 100644
    bool displayUnplacedComments;				///< True if unplaced comments should be displayed (in the header)
    bool findPosition(Subsort &subsort,Comment *comm,const Funcdata *fd);	///< Establish sorting key for a Comment
  public:
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/comment_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/comment_ghidra.cc
-index 04a4c2cf0..2ba980fc0 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/comment_ghidra.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/comment_ghidra.cc
-@@ -15,6 +15,8 @@
-  */
- #include "comment_ghidra.hh"
- 
-+using namespace std;
-+
- CommentDatabaseGhidra::CommentDatabaseGhidra(ArchitectureGhidra *g)
-   : CommentDatabase()
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/comment_ghidra.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/comment_ghidra.hh
 index c0dc59c89..0ed0def99 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/comment_ghidra.hh
@@ -1799,19 +1527,6 @@ index c0dc59c89..0ed0def99 100644
    virtual void deleteComment(Comment *com) {
      throw LowlevelError("deleteComment unimplemented"); }
    virtual CommentSet::const_iterator beginComment(const Address &fad) const;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/condexe.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/condexe.cc
-index 962f35d5d..0c41bb363 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/condexe.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/condexe.cc
-@@ -15,6 +15,8 @@
-  */
- #include "condexe.hh"
- 
-+using namespace std;
-+
- ConditionMarker::ConditionMarker(void)
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/condexe.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/condexe.hh
 index bf2e54615..8d479c3ed 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/condexe.hh
@@ -1853,32 +1568,6 @@ index bf2e54615..8d479c3ed 100644
    virtual int4 applyOp(PcodeOp *op,Funcdata &data);
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/consolemain.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/consolemain.cc
-index f40f3dd66..c4a628228 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/consolemain.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/consolemain.cc
-@@ -18,6 +18,8 @@
- 
- #include "libdecomp.hh"
- 
-+using namespace std;
-+
- class IfcLoadFile : public IfaceDecompCommand {
- public:
-   virtual void execute(istream &s);
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/context.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/context.cc
-index 51157f3a7..19ab8ddfa 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/context.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/context.cc
-@@ -17,6 +17,8 @@
- #include "slghsymbol.hh"
- #include "translate.hh"
- 
-+using namespace std;
-+
- ParserContext::ParserContext(ContextCache *ccache,Translate *trans)
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/context.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/context.hh
 index 8ae7012a6..5f00991fc 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/context.hh
@@ -1936,21 +1625,8 @@ index 8ae7012a6..5f00991fc 100644
  };
  
  inline void ParserContext::deallocateState(ParserWalkerChange &walker) {
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.cc
-index a4c6b71fc..dfe23cf03 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.cc
-@@ -18,6 +18,8 @@
- #include "double.hh"
- #include "subflow.hh"
- 
-+using namespace std;
-+
- /// \brief A stack equation
- struct StackEqn {
-   int4 var1;			///< Variable with 1 coefficient
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.hh
-index 2f4c94921..7ef1e69ff 100644
+index 2f4c94921..fcb5c7582 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.hh
 @@ -31,7 +31,7 @@
@@ -2025,15 +1701,6 @@ index 2f4c94921..7ef1e69ff 100644
    virtual Action *clone(const ActionGroupList &grouplist) const {
      if (!grouplist.contains(getGroup())) return (Action *)0;
      return new ActionForceGoto(getGroup());
-@@ -149,7 +149,7 @@ class ActionForceGoto : public Action {
- // \brief Perform common subexpression elimination
- // class ActionCse : public Action {
- // public:
--//   ActionCse(const string &g) : Action(0,"cse",g) {}			///< Constructor
-+//   ActionCse(const std::string &g) : Action(0,"cse",g) {}			///< Constructor
- //   virtual Action *clone(const ActionGroupList &grouplist) const {
- //     if (!grouplist.contains(getGroup())) return (Action *)0;
- //     return new ActionCse(getGroup());
 @@ -163,7 +163,7 @@ class ActionMultiCse : public Action {
    static PcodeOp *findMatch(BlockBasic *bl,PcodeOp *target,Varnode *in);	///< Find match to CPUI_MULTIEQUAL
    bool processBlock(Funcdata &data,BlockBasic *bl);		///< Search a block for equivalent CPUI_MULTIEQUAL
@@ -2411,24 +2078,6 @@ index 2f4c94921..7ef1e69ff 100644
    virtual Action *clone(const ActionGroupList &grouplist) const {
      if (!grouplist.contains(getGroup())) return (Action *)0;
      return new ActionActiveReturn(getGroup());
-@@ -746,7 +746,7 @@ class ActionActiveReturn : public Action {
- // \brief If there are any sub-function calls with \e paramshifts, add the shifted parameters.
- // class ActionParamShiftStart : public Action {
- // public:
--//   ActionParamShiftStart(const string &g) : Action( rule_onceperfunc, "paramshiftstart",g) {}	///< Constructor
-+//   ActionParamShiftStart(const std::string &g) : Action( rule_onceperfunc, "paramshiftstart",g) {}	///< Constructor
- //   virtual Action *clone(const ActionGroupList &grouplist) const {
- //     if (!grouplist.contains(getGroup())) return (Action *)0;
- //     return new ActionParamShiftStart(getGroup());
-@@ -758,7 +758,7 @@ class ActionActiveReturn : public Action {
- // class ActionParamShiftStop : public Action {
- //   bool paramshiftsleft;
- // public:
--//   ActionParamShiftStop(const string &g) : Action( 0, "paramshiftstop",g) {}	///< Constructor
-+//   ActionParamShiftStop(const std::string &g) : Action( 0, "paramshiftstop",g) {}	///< Constructor
- //   virtual void reset(Funcdata &data) { paramshiftsleft = true; }
- //   virtual Action *clone(const ActionGroupList &grouplist) const {
- //     if (!grouplist.contains(getGroup())) return (Action *)0;
 @@ -771,7 +771,7 @@ class ActionActiveReturn : public Action {
  class ActionReturnRecovery : public Action {
    static void buildReturnOutput(ParamActive *active,PcodeOp *retop,Funcdata &data);
@@ -2604,19 +2253,6 @@ index 2f4c94921..7ef1e69ff 100644
  };
  
  /// \brief A comparison operator for ordering terms in a sum
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/cover.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/cover.cc
-index 6e2b88a06..f41a8f745 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/cover.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/cover.cc
-@@ -16,6 +16,8 @@
- #include "cover.hh"
- #include "block.hh"
- 
-+using namespace std;
-+
- const CoverBlock Cover::emptyBlock;
- 
- /// PcodeOp objects and a CoverBlock start/stop boundaries have
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/cover.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/cover.hh
 index 4d874ff9f..4cc0bdaaa 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/cover.hh
@@ -2661,19 +2297,6 @@ index 4d874ff9f..4cc0bdaaa 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/cpool.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/cpool.cc
-index 42b1531ad..8e1fd1150 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/cpool.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/cpool.cc
-@@ -15,6 +15,8 @@
-  */
- #include "cpool.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_A = AttributeId("a",80);
- AttributeId ATTRIB_B = AttributeId("b",81);
- AttributeId ATTRIB_LENGTH = AttributeId("length",82);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/cpool.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/cpool.hh
 index ce9b9809a..76a83fd9b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/cpool.hh
@@ -2761,19 +2384,6 @@ index ce9b9809a..76a83fd9b 100644
    virtual bool empty(void) const { return cpoolMap.empty(); }
    virtual void clear(void) { cpoolMap.clear(); }
    virtual void encode(Encoder &encoder) const;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/cpool_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/cpool_ghidra.cc
-index e8dee8256..1da445915 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/cpool_ghidra.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/cpool_ghidra.cc
-@@ -15,6 +15,8 @@
-  */
- #include "cpool_ghidra.hh"
- 
-+using namespace std;
-+
- ConstantPoolGhidra::ConstantPoolGhidra(ArchitectureGhidra *g)
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/cpool_ghidra.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/cpool_ghidra.hh
 index af65a8d2b..5efe96766 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/cpool_ghidra.hh
@@ -2791,34 +2401,8 @@ index af65a8d2b..5efe96766 100644
    virtual bool empty(void) const { return false; }
    virtual void clear(void) { cache.clear(); }
    virtual void encode(Encoder &encoder) const;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/crc32.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/crc32.cc
-index 2881ab711..3c68cb3ba 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/crc32.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/crc32.cc
-@@ -16,6 +16,8 @@
-  */
- #include "crc32.hh"
- 
-+using namespace std;
-+
- // Table for bytewise calculation of a 32-bit Cyclic Redundancy Check
- uint4 crc32tab[] = {
-   0x0,0x77073096,0xee0e612c,0x990951ba,0x76dc419,0x706af48f,
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/database.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/database.cc
-index 4704eb1d3..2e0b74fb0 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/database.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/database.cc
-@@ -18,6 +18,8 @@
- #include "crc32.hh"
- #include <ctype.h>
- 
-+using namespace std;
-+
- AttributeId ATTRIB_CAT = AttributeId("cat",61);
- AttributeId ATTRIB_FIELD = AttributeId("field",62);
- AttributeId ATTRIB_MERGE = AttributeId("merge",63);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/database.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/database.hh
-index 8da3a41fa..787b1ca8b 100644
+index 67f42a265..d8e4b8e7a 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/database.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/database.hh
 @@ -155,7 +155,7 @@ class SymbolEntry {
@@ -3221,7 +2805,7 @@ index 8da3a41fa..787b1ca8b 100644
    const Scope *mapScope(const Scope *qpoint,const Address &addr,const Address &usepoint) const;
    Scope *mapScope(Scope *qpoint,const Address &addr,const Address &usepoint);
    uint4 getProperty(const Address &addr) const { return flagbase.getValue(addr); }	///< Get boolean properties at the given address
-@@ -935,7 +935,7 @@ class Database {
+@@ -936,7 +936,7 @@ class Database {
  /// \param sc is the scope containing the new symbol
  /// \param nm is the local name of the symbol
  /// \param ct is the data-type of the symbol
@@ -3230,19 +2814,6 @@ index 8da3a41fa..787b1ca8b 100644
  
  {
    scope=sc;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/database_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/database_ghidra.cc
-index 35030ffe0..93d390f97 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/database_ghidra.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/database_ghidra.cc
-@@ -16,6 +16,8 @@
- #include "database_ghidra.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- Scope *ScopeGhidra::buildSubScope(uint8 id,const string &nm)
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/database_ghidra.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/database_ghidra.hh
 index 304bd2914..09a6b6af3 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/database_ghidra.hh
@@ -3332,19 +2903,6 @@ index 304bd2914..09a6b6af3 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/double.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/double.cc
-index ce5706bcd..14ad6929e 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/double.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/double.cc
-@@ -15,6 +15,8 @@
-  */
- #include "double.hh"
- 
-+using namespace std;
-+
- /// Internally, the \b lo and \b hi Varnodes are set to null, and the \b val field
- /// holds the constant value.
- /// \param sz is the size in bytes of the constant
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/double.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/double.hh
 index 418d1f85e..09640b9d5 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/double.hh
@@ -3419,21 +2977,8 @@ index 418d1f85e..09640b9d5 100644
 +  static void reassignIndirects(Funcdata &data,PcodeOp *newStore,const std::vector<PcodeOp *> &indirects);
  };
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.cc
-index 9d8b08053..6c5fb790d 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.cc
-@@ -17,6 +17,8 @@
- #include "funcdata.hh"
- #include "crc32.hh"
- 
-+using namespace std;
-+
- // Table for how to hash opcodes, lumps certain operators (i.e. ADD SUB PTRADD PTRSUB) into one hash
- // zero indicates the operator should be skipped
- const uint4 DynamicHash::transtable[] = {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.hh
-index 2a500d56b..0973a626f 100644
+index 1355f9fe1..6fd8f9fec 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.hh
 @@ -62,10 +62,10 @@ class DynamicHash {
@@ -3451,7 +2996,16 @@ index 2a500d56b..0973a626f 100644
  
    Address addrresult;			///< Address most closely associated with variable
    uint8 hash;				///< The calculated hash value
-@@ -88,8 +88,8 @@ class DynamicHash {
+@@ -77,7 +77,7 @@ class DynamicHash {
+   void gatherUnmarkedOp(void);		///< Mark any new PcodeOps in the sub-graph
+   void pieceTogetherHash(const Varnode *root,uint4 method);	///< Clean-up and piece together formal hash value
+   static void moveOffSkip(const PcodeOp *&op,int4 &slot);	///< Convert given PcodeOp to a non-skip op by following data-flow
+-  static void dedupVarnodes(vector<Varnode *> &varlist);	///< Remove any duplicate Varnodes in given list
++  static void dedupVarnodes(std::vector<Varnode *> &varlist);	///< Remove any duplicate Varnodes in given list
+ public:
+   void clear(void);			///< Called for each additional hash (after the first)
+   void calcHash(const Varnode *root,uint4 method);	///< Calculate the hash for given Varnode and method
+@@ -89,8 +89,8 @@ class DynamicHash {
    uint8 getHash(void) const { return hash; }		///< Get the (current) hash
    
    const Address &getAddress(void) const { return addrresult; }	///< Get the (current) address
@@ -3461,20 +3015,7 @@ index 2a500d56b..0973a626f 100644
 +  static void gatherOpsAtAddress(std::vector<PcodeOp *> &opList,const Funcdata *fd,const Address &addr);
    static int4 getSlotFromHash(uint8 h);			///< Retrieve the encoded slot from a hash
    static uint4 getMethodFromHash(uint8 h);		///< Retrieve the encoded method from a hash
-   static OpCode getOpCodeFromHash(uint8 h);		///< Retrieve the encoded op-code from a hash
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/emulate.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/emulate.cc
-index 88936cedd..5025d952d 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/emulate.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/emulate.cc
-@@ -15,6 +15,8 @@
-  */
- #include "emulate.hh"
- 
-+using namespace std;
-+
- /// Any time the emulator is about to execute a user-defined pcode op with the given name,
- /// the indicated breakpoint is invoked first. The break table does \e not assume responsibility
- /// for freeing the breakpoint object.
+   static uint4 getOpCodeFromHash(uint8 h);		///< Retrieve the encoded op-code from a hash
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/emulate.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/emulate.hh
 index bfe874751..d7d33a980 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/emulate.hh
@@ -3527,19 +3068,6 @@ index bfe874751..d7d33a980 100644
    BreakTable *breaktable;	///< The table of breakpoints
    Address current_address;	///< Address of current instruction being executed
    bool instruction_start;	///< \b true if next pcode op is start of instruction
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/emulateutil.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/emulateutil.cc
-index fe37a7be2..8e022e3a3 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/emulateutil.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/emulateutil.cc
-@@ -16,6 +16,8 @@
- #include "architecture.hh"
- #include "emulateutil.hh"
- 
-+using namespace std;
-+
- /// \param g is the Architecture providing the LoadImage
- EmulatePcodeOp::EmulatePcodeOp(Architecture *g)
- 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/emulateutil.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/emulateutil.hh
 index a06b49ce3..92f76bd75 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/emulateutil.hh
@@ -3609,19 +3137,6 @@ index 788b2421d..d2b35046e 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/filemanage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/filemanage.cc
-index 9ab665cd3..56cd2620f 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/filemanage.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/filemanage.cc
-@@ -29,6 +29,8 @@ extern "C" {
- }
- #endif
- 
-+using namespace std;
-+
- // Path name separator
- #ifdef _WINDOWS
- char FileManage::separator = '\\';
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/filemanage.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/filemanage.hh
 index 9cd6f4e8f..f0c7423a0 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/filemanage.hh
@@ -3667,19 +3182,6 @@ index 9cd6f4e8f..f0c7423a0 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/float.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/float.cc
-index 068c7e991..8f843d1da 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/float.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/float.cc
-@@ -19,6 +19,8 @@
- #include <cmath>
- #include "address.hh"
- 
-+using namespace std;
-+
- /// Set format for a given encoding size according to IEEE 754 standards
- /// \param sz is the size of the encoding in bytes
- FloatFormat::FloatFormat(int4 sz)
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/float.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/float.hh
 index fff9075f1..f9c11b67b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/float.hh
@@ -3693,19 +3195,6 @@ index fff9075f1..f9c11b67b 100644
    void restoreXml(const Element *el);			///< Restore the format from XML
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/flow.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/flow.cc
-index c59ebdf61..c7c37dc6c 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/flow.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/flow.cc
-@@ -15,6 +15,8 @@
-  */
- #include "flow.hh"
- 
-+using namespace std;
-+
- /// Prepare for tracing flow for a new function.
- /// The Funcdata object and references to its internal containers must be explicitly given.
- /// \param d is the new function to trace
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/flow.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/flow.hh
 index 7362e4b18..c2c11d0dd 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/flow.hh
@@ -3770,19 +3259,6 @@ index 7362e4b18..c2c11d0dd 100644
    void setRange(const Address &b,const Address &e) { baddr = b; eaddr = e; }	///< Establish the flow bounds
    void setMaximumInstructions(uint4 max) { insn_max = max; }	///< Set the maximum number of instructions
    void setFlags(uint4 val) { flags |= val; }	///< Enable a specific option
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
-index d1bd842d8..064b98a34 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
-@@ -16,6 +16,8 @@
- #include "fspec.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_CUSTOM = AttributeId("custom",114);
- AttributeId ATTRIB_DOTDOTDOT = AttributeId("dotdotdot",115);
- AttributeId ATTRIB_EXTENSION = AttributeId("extension",116);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.hh
 index 08487fa4e..e086556b0 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.hh
@@ -4261,21 +3737,8 @@ index 08487fa4e..e086556b0 100644
  };
  
  /// Return the trial associated with the input Varnode to the associated p-code CALL or CALLIND.
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.cc
-index 2412d35bb..602910d36 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.cc
-@@ -15,6 +15,8 @@
-  */
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_NOCODE = AttributeId("nocode",84);
- 
- ElementId ELEM_AST = ElementId("ast",115);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.hh
-index 892883c0d..90c98d096 100644
+index af8e2bac3..702b7d877 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.hh
 @@ -76,13 +76,13 @@ class Funcdata {
@@ -4382,7 +3845,7 @@ index 892883c0d..90c98d096 100644
    void mapGlobals(void);			///< Make sure there is a Symbol entry for all global Varnodes
    void prepareThisPointer(void);		///< Prepare for recovery of the "this" pointer
    bool checkCallDoubleUse(const PcodeOp *opmatch,const PcodeOp *op,const Varnode *vn,uint4 fl,const ParamTrial &trial) const;
-@@ -414,7 +414,7 @@ class Funcdata {
+@@ -413,7 +413,7 @@ class Funcdata {
    Symbol *linkSymbol(Varnode *vn);				///< Find or create Symbol associated with given Varnode
    Symbol *linkSymbolReference(Varnode *vn);			///< Discover and attach Symbol to a constant reference
    Varnode *findLinkedVarnode(SymbolEntry *entry) const;	///< Find a Varnode matching the given Symbol mapping
@@ -4391,7 +3854,7 @@ index 892883c0d..90c98d096 100644
    void buildDynamicSymbol(Varnode *vn);				///< Build a \e dynamic Symbol associated with the given Varnode
    bool attemptDynamicMapping(SymbolEntry *entry,DynamicHash &dhash);
    bool attemptDynamicMappingLate(SymbolEntry *entry,DynamicHash &dhash);
-@@ -446,13 +446,13 @@ class Funcdata {
+@@ -445,13 +445,13 @@ class Funcdata {
    void opSetInput(PcodeOp *op,Varnode *vn,int4 slot);		///< Set a specific input operand for the given PcodeOp
    void opSwapInput(PcodeOp *op,int4 slot1,int4 slot2);		///< Swap two input operands in the given PcodeOp
    void opUnsetInput(PcodeOp *op,int4 slot);			///< Clear an input operand slot for the given PcodeOp
@@ -4407,7 +3870,7 @@ index 892883c0d..90c98d096 100644
    void opRemoveInput(PcodeOp *op,int4 slot);			///< Remove a specific input slot for the given PcodeOp
    void opInsertInput(PcodeOp *op,Varnode *vn,int4 slot);	///< Insert a new Varnode into the operand list for the given PcodeOp
    void opMarkStartBasic(PcodeOp *op) { op->setFlag(PcodeOp::startbasic); }	///< Mark PcodeOp as starting a basic block
-@@ -472,22 +472,22 @@ class Funcdata {
+@@ -471,22 +471,22 @@ class Funcdata {
    void opUndoPtradd(PcodeOp *op,bool finalize);	///< Convert a CPUI_PTRADD back into a CPUI_INT_ADD
  
    /// \brief Start of PcodeOp objects with the given op-code
@@ -4497,60 +3960,8 @@ index 892883c0d..90c98d096 100644
 +			     std::vector<Varnode *> &outlist);
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_block.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_block.cc
-index a7a2756e2..126ffe727 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_block.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_block.cc
-@@ -16,6 +16,8 @@
- #include "funcdata.hh"
- #include "flow.hh"
- 
-+using namespace std;
-+
- // Funcdata members pertaining directly to blocks
- 
- /// A description of each block in the current structure hierarchy is
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_op.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_op.cc
-index d546e58b6..6a4d8be41 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_op.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_op.cc
-@@ -16,6 +16,8 @@
- #include "funcdata.hh"
- #include "flow.hh"
- 
-+using namespace std;
-+
- // Funcdata members pertaining directly to ops
- 
- /// \param op is the given PcodeOp
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
-index bdbda0ae6..0c6bf2214 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
-@@ -15,6 +15,8 @@
-  */
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- // Funcdata members pertaining directly to varnodes
- 
- /// Properties of a given storage location are gathered from symbol information and
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.cc
-index ce67e2cc8..4e7cc5318 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.cc
-@@ -23,6 +23,8 @@
- #include "cpool_ghidra.hh"
- #include "inject_ghidra.hh"
- 
-+using namespace std;
-+
- //AttributeId ATTRIB_BADDATA = AttributeId("baddata",145);
- 
- ElementId ELEM_COMMAND_ISNAMEUSED = ElementId("command_isnameused",239);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.hh
-index bd0fc3afe..261bebe05 100644
+index 20dabcb6c..e2056337e 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.hh
 @@ -51,8 +51,8 @@ extern ElementId ELEM_COMMAND_GETUSEROPNAME;		///< Marshaling element \<command_
@@ -4585,7 +3996,7 @@ index bd0fc3afe..261bebe05 100644
    bool sendsyntaxtree;		///< True if the syntax tree should be sent with function output
    bool sendCcode;		///< True if C code should be sent with function output
    bool sendParamMeasures;       ///< True if measurements for argument and return parameters should be sent
-@@ -102,25 +102,25 @@ class ArchitectureGhidra : public Architecture {
+@@ -103,25 +103,25 @@ class ArchitectureGhidra : public Architecture {
    virtual void postSpecFile(void);
    virtual void resolveArchitecture(void);
  public:
@@ -4622,7 +4033,7 @@ index bd0fc3afe..261bebe05 100644
    //  Document *getScopeProperties(Scope *newscope);
  
    /// \brief Toggle whether the data-flow and control-flow is emitted as part of the main decompile action
-@@ -148,21 +148,21 @@ class ArchitectureGhidra : public Architecture {
+@@ -149,21 +149,21 @@ class ArchitectureGhidra : public Architecture {
  
    bool getSendParamMeasures(void) const { return sendParamMeasures; }	///< Get the current setting for emitting parameter info
  
@@ -4656,19 +4067,6 @@ index bd0fc3afe..261bebe05 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_context.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_context.cc
-index 226c3249c..80106670a 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_context.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_context.cc
-@@ -15,6 +15,8 @@
-  */
- #include "ghidra_context.hh"
- 
-+using namespace std;
-+
- const TrackedSet &ContextGhidra::getTrackedSet(const Address &addr) const
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_context.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_context.hh
 index 68c201a33..bd41a9042 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_context.hh
@@ -4700,21 +4098,8 @@ index 68c201a33..bd41a9042 100644
      throw LowlevelError("registerVariable should not be called for GHIDRA"); }
    virtual void encode(Encoder &encoder) const {
      throw LowlevelError("context::encode should not be called for GHIDRA"); }
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.cc
-index a2cc2299b..e1a7f57cd 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.cc
-@@ -22,6 +22,8 @@
- #include <io.h>
- #endif
- 
-+using namespace std;
-+
- #ifdef __REMOTE_SOCKET__
- 
- #include "ifacedecomp.hh"
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.hh
-index 8c682d80d..428319a65 100644
+index 8c682d80d..64fd45e35 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.hh
 @@ -39,11 +39,11 @@ extern ElementId ELEM_DOC;		///< Marshaling element \<doc>
@@ -4733,7 +4118,7 @@ index 8c682d80d..428319a65 100644
    static void shutDown(void);				///< Release all GhidraCommand resources
  };
  
-@@ -72,14 +72,14 @@ class GhidraDecompCapability : public GhidraCapability {
+@@ -72,8 +72,8 @@ class GhidraDecompCapability : public GhidraCapability {
  /// and sendResult() will send back any accumulated warning/error messages.
  class GhidraCommand {
  protected:
@@ -4744,13 +4129,6 @@ index 8c682d80d..428319a65 100644
    ArchitectureGhidra *ghidra;		///< The Architecture on which to perform the command
    int4 status;				///< Meta-command to system (0=wait for next command, 1=terminate process)
    virtual void loadParameters(void);	///< Read parameters directing command execution
-   virtual void sendResult(void);	///< Send results of the command (if any) back to the Ghidra client
- public:
--  GhidraCommand(void) : sin(cin),sout(cout) {
-+  GhidraCommand(void) : sin(std::cin),sout(std::cout) {
-     ghidra = (ArchitectureGhidra *)0; 
-   }					///< Construct given i/o streams
-   virtual ~GhidraCommand(void) {}	///< Destructor
 @@ -102,10 +102,10 @@ class GhidraCommand {
  ///   - The stripped down \<sleigh> tag describing address spaces for the program
  ///   - The \<coretypes> tag describing the built-in datatypes for the program
@@ -4777,19 +4155,6 @@ index 8c682d80d..428319a65 100644
    virtual void loadParameters(void);
    virtual void sendResult(void);
  public:
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_translate.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_translate.cc
-index dd2c0274a..bb5211a8f 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_translate.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_translate.cc
-@@ -16,6 +16,8 @@
- #include "ghidra_translate.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- /// \brief Associate a Varnode with a register name
- ///
- /// \param nm is the register name
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_translate.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_translate.hh
 index 207f2f375..c41fc12d9 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_translate.hh
@@ -4821,19 +4186,6 @@ index 207f2f375..c41fc12d9 100644
    virtual int4 oneInstruction(PcodeEmit &emit,const Address &baseaddr) const;
    virtual int4 instructionLength(const Address &baseaddr) const {
      throw LowlevelError("Cannot currently get instruction length through this interface"); }
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/globalcontext.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/globalcontext.cc
-index 15badbad3..a70ec2686 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/globalcontext.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/globalcontext.cc
-@@ -15,6 +15,8 @@
-  */
- #include "globalcontext.hh"
- 
-+using namespace std;
-+
- ElementId ELEM_CONTEXT_DATA = ElementId("context_data",120);
- ElementId ELEM_CONTEXT_POINTS = ElementId("context_points",121);
- ElementId ELEM_CONTEXT_POINTSET = ElementId("context_pointset",122);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/globalcontext.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/globalcontext.hh
 index 6bf5ae0fe..6e76a125a 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/globalcontext.hh
@@ -4940,19 +4292,6 @@ index 6bf5ae0fe..6e76a125a 100644
  
    virtual const uintm *getContext(const Address &addr) const { return database.getValue(addr).array; }
    virtual const uintm *getContext(const Address &addr,uintb &first,uintb &last) const;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.cc
-index aab637f39..a87932dc8 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.cc
-@@ -89,6 +89,8 @@
- 
- #include "grammar.hh"
- 
-+using namespace std;
-+
- extern int yylex(void);
- extern int yyerror(const char *str);
- static CParse *parse;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.hh
 index 3f9115e72..2caa79ce4 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.hh
@@ -5205,19 +4544,6 @@ index 3f9115e72..2caa79ce4 100644
 +extern Address parse_op(std::istream &s,uintm &uq,const TypeFactory &typegrp);
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/graph.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/graph.cc
-index 20d7cd196..31b69addd 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/graph.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/graph.cc
-@@ -16,6 +16,8 @@
-  */
- #include "graph.hh"
- 
-+using namespace std;
-+
- static void print_varnode_vertex(Varnode *vn,ostream &s)
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/graph.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/graph.hh
 index edd6ce865..09467394f 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/graph.hh
@@ -5234,19 +4560,6 @@ index edd6ce865..09467394f 100644
 +extern void dump_dom_graph(const std::string &name,const BlockGraph &graph,std::ostream &s);
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc
-index e8af0c939..8ce556c80 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc
-@@ -17,6 +17,8 @@
- #include "funcdata.hh"
- #include "prefersplit.hh"
- 
-+using namespace std;
-+
- /// Update disjoint cover making sure (addr,size) is contained in a single element and return
- /// an iterator to this element. The element's \b pass number is set to be the smallest value
- /// of any previous intersecting element. Additionally an \b intersect code is passed back:
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.hh
 index 76f731a58..4f5fed417 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.hh
@@ -5402,19 +4715,6 @@ index 76f731a58..4f5fed417 100644
 +  const std::list<LoadGuard> &getStoreGuards(void) const { return storeGuard; }	///< Get list of STORE ops that are guarded
    const LoadGuard *getStoreGuard(PcodeOp *op) const;	///< Get LoadGuard record associated with given PcodeOp
  };
- 
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.cc
-index 5e035d4a2..f4a1acfee 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.cc
-@@ -20,6 +20,8 @@ extern "C" {
- #include "pcodeparse.hh"
- #include "blockaction.hh"
- 
-+using namespace std;
-+
- // Constructing this registers the capability
- IfaceDecompCapability IfaceDecompCapability::ifaceDecompCapability;
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.hh
 index 73f476e20..fb9777427 100644
@@ -6128,19 +5428,6 @@ index 73f476e20..fb9777427 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.cc
-index 44a584305..ebcf1fcfd 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.cc
-@@ -15,6 +15,8 @@
-  */
- #include "ifaceterm.hh"
- 
-+using namespace std;
-+
- IfaceTerm::IfaceTerm(const string &prmpt,istream &is,ostream &os)
-   : IfaceStatus(prmpt,os)
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.hh
 index 0b70d8b22..43817d845 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.hh
@@ -6166,19 +5453,6 @@ index 0b70d8b22..43817d845 100644
    virtual void popScript(void);
    virtual bool isStreamFinished(void) const;
  };
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/inject_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/inject_ghidra.cc
-index 6ecde748c..5845276ce 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/inject_ghidra.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/inject_ghidra.cc
-@@ -15,6 +15,8 @@
-  */
- #include "inject_ghidra.hh"
- 
-+using namespace std;
-+
- void InjectContextGhidra::encode(Encoder &encoder) const
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/inject_ghidra.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/inject_ghidra.hh
 index c0678039c..18844d334 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/inject_ghidra.hh
@@ -6252,19 +5526,6 @@ index c0678039c..18844d334 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/inject_sleigh.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/inject_sleigh.cc
-index e37e3f469..137d0402c 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/inject_sleigh.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/inject_sleigh.cc
-@@ -17,6 +17,8 @@
- #include "pcodeparse.hh"
- #include "architecture.hh"
- 
-+using namespace std;
-+
- InjectContextSleigh::~InjectContextSleigh(void)
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/inject_sleigh.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/inject_sleigh.hh
 index be86fbcf6..4fa80954f 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/inject_sleigh.hh
@@ -6377,21 +5638,8 @@ index be86fbcf6..4fa80954f 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/interface.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/interface.cc
-index 8ac61f889..977703bbd 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/interface.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/interface.cc
-@@ -21,6 +21,8 @@
- #include "ext/stdio_filebuf.h"
- #endif
- 
-+using namespace std;
-+
- vector<IfaceCapability *> IfaceCapability::thelist;
- 
- void IfaceCapability::initialize(void)
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/interface.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/interface.hh
-index 0771e7428..1a467abda 100644
+index 0771e7428..88c637333 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/interface.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/interface.hh
 @@ -27,8 +27,6 @@
@@ -6403,16 +5651,12 @@ index 0771e7428..1a467abda 100644
  #ifdef __REMOTE_SOCKET__
  
  /// \brief A wrapper around a UNIX domain socket
-@@ -38,18 +36,18 @@ using namespace std;
- /// The socket is bound to a C++ istream and ostream.
- class RemoteSocket {
+@@ -40,16 +38,16 @@ class RemoteSocket {
    int fileDescriptor;		///< Descriptor for the socket
--  basic_filebuf<char> *inbuf;	///< Input buffer associated with the socket
--  basic_filebuf<char> *outbuf;	///< Output buffer for the socket
+   basic_filebuf<char> *inbuf;	///< Input buffer associated with the socket
+   basic_filebuf<char> *outbuf;	///< Output buffer for the socket
 -  istream *inStream;		///< The C++ input stream
 -  ostream *outStream;		///< The C++ output stream
-+  std::basic_filebuf<char> *inbuf;	///< Input buffer associated with the socket
-+  std::basic_filebuf<char> *outbuf;	///< Output buffer for the socket
 +  std::istream *inStream;		///< The C++ input stream
 +  std::ostream *outStream;		///< The C++ output stream
    bool isOpen;			///< Has the socket been opened
@@ -6648,19 +5892,6 @@ index 0771e7428..1a467abda 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.cc
-index 63126e06e..86146b913 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.cc
-@@ -17,6 +17,8 @@
- #include "emulate.hh"
- #include "flow.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_LABEL = AttributeId("label",131);
- AttributeId ATTRIB_NUM = AttributeId("num",132);
- 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.hh
 index eafb09897..1e0282f41 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.hh
@@ -6879,19 +6110,6 @@ index eafb09897..1e0282f41 100644
    int4 numIndicesByBlock(const FlowBlock *bl) const;
    int4 getIndexByBlock(const FlowBlock *bl,int4 i) const;
    Address getAddressByIndex(int4 i) const { return addresstable[i]; }	///< Get the i-th address table entry
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/libdecomp.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/libdecomp.cc
-index b60a349fe..81ab37960 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/libdecomp.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/libdecomp.cc
-@@ -15,6 +15,8 @@
-  */
- #include "libdecomp.hh"
- 
-+using namespace std;
-+
- void startDecompilerLibrary(const char *sleighhome)
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/libdecomp.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/libdecomp.hh
 index e7f5ae179..1578984a6 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/libdecomp.hh
@@ -6907,19 +6125,6 @@ index e7f5ae179..1578984a6 100644
  
  extern void shutdownDecompilerLibrary(void);
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage.cc
-index e14109b32..bba3e9674 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage.cc
-@@ -15,6 +15,8 @@
-  */
- #include "loadimage.hh"
- 
-+using namespace std;
-+
- /// This is a convenience method wrapped around the core
- /// loadFill() routine.  It automatically allocates an array
- /// of the desired size, and then fills it with load image data.
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage.hh
 index 59d4c9a5d..0cfd48715 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage.hh
@@ -7003,19 +6208,6 @@ index 59d4c9a5d..0cfd48715 100644
    return filename;
  }
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_bfd.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_bfd.cc
-index 7e9f1ad8a..6009dde95 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_bfd.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_bfd.cc
-@@ -16,6 +16,8 @@
-  */
- #include "loadimage_bfd.hh"
- 
-+using namespace std;
-+
- int4 LoadImageBfd::bfdinit = 0;	// Global initialization variable
- 
- LoadImageBfd::LoadImageBfd(const string &f,const string &t) : LoadImage(f)
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_bfd.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_bfd.hh
 index 9d69fcca5..9905ce825 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_bfd.hh
@@ -7063,19 +6255,6 @@ index 9d69fcca5..9905ce825 100644
    virtual void adjustVma(long adjust);
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_ghidra.cc
-index 069a1f956..2ede5182b 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_ghidra.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_ghidra.cc
-@@ -15,6 +15,8 @@
-  */
- #include "loadimage_ghidra.hh"
- 
-+using namespace std;
-+
- LoadImageGhidra::LoadImageGhidra(ArchitectureGhidra *g)
-   : LoadImage("ghidra_progam")
- 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_ghidra.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_ghidra.hh
 index 95c56dcdf..82700069a 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_ghidra.hh
@@ -7089,19 +6268,6 @@ index 95c56dcdf..82700069a 100644
    virtual void adjustVma(long adjust);
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.cc
-index b7a9a30c4..0de974108 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.cc
-@@ -16,6 +16,8 @@
- #include "loadimage_xml.hh"
- #include "translate.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_ARCH = AttributeId("arch",135);
- 
- ElementId ELEM_BINARYIMAGE = ElementId("binaryimage",230);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.hh
 index 018cc06bb..5f0707e5b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.hh
@@ -7137,20 +6303,8 @@ index 018cc06bb..5f0707e5b 100644
    virtual void adjustVma(long adjust);
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.cc
-index 20e51c1a9..c8f2af0ec 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.cc
-@@ -17,6 +17,7 @@
- #include "translate.hh"
- 
- using namespace PackedFormat;
-+using namespace std;
- 
- unordered_map<string,uint4> AttributeId::lookupAttributeId;
- 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.hh
-index c2eae63e0..7951c373c 100644
+index 98337529d..144dc58b6 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.hh
 @@ -20,8 +20,6 @@
@@ -7217,7 +6371,25 @@ index c2eae63e0..7951c373c 100644
  
    /// \brief Peek at the next child element of the current parent, without traversing in (opening) it.
    ///
-@@ -208,7 +206,7 @@ class Decoder {
+@@ -196,7 +194,7 @@ class Decoder {
+   /// \param expect is the string value to expect if the attribute is encoded as a string
+   /// \param expectval is the integer value to return if the attribute matches the expected string
+   /// \return the encoded integer or the integer value associated with the expected string
+-  virtual intb readSignedIntegerExpectString(const string &expect,intb expectval)=0;
++  virtual intb readSignedIntegerExpectString(const std::string &expect,intb expectval)=0;
+ 
+   /// \brief Find and parse a specific attribute in the current element as either a signed integer or a string.
+   ///
+@@ -209,7 +207,7 @@ class Decoder {
+   /// \param expect is the string to expect, if the attribute is not encoded as an integer
+   /// \param expectval is the integer value to return if the attribute matches the expected string
+   /// \return the encoded integer or the integer value associated with the expected string
+-  virtual intb readSignedIntegerExpectString(const AttributeId &attribId,const string &expect,intb expectval)=0;
++  virtual intb readSignedIntegerExpectString(const AttributeId &attribId,const std::string &expect,intb expectval)=0;
+ 
+   /// \brief Parse the current attribute as an unsigned integer value
+   ///
+@@ -231,7 +229,7 @@ class Decoder {
    ///
    /// The last attribute, as returned by getNextAttributeId, is returned as a string.
    /// \return the string associated with the current attribute.
@@ -7226,7 +6398,7 @@ index c2eae63e0..7951c373c 100644
  
    /// \brief Find the specific attribute in the current element and return it as a string
    ///
-@@ -217,7 +215,7 @@ class Decoder {
+@@ -240,7 +238,7 @@ class Decoder {
    /// Parse via getNextAttributeId is reset.
    /// \param attribId is the specific attribute id to match
    /// \return the string associated with the attribute
@@ -7235,7 +6407,7 @@ index c2eae63e0..7951c373c 100644
  
    /// \brief Parse the current attribute as an address space
    ///
-@@ -296,7 +294,7 @@ class Encoder {
+@@ -319,7 +317,7 @@ class Encoder {
    /// The string is associated with the given AttributeId annotation and the current open element.
    /// \param attribId is the given AttributeId annotation
    /// \param val is the string to encode
@@ -7244,7 +6416,7 @@ index c2eae63e0..7951c373c 100644
  
    /// \brief Write an address space reference into the encoding
    ///
-@@ -314,17 +312,17 @@ class Encoder {
+@@ -337,10 +335,10 @@ class Encoder {
  class XmlDecode : public Decoder {
    Document *document;				///< An ingested XML document, owned by \b this decoder
    const Element *rootElement;			///< The root XML element to be decoded
@@ -7258,16 +6430,23 @@ index c2eae63e0..7951c373c 100644
  public:
    XmlDecode(const AddrSpaceManager *spc,const Element *root) : Decoder(spc) {
      document = (Document *)0; rootElement = root; attributeIndex = -1; }	///< Constructor with preparsed root
-   XmlDecode(const AddrSpaceManager *spc) : Decoder(spc) {
+@@ -348,7 +346,7 @@ class XmlDecode : public Decoder {
      document = (Document *)0; rootElement = (const Element *)0; attributeIndex = -1; }	///< Constructor for use with ingestStream
+   const Element *getCurrentXmlElement(void) const { return elStack.back(); }	///< Get pointer to underlying XML element object
    virtual ~XmlDecode(void);
 -  virtual void ingestStream(istream &s);
 +  virtual void ingestStream(std::istream &s);
    virtual uint4 peekElement(void);
    virtual uint4 openElement(void);
    virtual uint4 openElement(const ElementId &elemId);
-@@ -338,8 +336,8 @@ class XmlDecode : public Decoder {
+@@ -360,12 +358,12 @@ class XmlDecode : public Decoder {
+   virtual bool readBool(const AttributeId &attribId);
+   virtual intb readSignedInteger(void);
    virtual intb readSignedInteger(const AttributeId &attribId);
+-  virtual intb readSignedIntegerExpectString(const string &expect,intb expectval);
+-  virtual intb readSignedIntegerExpectString(const AttributeId &attribId,const string &expect,intb expectval);
++  virtual intb readSignedIntegerExpectString(const std::string &expect,intb expectval);
++  virtual intb readSignedIntegerExpectString(const AttributeId &attribId,const std::string &expect,intb expectval);
    virtual uintb readUnsignedInteger(void);
    virtual uintb readUnsignedInteger(const AttributeId &attribId);
 -  virtual string readString(void);
@@ -7277,7 +6456,7 @@ index c2eae63e0..7951c373c 100644
    virtual AddrSpace *readSpace(void);
    virtual AddrSpace *readSpace(const AttributeId &attribId);
  };
-@@ -350,16 +348,16 @@ class XmlDecode : public Decoder {
+@@ -376,16 +374,16 @@ class XmlDecode : public Decoder {
  /// receive the XML document as calls are made on the encoder.
  class XmlEncode : public Encoder {
    friend class XmlDecode;
@@ -7297,7 +6476,7 @@ index c2eae63e0..7951c373c 100644
    virtual void writeSpace(const AttributeId &attribId,const AddrSpace *spc);
  };
  
-@@ -436,11 +434,11 @@ class PackedDecode : public Decoder {
+@@ -462,11 +460,11 @@ class PackedDecode : public Decoder {
    /// \brief An iterator into input stream
    class Position {
      friend class PackedDecode;
@@ -7311,7 +6490,7 @@ index c2eae63e0..7951c373c 100644
    Position startPos;			///< Position at the start of the current open element
    Position curPos;			///< Position of the next attribute as returned by getNextAttributeId
    Position endPos;			///< Ending position after all attributes in current open element
-@@ -457,7 +455,7 @@ class PackedDecode : public Decoder {
+@@ -483,7 +481,7 @@ class PackedDecode : public Decoder {
  public:
    PackedDecode(const AddrSpaceManager *spcManager) : Decoder(spcManager) {}	///< Constructor
    virtual ~PackedDecode(void);
@@ -7320,8 +6499,14 @@ index c2eae63e0..7951c373c 100644
    virtual uint4 peekElement(void);
    virtual uint4 openElement(void);
    virtual uint4 openElement(const ElementId &elemId);
-@@ -471,8 +469,8 @@ class PackedDecode : public Decoder {
+@@ -495,12 +493,12 @@ class PackedDecode : public Decoder {
+   virtual bool readBool(const AttributeId &attribId);
+   virtual intb readSignedInteger(void);
    virtual intb readSignedInteger(const AttributeId &attribId);
+-  virtual intb readSignedIntegerExpectString(const string &expect,intb expectval);
+-  virtual intb readSignedIntegerExpectString(const AttributeId &attribId,const string &expect,intb expectval);
++  virtual intb readSignedIntegerExpectString(const std::string &expect,intb expectval);
++  virtual intb readSignedIntegerExpectString(const AttributeId &attribId,const std::string &expect,intb expectval);
    virtual uintb readUnsignedInteger(void);
    virtual uintb readUnsignedInteger(const AttributeId &attribId);
 -  virtual string readString(void);
@@ -7331,7 +6516,7 @@ index c2eae63e0..7951c373c 100644
    virtual AddrSpace *readSpace(void);
    virtual AddrSpace *readSpace(const AttributeId &attribId);
  };
-@@ -481,17 +479,17 @@ class PackedDecode : public Decoder {
+@@ -509,17 +507,17 @@ class PackedDecode : public Decoder {
  ///
  /// See PackedDecode for details of the encoding format.
  class PackedEncode : public Encoder {
@@ -7352,7 +6537,7 @@ index c2eae63e0..7951c373c 100644
    virtual void writeSpace(const AttributeId &attribId,const AddrSpace *spc);
  };
  
-@@ -503,7 +501,7 @@ inline uint1 PackedDecode::getBytePlus1(Position &pos)
+@@ -531,7 +529,7 @@ inline uint1 PackedDecode::getBytePlus1(Position &pos)
  {
    uint1 *ptr = pos.current + 1;
    if (ptr == pos.end) {
@@ -7361,7 +6546,7 @@ index c2eae63e0..7951c373c 100644
      ++iter;
      if (iter == inStream.end())
        throw DecoderError("Unexpected end of stream");
-@@ -573,10 +571,10 @@ extern AttributeId ATTRIB_CONTENT;	///< Special attribute for XML text content o
+@@ -601,10 +599,10 @@ extern AttributeId ATTRIB_CONTENT;	///< Special attribute for XML text content o
  /// placeholder attribute, ATTRIB_UNKNOWN, is returned as a placeholder for attributes with unrecognized names.
  /// \param nm is the name of the attribute
  /// \return the associated id
@@ -7374,7 +6559,7 @@ index c2eae63e0..7951c373c 100644
    if (iter != lookupAttributeId.end())
      return (*iter).second;
    return ATTRIB_UNKNOWN.id;
-@@ -586,10 +584,10 @@ inline uint4 AttributeId::find(const string &nm)
+@@ -614,10 +612,10 @@ inline uint4 AttributeId::find(const string &nm)
  /// placeholder element, ELEM_UNKNOWN, is returned as a placeholder for elements with unrecognized names.
  /// \param nm is the name of the element
  /// \return the associated id
@@ -7387,19 +6572,6 @@ index c2eae63e0..7951c373c 100644
    if (iter != lookupElementId.end())
      return (*iter).second;
    return ELEM_UNKNOWN.id;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/memstate.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/memstate.cc
-index be9a570a0..621e2dda9 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/memstate.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/memstate.cc
-@@ -16,6 +16,8 @@
- #include "memstate.hh"
- #include "translate.hh"
- 
-+using namespace std;
-+
- /// This is a static convenience routine for decoding a value from a sequence of bytes depending
- /// on the desired endianness
- /// \param ptr is the pointer to the bytes to decode
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/memstate.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/memstate.hh
 index 6a260c466..273d66cab 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/memstate.hh
@@ -7444,19 +6616,6 @@ index 6a260c466..273d66cab 100644
    void setValue(const VarnodeData *vn,uintb cval); ///< Set value on a given \b varnode
    uintb getValue(const VarnodeData *vn) const; ///< Get a value from a \b varnode
    void getChunk(uint1 *res,AddrSpace *spc,uintb off,int4 size) const; ///< Get a chunk of data from memory state
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc
-index cb41351e2..3a856760e 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc
-@@ -16,6 +16,8 @@
- #include "merge.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- /// This instance assumes the identity of the given Varnode and the defining index is
- /// cached to facilitate quick sorting.
- /// \param v is the given Varnode
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/merge.hh
 index 18c9e0b15..df33d998f 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.hh
@@ -7529,19 +6688,6 @@ index 18c9e0b15..df33d998f 100644
  
    void mergeOpcode(OpCode opc);
    void mergeByDatatype(VarnodeLocSet::const_iterator startiter,VarnodeLocSet::const_iterator enditer);
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
-index 068393416..980300b23 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
-@@ -16,6 +16,8 @@
- #include "op.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- ElementId ELEM_IOP = ElementId("iop",113);
- ElementId ELEM_UNIMPL = ElementId("unimpl",114);
- 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/op.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/op.hh
 index d93dcd3c1..2a1b32c8a 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/op.hh
@@ -7672,19 +6818,6 @@ index d93dcd3c1..2a1b32c8a 100644
  };
  
  extern int4 functionalEqualityLevel(Varnode *vn1,Varnode *vn2,Varnode **res1,Varnode **res2);
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
-index 3e0c39904..f3dcaed3c 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
-@@ -16,6 +16,8 @@
- #include "opbehavior.hh"
- #include "translate.hh"
- 
-+using namespace std;
-+
- /// This routine generates a vector of OpBehavior objects indexed by opcode
- /// \param inst is the vector of behaviors to be filled
- /// \param trans is the translator object needed by the floating point behaviors
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.hh
 index 5061cb65f..ffec2e4ef 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.hh
@@ -7707,21 +6840,8 @@ index 5061cb65f..ffec2e4ef 100644
  };
  
  /// This kind of OpBehavior is associated with a particular opcode and is either unary or binary
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.cc
-index d116fe62d..100236b1e 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.cc
-@@ -16,6 +16,8 @@
- #include "opcodes.hh"
- #include "types.h"
- 
-+using namespace std;
-+
- /// \brief Names of operations associated with their opcode number
- ///
- /// Some of the names have been replaced with special placeholder
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.hh
-index 14ec99772..45e98662e 100644
+index 14ec99772..1d9d612b3 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.hh
 @@ -21,8 +21,6 @@
@@ -7738,23 +6858,10 @@ index 14ec99772..45e98662e 100644
  
  extern const char *get_opname(OpCode opc);		///< Convert an OpCode to the name as a string
 -extern OpCode get_opcode(const string &nm);		///< Convert a name string to the matching OpCode
-+extern OpCode get_opcode(const std::string &nm);	///< Convert a name string to the matching OpCode
++extern OpCode get_opcode(const std::string &nm);		///< Convert a name string to the matching OpCode
  
  extern OpCode get_booleanflip(OpCode opc,bool &reorder);	///< Get the complementary OpCode
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/options.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/options.cc
-index 0ee439e44..ab042112c 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/options.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/options.cc
-@@ -18,6 +18,8 @@
- #include "flow.hh"
- #include "printc.hh"
- 
-+using namespace std;
-+
- ElementId ELEM_ALIASBLOCK = ElementId("aliasblock",174);
- ElementId ELEM_ALLOWCONTEXTSET = ElementId("allowcontextset",175);
- ElementId ELEM_ANALYZEFORLOOPS = ElementId("analyzeforloops",176);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/options.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/options.hh
 index 474ee7071..a36f35d7e 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/options.hh
@@ -8045,19 +7152,6 @@ index 474ee7071..a36f35d7e 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/override.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/override.cc
-index f64cb03ca..ca5d726c9 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/override.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/override.cc
-@@ -16,6 +16,8 @@
- #include "override.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- ElementId ELEM_DEADCODEDELAY = ElementId("deadcodedelay",218);
- ElementId ELEM_FLOW = ElementId("flow",219);
- ElementId ELEM_FORCEGOTO = ElementId("forcegoto",220);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/override.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/override.hh
 index 1a76e46e1..c4d780feb 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/override.hh
@@ -8101,19 +7195,6 @@ index 1a76e46e1..c4d780feb 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/paramid.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/paramid.cc
-index 093a8b232..4ba724490 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/paramid.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/paramid.cc
-@@ -15,6 +15,8 @@
-  */
- #include "paramid.hh"
- 
-+using namespace std;
-+
- ElementId ELEM_PARAMMEASURES = ElementId("parammeasures",106);
- ElementId ELEM_PROTO = ElementId("proto",107);
- ElementId ELEM_RANK = ElementId("rank",108);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/paramid.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/paramid.hh
 index 7eb7d78c9..91aa7dfed 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/paramid.hh
@@ -8150,18 +7231,19 @@ index 7eb7d78c9..91aa7dfed 100644
  
  #endif //ifndef __CPUI_PARAMID__
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/partmap.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/partmap.hh
-index 41abc55a0..91851a005 100644
+index 41abc55a0..e41558cdb 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/partmap.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/partmap.hh
-@@ -199,7 +199,6 @@ template<typename _linetype,typename _valuetype>
+@@ -199,8 +199,6 @@ template<typename _linetype,typename _valuetype>
  #if 0
  
  #include <iostream>
 -using namespace std;
- 
+-
  int main(int argc,char **argv)
  
-@@ -212,16 +211,16 @@ int main(int argc,char **argv)
+ {
+@@ -212,16 +210,16 @@ int main(int argc,char **argv)
    data.split(3) = 4;
    data.split(3) = 3;
  
@@ -8183,19 +7265,6 @@ index 41abc55a0..91851a005 100644
      ++iter;
    }
  }
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
-index 133da8178..ce8a0f834 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
-@@ -15,6 +15,8 @@
-  */
- #include "pcodecompile.hh"
- 
-+using namespace std;
-+
- string Location::format(void) const
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.hh
 index 3c7f2b26f..6b44c2af2 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.hh
@@ -8301,21 +7370,8 @@ index 3c7f2b26f..6b44c2af2 100644
    static bool propagateSize(ConstructTpl *ct);
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeinject.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeinject.cc
-index 7a317f47f..d6678a5ca 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeinject.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeinject.cc
-@@ -16,6 +16,8 @@
- #include "pcodeinject.hh"
- #include "architecture.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_DYNAMIC = AttributeId("dynamic",70);
- AttributeId ATTRIB_INCIDENTALCOPY = AttributeId("incidentalcopy",71);
- AttributeId ATTRIB_INJECT = AttributeId("inject",72);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeinject.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeinject.hh
-index d57215bc7..fac6c3f7d 100644
+index d57215bc7..2d558ac55 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeinject.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeinject.hh
 @@ -52,12 +52,12 @@ extern ElementId ELEM_SIZE_PCODE;	///< Marshaling element \<size_pcode>
@@ -8435,7 +7491,7 @@ index d57215bc7..fac6c3f7d 100644
 +  std::vector<std::string> callOtherTarget;	///< Map from injectid to callother-fixup target-op name
 +  std::vector<std::string> callMechTarget;	///< Map from injectid to call-mech name
 +  std::vector<std::string> scriptNames;		///< Map from injectid to script name
-+  void registerCallFixup(const std::string &fixupName,int4 injectid/* , std::vector<std::string> targets */);
++  void registerCallFixup(const std::string &fixupName,int4 injectid/* , vector<string> targets */);
 +  void registerCallOtherFixup(const std::string &fixupName,int4 injectid);
 +  void registerCallMechanism(const std::string &fixupName,int4 injectid);
 +  void registerExeScript(const std::string &scriptName,int4 injectid);
@@ -8498,19 +7554,6 @@ index d57215bc7..fac6c3f7d 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.cc
-index c562c0f83..4d67e8a6e 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.cc
-@@ -89,6 +89,8 @@
- 
- #include "pcodeparse.hh"
- 
-+using namespace std;
-+
-   //#define YYERROR_VERBOSE
-   extern int yylex(void);
-   static PcodeSnippet *pcode;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.hh
 index 587604237..cca442307 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.hh
@@ -8574,32 +7617,6 @@ index 587604237..cca442307 100644
  };
  
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.y b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.y
-index c858fa148..46480a5ad 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.y
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.y
-@@ -16,6 +16,8 @@
- %{
- #include "pcodeparse.hh"
- 
-+using namespace std;
-+
-   //#define YYERROR_VERBOSE
-   extern int yylex(void);
-   static PcodeSnippet *pcode;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.cc
-index 317d4dbf1..5221185f8 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.cc
-@@ -16,6 +16,8 @@
- #include "pcoderaw.hh"
- #include "translate.hh"
- 
-+using namespace std;
-+
- /// Build this VarnodeData from an \<addr>, \<register>, or \<varnode> element.
- /// \param decoder is the stream decoder
- void VarnodeData::decode(Decoder &decoder)
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.hh
 index fd70a956e..bab636fcc 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.hh
@@ -8613,19 +7630,6 @@ index fd70a956e..bab636fcc 100644
  public:
    void setBehavior(OpBehavior *be); ///< Set the opcode for this op
    OpBehavior *getBehavior(void) const; ///< Retrieve the behavior for this op
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/prefersplit.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/prefersplit.cc
-index 635941885..e1267e610 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/prefersplit.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/prefersplit.cc
-@@ -16,6 +16,8 @@
- #include "prefersplit.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- ElementId ELEM_PREFERSPLIT = ElementId("prefersplit",225);
- 
- bool PreferSplitRecord::operator<(const PreferSplitRecord &op2) const
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/prefersplit.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/prefersplit.hh
 index 9654ceedd..7e517620c 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/prefersplit.hh
@@ -8653,19 +7657,6 @@ index 9654ceedd..7e517620c 100644
    void split(void);
    void splitAdditional(void);
  };
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/prettyprint.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/prettyprint.cc
-index 388708030..fa631ccf1 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/prettyprint.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/prettyprint.cc
-@@ -16,6 +16,8 @@
- #include "prettyprint.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_BLOCKREF = AttributeId("blockref",35);
- AttributeId ATTRIB_CLOSE = AttributeId("close",36);
- AttributeId ATTRIB_COLOR = AttributeId("color",37);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/prettyprint.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/prettyprint.hh
 index cc81dad23..046ac8b40 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/prettyprint.hh
@@ -9070,19 +8061,6 @@ index cc81dad23..046ac8b40 100644
    virtual bool emitsMarkup(void) const { return lowlevel->emitsMarkup(); }
    virtual void resetDefaults(void);
    void setMarkup(bool val);	///< Toggle whether the low-level emitter emits markup or not
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/printc.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/printc.cc
-index 5c90024a2..bd433b898 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/printc.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/printc.cc
-@@ -16,6 +16,8 @@
- #include "printc.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- // Operator tokens for expressions
- //                        token #in prec assoc   optype       space bump
- OpToken PrintC::hidden = { "", "", 1, 70, false, OpToken::hiddenfunction, 0, 0, (OpToken *)0 };
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/printc.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/printc.hh
 index 6c7d79988..186c79f86 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/printc.hh
@@ -9212,19 +8190,6 @@ index 6c7d79988..186c79f86 100644
    virtual void docTypeDefinitions(const TypeFactory *typegrp);
    virtual void docAllGlobals(void);
    virtual void docSingleGlobal(const Symbol *sym);
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/printjava.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/printjava.cc
-index 473bab08a..a193e8688 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/printjava.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/printjava.cc
-@@ -16,6 +16,8 @@
- #include "printjava.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- OpToken PrintJava::instanceof = { "instanceof", "", 2, 60, true, OpToken::binary, 1, 0, (OpToken *)0 };
- 
- // Constructing this registers the capability
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/printjava.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/printjava.hh
 index f3f200d11..d95adf12a 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/printjava.hh
@@ -9241,19 +8206,6 @@ index f3f200d11..d95adf12a 100644
    virtual void resetDefaults(void);
    virtual void docFunction(const Funcdata *fd);
    virtual void pushTypeStart(const Datatype *ct,bool noident);
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/printlanguage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/printlanguage.cc
-index f43d3e6f3..8f7a3c03b 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/printlanguage.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/printlanguage.cc
-@@ -17,6 +17,8 @@
- #include "printlanguage.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- const string PrintLanguage::OPEN_PAREN = "(";
- const string PrintLanguage::CLOSE_PAREN = ")";
- 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/printlanguage.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/printlanguage.hh
 index ea7a1efa5..71178da2d 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/printlanguage.hh
@@ -9433,19 +8385,6 @@ index ea7a1efa5..71178da2d 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/rangeutil.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/rangeutil.cc
-index d98998426..3d17317f8 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/rangeutil.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/rangeutil.cc
-@@ -16,6 +16,8 @@
- #include "rangeutil.hh"
- #include "block.hh"
- 
-+using namespace std;
-+
- const char CircleRange::arrange[] = "gcgbegdagggggggeggggcgbggggggggcdfgggggggegdggggbgggfggggcgbegda";
- 
- /// All the instantiations where left == right represent the same set. We
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/rangeutil.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/rangeutil.hh
 index e4f37b063..f046fba21 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/rangeutil.hh
@@ -9544,19 +8483,6 @@ index e4f37b063..f046fba21 100644
  #endif
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.cc
-index 3b83cf3ce..aab606e5d 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.cc
-@@ -15,6 +15,8 @@
-  */
- #include "raw_arch.hh"
- 
-+using namespace std;
-+
- ElementId ELEM_RAW_SAVEFILE = ElementId("raw_savefile",237);
- 
- // Constructing this object registers the capability
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.hh
 index 490abf901..23580df2f 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.hh
@@ -9581,21 +8507,8 @@ index 490abf901..23580df2f 100644
    virtual ~RawBinaryArchitecture(void) {}
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index 3955b836b..81d62ac2a 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-@@ -18,6 +18,8 @@
- #include "subflow.hh"
- #include "rangeutil.hh"
- 
-+using namespace std;
-+
- /// \class RuleEarlyRemoval
- /// \brief Get rid of unused PcodeOp objects where we can guarantee the output is unused
- int4 RuleEarlyRemoval::applyOp(PcodeOp *op,Funcdata &data)
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.hh
-index 0412b8b72..71b9b1d16 100644
+index 0412b8b72..e1bfe6e4b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.hh
 @@ -52,9 +52,9 @@ class AddTreeState {
@@ -9620,16 +8533,7 @@ index 0412b8b72..71b9b1d16 100644
    virtual Rule *clone(const ActionGroupList &grouplist) const {
      if (!grouplist.contains(getGroup())) return (Rule *)0;
      return new RuleEarlyRemoval(getGroup());
-@@ -92,180 +92,180 @@ class RuleEarlyRemoval : public Rule {
- };
- // class RuleAddrForceRelease : public Rule {
- // public:
--//   RuleAddrForceRelease(const string &g) : Rule(g, 0, "addrforcerelease") {}	///< Constructor
--//   virtual void getOpList(vector<uint4> &oplist) const;
-+//   RuleAddrForceRelease(const std::string &g) : Rule(g, 0, "addrforcerelease") {}	///< Constructor
-+//   virtual void getOpList(std::vector<uint4> &oplist) const;
- //   virtual int4 applyOp(PcodeOp *op,Funcdata &data);
- // };
+@@ -99,173 +99,173 @@ class RuleEarlyRemoval : public Rule {
  class RuleCollectTerms : public Rule {
    static Varnode *getMultCoeff(Varnode *vn,uintb &coef);	///< Get the multiplicative coefficient
  public:
@@ -9837,7 +8741,7 @@ index 0412b8b72..71b9b1d16 100644
    virtual int4 applyOp(PcodeOp *op,Funcdata &data);
    static void minMaxUse(Varnode *vn,int4 &maxByte,int4 &minByte);
    static void replaceDescendants(Varnode *origVn,Varnode *newVn,int4 maxByte,int4 minByte,Funcdata &data);
-@@ -275,389 +275,389 @@ class RulePullsubMulti : public Rule {
+@@ -275,173 +275,173 @@ class RulePullsubMulti : public Rule {
  };
  class RulePullsubIndirect : public Rule {
  public:
@@ -10045,16 +8949,7 @@ index 0412b8b72..71b9b1d16 100644
    virtual int4 applyOp(PcodeOp *op,Funcdata &data);
  };
  // class RuleShiftLess : public Rule {
- // public:
--//   RuleShiftLess(const string &g) : Rule(g, 0, "shiftless") {}	///< Constructor
-+//   RuleShiftLess(const std::string &g) : Rule(g, 0, "shiftless") {}	///< Constructor
- //   virtual Rule *clone(const ActionGroupList &grouplist) const {
- //     if (!grouplist.contains(getGroup())) return (Rule *)0;
- //     return new RuleShiftLess(getGroup());
- //   }
--//   virtual void getOpList(vector<uint4> &oplist) const;
-+//   virtual void getOpList(std::vector<uint4> &oplist) const;
- //   virtual int4 applyOp(PcodeOp *op,Funcdata &data);
+@@ -456,208 +456,208 @@ class RuleShiftCompare : public Rule {
  // };
  class RuleLessEqual : public Rule {
  public:
@@ -10326,7 +9221,7 @@ index 0412b8b72..71b9b1d16 100644
    virtual Rule *clone(const ActionGroupList &grouplist) const {
      if (!grouplist.contains(getGroup())) return (Rule *)0;
      return new RulePropagateCopy(getGroup());
-@@ -687,62 +687,62 @@ class RulePropagateCopy : public Rule {
+@@ -687,52 +687,52 @@ class RulePropagateCopy : public Rule {
  };
  class Rule2Comp2Mult : public Rule {
  public:
@@ -10389,19 +9284,7 @@ index 0412b8b72..71b9b1d16 100644
    virtual int4 applyOp(PcodeOp *op,Funcdata &data);
  };
  // class RuleUndistribute : public Rule {
- // public:
--//   RuleUndistribute(const string &g) : Rule(g, 0, "undistribute") {}	///< Constructor
-+//   RuleUndistribute(const std::string &g) : Rule(g, 0, "undistribute") {}	///< Constructor
- //   virtual Rule *clone(const ActionGroupList &grouplist) const {
- //     if (!grouplist.contains(getGroup())) return (Rule *)0;
- //     return new RuleUndistribute(Group());
- //   }
--//   virtual void getOpList(vector<uint4> &oplist) const;
-+//   virtual void getOpList(std::vector<uint4> &oplist) const;
- //   virtual int4 applyOp(PcodeOp *op,Funcdata &data);
- // };
- class RuleLoadVarnode : public Rule {
-@@ -751,463 +751,463 @@ class RuleLoadVarnode : public Rule {
+@@ -751,22 +751,22 @@ class RuleLoadVarnode : public Rule {
    static AddrSpace *vnSpacebase(Architecture *glb,Varnode *vn,uintb &val,AddrSpace *spc);
    static AddrSpace *checkSpacebase(Architecture *glb,PcodeOp *op,uintb &offoff);
  public:
@@ -10428,16 +9311,7 @@ index 0412b8b72..71b9b1d16 100644
    virtual int4 applyOp(PcodeOp *op,Funcdata &data);
  };
  // class RuleShadowVar : public Rule {
- // public:
--//   RuleShadowVar(const string &g) : Rule(g, 0, "shadowvar") {}	///< Constructor
-+//   RuleShadowVar(const std::string &g) : Rule(g, 0, "shadowvar") {}	///< Constructor
- //   virtual Rule *clone(const ActionGroupList &grouplist) const {
- //     if (!grouplist.contains(getGroup())) return (Rule *)0;
- //     return new RuleShadowVar(getGroup());
- //   }
--//   virtual void getOpList(vector<uint4> &oplist) const;
-+//   virtual void getOpList(std::vector<uint4> &oplist) const;
- //   virtual int4 applyOp(PcodeOp *op,Funcdata &data);
+@@ -781,33 +781,33 @@ class RuleStoreVarnode : public Rule {
  // };
  class RuleSubExtComm : public Rule {
  public:
@@ -10477,16 +9351,7 @@ index 0412b8b72..71b9b1d16 100644
    virtual int4 applyOp(PcodeOp *op,Funcdata &data);
  };
  // class RuleIndirectConcat : public Rule {
- // public:
--//   RuleIndirectConcat(const string &g) : Rule(g, 0, "indirectconcat") {}	///< Constructor
-+//   RuleIndirectConcat(const std::string &g) : Rule(g, 0, "indirectconcat") {}	///< Constructor
- //   virtual Rule *clone(const ActionGroupList &grouplist) const {
- //     if (!grouplist.contains(getGroup())) return (Rule *)0;
- //     return new RuleIndirectConcat(getGroup());
- //   }
--//   virtual void getOpList(vector<uint4> &oplist) const;
-+//   virtual void getOpList(std::vector<uint4> &oplist) const;
- //   virtual int4 applyOp(PcodeOp *op,Funcdata &data);
+@@ -822,347 +822,347 @@ class RuleConcatCommute : public Rule {
  // };
  class RuleConcatZext : public Rule {
  public:
@@ -10901,18 +9766,7 @@ index 0412b8b72..71b9b1d16 100644
    virtual int4 applyOp(PcodeOp *op,Funcdata &data);
  };
  
- // class RuleRightShiftSub : public Rule {
- // public:
--//   RuleRightShiftSub(const string &g) : Rule( g, 0, "rightshiftsub") {}	///< Constructor
-+//   RuleRightShiftSub(const std::string &g) : Rule( g, 0, "rightshiftsub") {}	///< Constructor
- //   virtual Rule *clone(const ActionGroupList &grouplist) const {
- //     if (!grouplist.contains(getGroup())) return (Rule *)0;
- //     return new RuleRightShiftSub(Group());
- //   }
--//   virtual void getOpList(vector<uint4> &oplist) const;
-+//   virtual void getOpList(std::vector<uint4> &oplist) const;
- //   virtual int4 applyOp(PcodeOp *op,Funcdata &data);
- // };
+@@ -1179,35 +1179,35 @@ class RuleSubNormal : public Rule {
  
  class RulePositiveDiv : public Rule {
  public:
@@ -11361,19 +10215,6 @@ index 0412b8b72..71b9b1d16 100644
    virtual int4 applyOp(PcodeOp *op,Funcdata &data);
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/rulecompile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/rulecompile.cc
-index af4e191c7..eeb7cc1f7 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/rulecompile.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/rulecompile.cc
-@@ -17,6 +17,8 @@
- #include "rulecompile.hh"
- #include "ruleparse.hh"
- 
-+using namespace std;
-+
- RuleCompile *rulecompile;
- extern int4 ruleparsedebug;
- extern int4 ruleparseparse(void);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/rulecompile.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/rulecompile.hh
 index 8cce8fc2f..23c656384 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/rulecompile.hh
@@ -11489,32 +10330,6 @@ index 8cce8fc2f..23c656384 100644
  };
  
  /*
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleparse.y b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleparse.y
-index 3d3ced687..aceb52b9a 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleparse.y
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleparse.y
-@@ -17,6 +17,8 @@
- #ifdef CPUI_RULECOMPILE
- #include "rulecompile.hh"
- 
-+using namespace std;
-+
- #define YYERROR_VERBOSE
- 
- extern RuleCompile *rulecompile;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
-index 1c9ab7560..a791a3348 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
-@@ -16,6 +16,8 @@
- #include "semantics.hh"
- #include "translate.hh"
- 
-+using namespace std;
-+
- ConstTpl::ConstTpl(const_type tp)
- 
- {				// Constructor for relative jump constants and uniques
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
 index 1fbd169c9..de1f10961 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
@@ -11633,21 +10448,8 @@ index 1fbd169c9..de1f10961 100644
    int4 restoreXml(const Element *el,const AddrSpaceManager *manage);
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh.cc
-index 0fd86e645..b33cf85d2 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh.cc
-@@ -16,6 +16,8 @@
- #include "sleigh.hh"
- #include "loadimage.hh"
- 
-+using namespace std;
-+
- PcodeCacher::PcodeCacher(void)
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh.hh
-index 74fc5cbf8..c003c55f4 100644
+index 74fc5cbf8..ab07b2e7b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh.hh
 @@ -57,9 +57,9 @@ class PcodeCacher {
@@ -11674,62 +10476,8 @@ index 74fc5cbf8..c003c55f4 100644
    virtual void allowContextSet(bool val) const;
    virtual int4 instructionLength(const Address &baseaddr) const;
    virtual int4 oneInstruction(PcodeEmit &emit,const Address &baseaddr) const;
-@@ -327,8 +327,8 @@ class Sleigh : public SleighBase {
- 
-   // Set up the loadimage
-   // Providing an executable name and architecture
--  string loadimagename = "x86testcode";
--  string bfdtarget= "default";
-+  std::string loadimagename = "x86testcode";
-+  std::string bfdtarget= "default";
- 
-   loader = new LoadImageBfd(loadimagename,bfdtarget);
-   loader->open();       // Load the executable from file
-@@ -345,7 +345,7 @@ class Sleigh : public SleighBase {
-   this.
- 
-   \code
--  string sleighfilename = "specfiles/x86.sla";
-+  std::string sleighfilename = "specfiles/x86.sla";
-   DocumentStorage docstorage;
-   Element *sleighroot = docstorage.openDocument(sleighfilename)->getRoot();
-   docstorage.registerTag(sleighroot);
-@@ -365,7 +365,7 @@ class Sleigh : public SleighBase {
-   \code
-   class AssemblyRaw : public AssemblyEmit {
-   public:
--    virtual void dump(const Address &addr,const string &mnem,const string &body) {
-+    virtual void dump(const Address &addr,const std::string &mnem,const std::string &body) {
-       addr.printRaw(cout);
-       cout << ": " << mnem << ' ' << body << endl;
-     }
-@@ -484,9 +484,9 @@ class Sleigh : public SleighBase {
-   \code
-   class MyLoadImage : public LoadImage {
-   public:
--    MyLoadImage(const string &nm) : Loadimage(nm) {}
-+    MyLoadImage(const std::string &nm) : Loadimage(nm) {}
-     virtual void loadFill(uint1 *ptr,int4 size,const Address &addr);
--    virtual string getArchType(void) const { return "mytype"; }
-+    virtual std::string getArchType(void) const { return "mytype"; }
-     virtual void adjustVma(long adjust) {}
-   };
-   \endcode
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.cc
-index c0518ec0e..5660525e2 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.cc
-@@ -16,6 +16,8 @@
- #include "sleigh_arch.hh"
- #include "inject_sleigh.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_DEPRECATED = AttributeId("deprecated",136);
- AttributeId ATTRIB_ENDIAN = AttributeId("endian",137);
- AttributeId ATTRIB_PROCESSOR = AttributeId("processor",138);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.hh
-index 6bb57b81a..0f0535d22 100644
+index 203a33ee6..467675555 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.hh
 @@ -42,15 +42,15 @@ extern ElementId ELEM_LANGUAGE_DEFINITIONS;	///< Marshaling element \<language_d
@@ -11804,7 +10552,7 @@ index 6bb57b81a..0f0535d22 100644
    int4 numCompilers(void) const { return compilers.size(); }	///< Get the number of compiler records
    const CompilerTag &getCompiler(int4 i) const { return compilers[i]; }	///< Get the i-th compiler record
    int4 numTruncations(void) const { return truncations.size(); }	///< Get the number of truncation records
-@@ -104,38 +104,38 @@ class LanguageDescription {
+@@ -104,17 +104,17 @@ class LanguageDescription {
  /// Generally a \e language \e id (i.e. x86:LE:64:default) is provided, then this
  /// object is able to automatically load in configuration and construct the Translate object.
  class SleighArchitecture : public Architecture {
@@ -11828,7 +10576,8 @@ index 6bb57b81a..0f0535d22 100644
 +  static void collectSpecFiles(std::ostream &errs);		///< Gather specification files in normal locations
    virtual Translate *buildTranslator(DocumentStorage &store);
    virtual PcodeInjectLibrary *buildPcodeInjectLibrary(void);
-   virtual void buildSpecFile(DocumentStorage &store);
+   virtual void buildTypegrp(DocumentStorage &store);
+@@ -127,21 +127,21 @@ class SleighArchitecture : public Architecture {
    virtual void modifySpaces(Translate *trans);
    virtual void resolveArchitecture(void);
  public:
@@ -11861,19 +10610,6 @@ index 6bb57b81a..0f0535d22 100644
    static void shutdown(void);					///< Shutdown all Translate objects and free global resources.
    static FileManage specpaths;					///< Known directories that contain .ldefs files.
  };
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighbase.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighbase.cc
-index 6b170df8e..4511dbb65 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighbase.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighbase.cc
-@@ -15,6 +15,8 @@
-  */
- #include "sleighbase.hh"
- 
-+using namespace std;
-+
- const int4 SleighBase::SLA_FORMAT_VERSION = 3;
- 
- const uint4 SleighBase::MAX_UNIQUE_SIZE = 128;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighbase.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighbase.hh
 index 560c5a203..0f96de8c6 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighbase.hh
@@ -11944,32 +10680,6 @@ index 560c5a203..0f96de8c6 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
-index 87a4d7980..3ed0c3390 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
-@@ -22,6 +22,8 @@
- #include "emulate.hh"
- #include <iostream>
- 
-+using namespace std;
-+
- // These are the bytes for an example x86 binary
- // These bytes are loaded at address 0x80483b4
- static uint1 myprog[] = {
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-index 40d731480..2c8eefab7 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-@@ -17,6 +17,8 @@
- #include "filemanage.hh"
- #include <csignal>
- 
-+using namespace std;
-+
- SleighCompile *slgh;		// Global pointer to sleigh object for use with parser
- #ifdef YYDEBUG
- extern int yydebug;		// Global debugging state for parser
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.hh
 index 8fd9ba2fd..c4971d04e 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.hh
@@ -12281,19 +10991,6 @@ index 8fd9ba2fd..c4971d04e 100644
  };
  
  extern SleighCompile *slgh;		///< A global reference to the SLEIGH compiler accessible to the parse functions
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.cc
-index 746d70a81..bd4aa1b77 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.cc
-@@ -81,6 +81,8 @@
- 
- #include "slgh_compile.hh"
- 
-+using namespace std;
-+
- #define YYERROR_VERBOSE
- 
-   extern SleighCompile *slgh;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.hh
 index f52fe7abb..4bc7f292d 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.hh
@@ -12330,34 +11027,8 @@ index f52fe7abb..4bc7f292d 100644
    SleighSymbol *anysym;
    SpaceSymbol *spacesym;
    SectionSymbol *sectionsym;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
-index b3fedb7b6..0e2172f79 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
-@@ -16,6 +16,8 @@
- %{
- #include "slgh_compile.hh"
- 
-+using namespace std;
-+
- #define YYERROR_VERBOSE
- 
-   extern SleighCompile *slgh;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
-index 3b7534f09..f6f4f029d 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
-@@ -16,6 +16,8 @@
- #include "slghpatexpress.hh"
- #include "sleighbase.hh"
- 
-+using namespace std;
-+
- int4 TokenPattern::resolveTokens(const TokenPattern &tok1,const TokenPattern &tok2)
- 
- {				// Use the token lists to decide how the two patterns
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.hh
-index 8c748c2ce..7aa030a45 100644
+index 8c748c2ce..69e7e170b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.hh
 @@ -20,7 +20,7 @@
@@ -12396,7 +11067,7 @@ index 8c748c2ce..7aa030a45 100644
 -  virtual void listValues(vector<const PatternValue *> &list) const { list.push_back(this); }
 -  virtual void getMinMax(vector<intb> &minlist,vector<intb> &maxlist) const { 
 +  virtual void listValues(std::vector<const PatternValue *> &list) const { list.push_back(this); }
-+  virtual void getMinMax(std::vector<intb> &minlist,std::vector<intb> &maxlist) const {
++  virtual void getMinMax(std::vector<intb> &minlist,std::vector<intb> &maxlist) const { 
      minlist.push_back(minValue()); maxlist.push_back(maxValue()); }
 -  virtual intb getSubValue(const vector<intb> &replace,int4 &listpos) const { return replace[listpos++]; }
 +  virtual intb getSubValue(const std::vector<intb> &replace,int4 &listpos) const { return replace[listpos++]; }
@@ -12806,19 +11477,6 @@ index 8c748c2ce..7aa030a45 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpattern.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpattern.cc
-index 4ebeaa000..9cb0803eb 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpattern.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpattern.cc
-@@ -15,6 +15,8 @@
-  */
- #include "slghpattern.hh"
- 
-+using namespace std;
-+
- uintm DisjointPattern::getMask(int4 startbit,int4 size,bool context) const
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpattern.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpattern.hh
 index 05b98e00a..153164e9a 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpattern.hh
@@ -12906,49 +11564,8 @@ index 05b98e00a..153164e9a 100644
    virtual void restoreXml(const Element *el);
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc
-index 1ac87e2cd..20cbf21e4 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc
-@@ -888,6 +888,9 @@ char *yytext;
- #line 18 "slghscan.l"
- #include "slgh_compile.hh"
- #include "slghparse.hh"
-+
-+using namespace std;
-+
- #define yywrap() 1
- #define YY_SKIP_YYWRAP
- 
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l
-index 2df137019..f2341ef09 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l
-@@ -17,6 +17,9 @@
- %{
- #include "slgh_compile.hh"
- #include "slghparse.hh"
-+
-+using namespace std;
-+
- #define yywrap() 1
- #define YY_SKIP_YYWRAP
- 
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
-index 85bd54261..22dc50d0d 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
-@@ -17,6 +17,8 @@
- #include "sleighbase.hh"
- #include <cmath>
- 
-+using namespace std;
-+
- SleighSymbol *SymbolScope::addSymbol(SleighSymbol *a)
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.hh
-index 82d95ffef..e07f85e2b 100644
+index 82d95ffef..2327854a6 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.hh
 @@ -29,19 +29,19 @@ class SleighSymbol {
@@ -13234,7 +11851,7 @@ index 82d95ffef..e07f85e2b 100644
  public:
    VarnodeListSymbol(void) {}	// For use with restoreXml
 -  VarnodeListSymbol(const string &nm,PatternValue *pv,const vector<SleighSymbol *> &vt); 
-+  VarnodeListSymbol(const std::string &nm,PatternValue *pv,const std::vector<SleighSymbol *> &vt);
++  VarnodeListSymbol(const std::string &nm,PatternValue *pv,const std::vector<SleighSymbol *> &vt); 
    virtual Constructor *resolve(ParserWalker &walker);
    virtual void getFixedHandle(FixedHandle &hand,ParserWalker &walker) const;
    virtual int4 getSize(void) const;
@@ -13564,19 +12181,6 @@ index 82d95ffef..e07f85e2b 100644
    uint4 getIndex(void) const { return index; }
    void incrementRefCount(void) { refcount += 1; }
    uint4 getRefCount(void) const { return refcount; }
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
-index ff6f282ca..b8ac04e72 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
-@@ -18,6 +18,8 @@
- 
- #include <climits>
- 
-+using namespace std;
-+
- AttributeId ATTRIB_BASE = AttributeId("base",89);
- AttributeId ATTRIB_DEADCODEDELAY = AttributeId("deadcodedelay",90);
- AttributeId ATTRIB_DELAY = AttributeId("delay", 91);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/space.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/space.hh
 index 92209bd30..e25e3f79e 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/space.hh
@@ -13702,19 +12306,6 @@ index 92209bd30..e25e3f79e 100644
    return name;
  }
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/string_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/string_ghidra.cc
-index 080f543ce..eb10514d1 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/string_ghidra.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/string_ghidra.cc
-@@ -15,6 +15,8 @@
-  */
- #include "string_ghidra.hh"
- 
-+using namespace std;
-+
- GhidraStringManager::GhidraStringManager(ArchitectureGhidra *g,int4 max)
-   : StringManager(max)
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/string_ghidra.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/string_ghidra.hh
 index 884e7e671..af81276ed 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/string_ghidra.hh
@@ -13728,19 +12319,6 @@ index 884e7e671..af81276ed 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc
-index 220210a1c..a1324ca46 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc
-@@ -16,6 +16,8 @@
- #include "stringmanage.hh"
- #include "architecture.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_TRUNC = AttributeId("trunc",69);
- 
- ElementId ELEM_BYTES = ElementId("bytes",83);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.hh
 index 8a227c69e..f6f5bcb4e 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.hh
@@ -13785,19 +12363,6 @@ index 8a227c69e..f6f5bcb4e 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/subflow.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/subflow.cc
-index 8f6835b3f..2a79f2942 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/subflow.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/subflow.cc
-@@ -15,6 +15,8 @@
-  */
- #include "subflow.hh"
- 
-+using namespace std;
-+
- /// \brief Return \e slot of constant if INT_OR op sets all bits in mask, otherwise -1
- ///
- /// \param orop is the given CPUI_INT_OR op
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/subflow.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/subflow.hh
 index d3c5983b8..741af41d2 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/subflow.hh
@@ -13855,32 +12420,6 @@ index d3c5983b8..741af41d2 100644
    bool allowSubpieceTerminator;	///< \b true if we allow lanes to be cast (via SUBPIECE) to a smaller integer size
  
    TransformVar *setReplacement(Varnode *vn,int4 numLanes,int4 skipLanes);
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc
-index ebc049c29..cfac8815a 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc
-@@ -19,6 +19,8 @@
- 
- #include "libdecomp.hh"
- 
-+using namespace std;
-+
- vector<UnitTest *> UnitTest::tests;
- 
- /// Run all the tests unless a non-empty set of names is passed in.
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.cc
-index 4f7110bb4..a23cad3df 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.cc
-@@ -15,6 +15,8 @@
-  */
- #include "ifacedecomp.hh"
- 
-+using namespace std;
-+
- void FunctionTestProperty::startTest(void) const
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.hh
 index 46abd6bce..daf9779b7 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.hh
@@ -13959,19 +12498,6 @@ index 46abd6bce..daf9779b7 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/transform.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/transform.cc
-index 3c594169d..2e42baac0 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/transform.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/transform.cc
-@@ -16,6 +16,8 @@
- #include "transform.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_VECTOR_LANE_SIZES = AttributeId("vector_lane_sizes",130);
- 
- /// \param op2 is the lane description to copy from
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/transform.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/transform.hh
 index fa26f0bd1..107e701fc 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/transform.hh
@@ -14017,21 +12543,8 @@ index fa26f0bd1..107e701fc 100644
    void placeInputs(void);	///< Set input Varnodes for all new ops
  public:
    TransformManager(Funcdata *f) { fd = f; }	///< Constructor
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/translate.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/translate.cc
-index ec3ec9a01..1d1c89275 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/translate.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/translate.cc
-@@ -15,6 +15,8 @@
-  */
- #include "translate.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_CODE = AttributeId("code",43);
- AttributeId ATTRIB_CONTAIN = AttributeId("contain",44);
- AttributeId ATTRIB_DEFAULTSPACE = AttributeId("defaultspace",45);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/translate.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/translate.hh
-index 4f296ee10..baec0079a 100644
+index 34a4709a8..3d9476b87 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/translate.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/translate.hh
 @@ -54,7 +54,7 @@ struct UnimplError : public LowlevelError {
@@ -14145,7 +12658,16 @@ index 4f296ee10..baec0079a 100644
    JoinRecord *findJoin(uintb offset) const; ///< Find JoinRecord for \e offset in the join space
    void setDeadcodeDelay(AddrSpace *spc,int4 delaydelta); ///< Set the deadcodedelay for a specific space
    void truncateSpace(const TruncationTag &tag);	///< Mark a space as truncated from its original size
-@@ -306,7 +306,7 @@ class Translate : public AddrSpaceManager {
+@@ -280,7 +280,7 @@ class AddrSpaceManager {
+   void renormalizeJoinAddress(Address &addr,int4 size);
+ 
+   /// \brief Parse a string with just an \e address \e space name and a hex offset
+-  Address parseAddressSimple(const string &val);
++  Address parseAddressSimple(const std::string &val);
+ };
+ 
+ /// \brief The interface to a translation engine for a processor.
+@@ -309,7 +309,7 @@ class Translate : public AddrSpaceManager {
    uint4 unique_base;		///< Starting offset into unique space
  protected:
    int4 alignment;      ///< Byte modulo on which instructions are aligned
@@ -14154,7 +12676,7 @@ index 4f296ee10..baec0079a 100644
  
    void setBigEndian(bool val);	///< Set general endianness to \b big if val is \b true
    void setUniqueBase(uint4 val); ///< Set the base offset for new temporary registers
-@@ -336,7 +336,7 @@ class Translate : public AddrSpaceManager {
+@@ -339,7 +339,7 @@ class Translate : public AddrSpaceManager {
    /// \param name is the name of the new context variable
    /// \param sbit is the first bit of the variable in the packed state
    /// \param ebit is the last bit of the variable in the packed state
@@ -14163,7 +12685,7 @@ index 4f296ee10..baec0079a 100644
  
    /// \brief Set the default value for a particular context variable
    ///
-@@ -345,7 +345,7 @@ class Translate : public AddrSpaceManager {
+@@ -348,7 +348,7 @@ class Translate : public AddrSpaceManager {
    /// for the variable.
    /// \param name is the name of the context variable
    /// \param val is the value to be considered default
@@ -14172,7 +12694,7 @@ index 4f296ee10..baec0079a 100644
  
    /// \brief Toggle whether disassembly is allowed to affect context
    ///
-@@ -362,7 +362,7 @@ class Translate : public AddrSpaceManager {
+@@ -365,7 +365,7 @@ class Translate : public AddrSpaceManager {
    /// Retrieve the location and size of a register given its name
    /// \param nm is the name of the register
    /// \return the VarnodeData for the register
@@ -14181,7 +12703,7 @@ index 4f296ee10..baec0079a 100644
  
    /// \brief Get the name of a register given its location
    ///
-@@ -374,7 +374,7 @@ class Translate : public AddrSpaceManager {
+@@ -377,7 +377,7 @@ class Translate : public AddrSpaceManager {
    /// \param off is the offset of the location
    /// \param size is the size of the location
    /// \return the name of the register, or an empty string
@@ -14190,7 +12712,7 @@ index 4f296ee10..baec0079a 100644
  
    /// \brief Get a list of all register names and the corresponding location
    ///
-@@ -382,7 +382,7 @@ class Translate : public AddrSpaceManager {
+@@ -385,7 +385,7 @@ class Translate : public AddrSpaceManager {
    /// that are specific to it.  This function populates a map from the location information
    /// to the name, for every named location known by the translator
    /// \param reglist is the map which will be populated by the call
@@ -14199,7 +12721,7 @@ index 4f296ee10..baec0079a 100644
  
    /// \brief Get a list of all \e user-defined pcode ops
    ///
-@@ -392,7 +392,7 @@ class Translate : public AddrSpaceManager {
+@@ -395,7 +395,7 @@ class Translate : public AddrSpaceManager {
    /// and an index.  This method returns a list of these ops
    /// in index order.
    /// \param res is the resulting vector of user op names
@@ -14208,19 +12730,6 @@ index 4f296ee10..baec0079a 100644
  
    /// \brief Get the length of a machine instruction
    ///
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index 91bf4bc77..0f725c138 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-@@ -16,6 +16,8 @@
- #include "type.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- /// The base propagation ordering associated with each meta-type.
- /// The array elements correspond to the ordering of #type_metatype.
- sub_metatype Datatype::base2sub[15] = {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/type.hh
 index 78b6fe4d2..64fa3f4d8 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.hh
@@ -14580,19 +13089,6 @@ index 78b6fe4d2..64fa3f4d8 100644
    void cacheCoreTypes(void);				///< Cache common types
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/typegrp_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/typegrp_ghidra.cc
-index 351e3df1a..dcc279aaf 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/typegrp_ghidra.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/typegrp_ghidra.cc
-@@ -15,6 +15,8 @@
-  */
- #include "typegrp_ghidra.hh"
- 
-+using namespace std;
-+
- Datatype *TypeFactoryGhidra::findById(const string &n,uint8 id,int4 sz)
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/typegrp_ghidra.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/typegrp_ghidra.hh
 index 847dec7da..91de00eea 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/typegrp_ghidra.hh
@@ -14606,19 +13102,6 @@ index 847dec7da..91de00eea 100644
  public:
    TypeFactoryGhidra(ArchitectureGhidra *g) : TypeFactory(g) {}	///< Constructor
    virtual ~TypeFactoryGhidra(void) {}
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.cc
-index 11000806f..210d7ae99 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.cc
-@@ -17,6 +17,8 @@
- #include "funcdata.hh"
- #include <cmath>
- 
-+using namespace std;
-+
- /// \param inst will hold the array of TypeOp objects, indexed on op-code
- /// \param tlst is the corresponding TypeFactory for the Architecture
- /// \param trans is the Translate object for floating-point formats
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.hh
 index f8976eb5e..c90401b52 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.hh
@@ -14947,19 +13430,6 @@ index f8976eb5e..c90401b52 100644
  };
  
  /// \brief Information about the INSERT op-code
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/unify.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/unify.cc
-index d848cfc7d..4caefde8d 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/unify.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/unify.cc
-@@ -16,6 +16,8 @@
- #ifdef CPUI_RULECOMPILE
- #include "unify.hh"
- 
-+using namespace std;
-+
- UnifyDatatype::UnifyDatatype(uint4 tp)
- 
- {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/unify.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/unify.hh
 index 995f96b44..2522ad5ae 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/unify.hh
@@ -15503,19 +13973,6 @@ index 995f96b44..2522ad5ae 100644
  	     
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.cc
-index 940d33322..055662fb9 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.cc
-@@ -16,6 +16,8 @@
- #include "unionresolve.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- /// The original parent must either be a union, a pointer to a union, or a partial union.
- /// The object is set up initially to resolve to the parent.
- /// \param parent is the original parent data-type
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.hh
 index c60c70601..77e85c1a6 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.hh
@@ -15537,19 +13994,6 @@ index c60c70601..77e85c1a6 100644
    ResolvedUnion result;		///< The best result
    int4 trialCount;		///< Number of trials evaluated so far
    static const int4 maxPasses;	///< Maximum number of levels to score through
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/userop.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/userop.cc
-index e60353941..d32919020 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/userop.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/userop.cc
-@@ -16,6 +16,8 @@
- #include "userop.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_FARPOINTER = AttributeId("farpointer",85);
- AttributeId ATTRIB_INPUTOP = AttributeId("inputop",86);
- AttributeId ATTRIB_OUTPUTOP = AttributeId("outputop",87);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/userop.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/userop.hh
 index a283255cb..d99f16029 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/userop.hh
@@ -15712,21 +14156,8 @@ index a283255cb..d99f16029 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc
-index ff5678c04..d8d010b27 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc
-@@ -17,6 +17,8 @@
- #include "op.hh"
- #include "database.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_CLASS = AttributeId("class",66);
- AttributeId ATTRIB_REPREF = AttributeId("repref",67);
- AttributeId ATTRIB_SYMREF = AttributeId("symref",68);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh
-index 25f6f8361..f26e0c6b6 100644
+index 21e547919..31dce00be 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.hh
 @@ -62,7 +62,7 @@ class HighVariable {
@@ -15738,7 +14169,7 @@ index 25f6f8361..f26e0c6b6 100644
    int4 numMergeClasses;			///< Number of different speculative merge classes in \b this
    mutable uint4 highflags;		///< Dirtiness flags
    mutable uint4 flags;			///< Boolean properties inherited from Varnode members
-@@ -102,9 +102,9 @@ class HighVariable {
+@@ -103,9 +103,9 @@ class HighVariable {
    /// \brief Print details of the cover for \b this (for debug purposes)
    ///
    /// \param s is the output stream
@@ -15750,7 +14181,7 @@ index 25f6f8361..f26e0c6b6 100644
    bool hasName(void) const;			///< Check if \b this HighVariable can be named
    Varnode *getTiedVarnode(void) const;		///< Find the first address tied member Varnode
    Varnode *getInputVarnode(void) const;		///< Find (the) input member Varnode
-@@ -143,7 +143,7 @@ class HighVariable {
+@@ -144,7 +144,7 @@ class HighVariable {
    //  Varnode *findGlobalRep(void) const;
    static bool compareName(Varnode *vn1,Varnode *vn2);	///< Determine which given Varnode is most nameable
    static bool compareJustLoc(const Varnode *a,const Varnode *b);	///< Compare based on storage location
@@ -15759,19 +14190,6 @@ index 25f6f8361..f26e0c6b6 100644
  };
  
  #endif
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc
-index 76f4ed86f..9674c5dfe 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc
-@@ -16,6 +16,8 @@
- #include "varmap.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_LOCK = AttributeId("lock",133);
- AttributeId ATTRIB_MAIN = AttributeId("main",134);
- 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.hh
 index 5267b0a3a..dba5351fa 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.hh
@@ -15888,21 +14306,8 @@ index 5267b0a3a..dba5351fa 100644
  				   const Address &pc,
  				   Datatype *ct,
  				   int4 &index,uint4 flags) const;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc
-index 4675e9ee8..e7041884b 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc
-@@ -16,6 +16,8 @@
- #include "varnode.hh"
- #include "funcdata.hh"
- 
-+using namespace std;
-+
- AttributeId ATTRIB_ADDRTIED = AttributeId("addrtied",30);
- AttributeId ATTRIB_GRP = AttributeId("grp",31);
- AttributeId ATTRIB_INPUT = AttributeId("input",32);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.hh
-index c6f656478..d27b37f8c 100644
+index 30a49cb75..eadd293db 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.hh
 @@ -47,10 +47,10 @@ struct VarnodeCompareDefLoc {
@@ -15927,7 +14332,7 @@ index c6f656478..d27b37f8c 100644
    mutable Cover *cover;		///< Addresses covered by the def->use of this Varnode
    mutable union {
      Datatype *dataType;		///< Temporary data-type associated with \b this for use in type propagate algorithm
-@@ -195,8 +195,8 @@ class Varnode {
+@@ -196,8 +196,8 @@ class Varnode {
    ValueSet *getValueSet(void) const { return temp.valueSet; }	///< Get the temporary ValueSet record
    uint4 getCreateIndex(void) const { return create_index; } ///< Get the creation index
    Cover *getCover(void) const { updateCover(); return cover; } ///< Get Varnode coverage information
@@ -15938,7 +14343,7 @@ index c6f656478..d27b37f8c 100644
    uintb getConsume(void) const { return consumed; } ///< Get mask of consumed bits
    void setConsume(uintb val) { consumed = val; } ///< Set the mask of consumed bits (used by dead-code algorithm)
    bool isConsumeList(void) const { return ((addlflags&Varnode::lisconsume)!=0); } ///< Get marker used by dead-code algorithm
-@@ -207,10 +207,10 @@ class Varnode {
+@@ -208,10 +208,10 @@ class Varnode {
    void clearConsumeVacuous(void) { addlflags &= ~Varnode::vacconsume; } ///< Clear marker used by dead-code algorithm
    PcodeOp *loneDescend(void) const; ///< Return unique reading PcodeOp, or \b null if there are zero or more than 1
    Address getUsePoint(const Funcdata &fd) const; ///< Get Address when this Varnode first comes into scope
@@ -15953,7 +14358,7 @@ index c6f656478..d27b37f8c 100644
    Varnode(int4 s,const Address &m,Datatype *dt);	///< Construct a \e free Varnode
    bool operator<(const Varnode &op2) const; ///< Comparison operator on Varnode
    bool operator==(const Varnode &op2) const; ///< Equality operator
-@@ -224,7 +224,7 @@ class Varnode {
+@@ -225,7 +225,7 @@ class Varnode {
    int4 overlap(const Address &op2loc,int4 op2size) const;	///< Return relative point of overlap with Address range
    uintb getNZMask(void) const { return nzm; } ///< Get the mask of bits within \b this that are known to be zero
    int4 termOrder(const Varnode *op) const; ///< Compare two Varnodes based on their term order
@@ -15962,7 +14367,7 @@ index c6f656478..d27b37f8c 100644
    bool isAnnotation(void) const { return ((flags&Varnode::annotation)!=0); } ///< Is \b this an annotation?
    bool isImplied(void) const { return ((flags&Varnode::implied)!=0); } ///< Is \b this an implied variable?
    bool isExplicit(void) const { return ((flags&Varnode::explict)!=0); }	///< Is \b this an explicitly printed variable?
-@@ -332,7 +332,7 @@ class Varnode {
+@@ -333,7 +333,7 @@ class Varnode {
    bool copyShadow(const Varnode *op2) const; ///< Are \b this and \b op2 copied from the same source?
    void encode(Encoder &encoder) const; ///< Encode a description of \b this to a stream
    static bool comparePointers(const Varnode *a,const Varnode *b) { return (*a < *b); }	///< Compare Varnodes as pointers
@@ -15971,21 +14376,8 @@ index c6f656478..d27b37f8c 100644
  };
  
  /// \brief A container for Varnode objects from a specific function
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc
-index fc4d1bf61..68778c5ca 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc
-@@ -98,6 +98,8 @@
- #include <iostream>
- #include <string>
- 
-+using namespace std;
-+
- string Attributes::bogus_uri("http://unused.uri");
- 
- /// \brief The XML character scanner
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.hh
-index a1c763a3e..802f57988 100644
+index a1c763a3e..95255b533 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.hh
 @@ -25,8 +25,6 @@
@@ -16002,12 +14394,11 @@ index a1c763a3e..802f57988 100644
  /// including the \e namespace URI.
  class Attributes {
 -  static string bogus_uri;		///< A placeholder for the namespace URI that should be attached to the element
--//  static string prefix;
++  static std::string bogus_uri;		///< A placeholder for the namespace URI that should be attached to the element
+ //  static string prefix;
 -  string *elementname;			///< The name of the XML element
 -  vector<string *> name;		///< List of names for each formal XML attribute
 -  vector<string *> value;		///< List of values for each formal XML attribute
-+  static std::string bogus_uri;		///< A placeholder for the namespace URI that should be attached to the element
-+//  static std::string prefix;
 +  std::string *elementname;			///< The name of the XML element
 +  std::vector<std::string *> name;		///< List of names for each formal XML attribute
 +  std::vector<std::string *> value;		///< List of values for each formal XML attribute
@@ -16029,23 +14420,17 @@ index a1c763a3e..802f57988 100644
 -  const string &getURI(int4 i) const { return bogus_uri; }	///< Get the namespace URI associated with the i-th attribute
 -  const string &getLocalName(int4 i) const { return *name[i]; }	///< Get the local name of the i-th attribute
 -  const string &getQName(int4 i) const { return *name[i]; }	///< Get the qualified name of the i-th attribute
--  //  int4 getIndex(const string &uri,const string &localName) const;
--  //  int4 getIndex(const string &qualifiedName) const;
--  //  const string &getType(int4 index) const;
--  //  const string &getType(const string &uri,const string &localName) const;
--  //  const string &getType(const string &qualifiedName) const;
--  const string &getValue(int4 i) const { return *value[i]; }	///< Get the value of the i-th attribute
--  //const string &getValue(const string &uri,const string &localName) const;
 +  const std::string &getURI(int4 i) const { return bogus_uri; }	///< Get the namespace URI associated with the i-th attribute
 +  const std::string &getLocalName(int4 i) const { return *name[i]; }	///< Get the local name of the i-th attribute
 +  const std::string &getQName(int4 i) const { return *name[i]; }	///< Get the qualified name of the i-th attribute
-+  //  int4 getIndex(const std::string &uri,const std::string &localName) const;
-+  //  int4 getIndex(const std::string &qualifiedName) const;
-+  //  const std::string &getType(int4 index) const;
-+  //  const std::string &getType(const std::string &uri,const std::string &localName) const;
-+  //  const std::string &getType(const std::string &qualifiedName) const;
+   //  int4 getIndex(const string &uri,const string &localName) const;
+   //  int4 getIndex(const string &qualifiedName) const;
+   //  const string &getType(int4 index) const;
+   //  const string &getType(const string &uri,const string &localName) const;
+   //  const string &getType(const string &qualifiedName) const;
+-  const string &getValue(int4 i) const { return *value[i]; }	///< Get the value of the i-th attribute
 +  const std::string &getValue(int4 i) const { return *value[i]; }	///< Get the value of the i-th attribute
-+  //const std::string &getValue(const std::string &uri,const std::string &localName) const;
+   //const string &getValue(const string &uri,const string &localName) const;
    /// \brief Get the value of the attribute with the given qualified name
 -  const string &getValue(const string &qualifiedName) const {
 +  const std::string &getValue(const std::string &qualifiedName) const {
@@ -16346,32 +14731,6 @@ index a1c763a3e..802f57988 100644
  
  {
    if (attr.size()==0) return false;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.y b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.y
-index 8f5386237..5d5f702cc 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.y
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.y
-@@ -25,6 +25,8 @@
- #include <iostream>
- #include <string>
- 
-+using namespace std;
-+
- string Attributes::bogus_uri("http://unused.uri");
- 
- /// \brief The XML character scanner
-diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.cc
-index c5c533ba9..21e6e390a 100644
---- a/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.cc
-@@ -15,6 +15,8 @@
-  */
- #include "xml_arch.hh"
- 
-+using namespace std;
-+
- ElementId ELEM_XML_SAVEFILE = ElementId("xml_savefile",236);
- 
- // Constructing the singleton registers the capability
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.hh
 index 6371148b0..e9598b9d5 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.hh
@@ -16396,58 +14755,6 @@ index 6371148b0..e9598b9d5 100644
    virtual ~XmlArchitecture(void) {}
  };
  
-diff --git a/Ghidra/Features/Decompiler/src/decompile/unittests/testcirclerange.cc b/Ghidra/Features/Decompiler/src/decompile/unittests/testcirclerange.cc
-index a8bf58ec5..6dcfc7930 100644
---- a/Ghidra/Features/Decompiler/src/decompile/unittests/testcirclerange.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/unittests/testcirclerange.cc
-@@ -16,6 +16,8 @@
- #include "architecture.hh"
- #include "test.hh"
- 
-+using namespace std;
-+
- class CircleRangeTestEnvironment {
-   Architecture *g;
- public:
-diff --git a/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc b/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
-index 67d92c573..9cb08b3d1 100644
---- a/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
-@@ -27,6 +27,8 @@
- #include <limits>
- #include <vector>
- 
-+using namespace std;
-+
- // utility functions
- float floatFromRawBits(uintb e) {
-     float f;
-diff --git a/Ghidra/Features/Decompiler/src/decompile/unittests/testmarshal.cc b/Ghidra/Features/Decompiler/src/decompile/unittests/testmarshal.cc
-index b941fede3..a09332af8 100644
---- a/Ghidra/Features/Decompiler/src/decompile/unittests/testmarshal.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/unittests/testmarshal.cc
-@@ -16,6 +16,8 @@
- #include "translate.hh"
- #include "test.hh"
- 
-+using namespace std;
-+
- class TestAddrSpaceManager : public AddrSpaceManager {
- public:
-   TestAddrSpaceManager(Translate *t);
-diff --git a/Ghidra/Features/Decompiler/src/decompile/unittests/testtypes.cc b/Ghidra/Features/Decompiler/src/decompile/unittests/testtypes.cc
-index 4ce7cdde6..1ac3c3d5f 100644
---- a/Ghidra/Features/Decompiler/src/decompile/unittests/testtypes.cc
-+++ b/Ghidra/Features/Decompiler/src/decompile/unittests/testtypes.cc
-@@ -18,6 +18,8 @@
- #include "test.hh"
- #include <iostream>
- 
-+using namespace std;
-+
- static Architecture *glb;
- static TypeFactory *types;
- static CastStrategy *strategy;
 -- 
-2.39.0
+2.40.0
 

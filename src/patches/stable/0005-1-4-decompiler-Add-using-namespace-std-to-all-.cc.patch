@@ -1,0 +1,1640 @@
+From 5a016a2b679fb58b5896049cecc5e3be9a6c66fb Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.d.kilmer@gmail.com>
+Date: Sun, 19 Mar 2023 15:37:26 -0400
+Subject: [PATCH 5/8] (1/4) decompiler: Add 'using namespace std' to all '.cc'
+
+This commit _should_ compile with all Ghidra code.
+
+It is less controversial (but still not ideal) to add 'using namespace'
+to C++ source files. Source files are isolated and will not affect any
+code other than what's in the source file. Eventually, it would be best
+to refactor to either use a using-declaration statement or to attach
+'std::' to all the symbols. Clangd refactors exist to do this (but they
+don't work on header files).
+
+I modified the *.y and *.l files, but I did not regenerate because it
+would cause more diffs than necessary, but if you did regenerate, it
+would generate the intended modifications made to the generated files.
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/action.cc       | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/address.cc      | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/architecture.cc | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.cc     | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/block.cc        | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/blockaction.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/callgraph.cc    | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/capability.cc   | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/cast.cc         | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/codedata.cc     | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/comment.cc      | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/comment_ghidra.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/condexe.cc      | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/consolemain.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/context.cc      | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.cc   | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/cover.cc        | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/cpool.cc        | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/cpool_ghidra.cc | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/crc32.cc        | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/database.cc     | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/database_ghidra.cc | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/double.cc       | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.cc      | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/emulate.cc      | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/emulateutil.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/filemanage.cc   | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/float.cc        | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/flow.cc         | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc        | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.cc     | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/funcdata_block.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_op.cc  | 2 ++
+ .../Decompiler/src/decompile/cpp/funcdata_varnode.cc         | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.cc  | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/ghidra_context.cc  | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/ghidra_process.cc  | 5 ++++-
+ .../Decompiler/src/decompile/cpp/ghidra_translate.cc         | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/globalcontext.cc   | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/grammar.cc      | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/grammar.y       | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/graph.cc        | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc     | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.cc    | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/inject_ghidra.cc   | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/inject_sleigh.cc   | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/interface.cc    | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.cc    | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/libdecomp.cc    | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/loadimage.cc    | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/loadimage_bfd.cc   | 2 ++
+ .../Decompiler/src/decompile/cpp/loadimage_ghidra.cc         | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/loadimage_xml.cc   | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/marshal.cc      | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/memstate.cc     | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc        | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/op.cc           | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc   | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.cc      | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/options.cc      | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/override.cc     | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/paramid.cc      | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/pcodeinject.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.cc   | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.y    | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.cc     | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/prefersplit.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/prettyprint.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/printc.cc       | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/printjava.cc    | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/printlanguage.cc   | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/rangeutil.cc    | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.cc     | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc   | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/rulecompile.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/ruleparse.y     | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc    | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/sleigh.cc       | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/sleighbase.cc   | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/sleighexample.cc   | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.cc    | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y     | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/slghpatexpress.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/slghpattern.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc     | 3 +++
+ Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l      | 3 +++
+ Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc   | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/space.cc        | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/string_ghidra.cc   | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/subflow.cc      | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/test.cc         | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.cc | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/transform.cc    | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/translate.cc    | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/type.cc         | 2 ++
+ .../Features/Decompiler/src/decompile/cpp/typegrp_ghidra.cc  | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/typeop.cc       | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/unify.cc        | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.cc | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/userop.cc       | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc     | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc       | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc      | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc          | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/xml.y           | 2 ++
+ Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.cc     | 2 ++
+ .../Decompiler/src/decompile/unittests/testcirclerange.cc    | 2 ++
+ .../Decompiler/src/decompile/unittests/testfloatemu.cc       | 2 ++
+ .../Decompiler/src/decompile/unittests/testmarshal.cc        | 2 ++
+ .../Features/Decompiler/src/decompile/unittests/testtypes.cc | 2 ++
+ 115 files changed, 234 insertions(+), 1 deletion(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/action.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/action.cc
+index 7b1b2062a..76fc27d72 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/action.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/action.cc
+@@ -18,6 +18,8 @@
+ 
+ #include "coreaction.hh"
+ 
++using namespace std;
++
+ /// Specify the name, group, and properties of the Action
+ /// \param f is the collection of property flags
+ /// \param nm is the Action name
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
+index 0b3bf04c8..9a58ea4ef 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
+@@ -16,6 +16,8 @@
+ #include "address.hh"
+ #include "translate.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_FIRST = AttributeId("first",27);
+ AttributeId ATTRIB_LAST = AttributeId("last",28);
+ AttributeId ATTRIB_UNIQ = AttributeId("uniq",29);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.cc
+index 14c4c337c..a43cf5387 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/architecture.cc
+@@ -24,6 +24,8 @@
+ #include <cmath>
+ #endif
+ 
++using namespace std;
++
+ vector<ArchitectureCapability *> ArchitectureCapability::thelist;
+ 
+ const uint4 ArchitectureCapability::majorversion = 5;
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.cc
+index b9a495500..a37960f9e 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/bfd_arch.cc
+@@ -16,6 +16,8 @@
+  */
+ #include "bfd_arch.hh"
+ 
++using namespace std;
++
+ // Constructing this object registers capability
+ BfdArchitectureCapability BfdArchitectureCapability::bfdArchitectureCapability;
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
+index 611009333..fff1a5cfe 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
+@@ -17,6 +17,8 @@
+ #include "block.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_ALTINDEX = AttributeId("altindex",75);
+ AttributeId ATTRIB_DEPTH = AttributeId("depth",76);
+ AttributeId ATTRIB_END = AttributeId("end",77);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/blockaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/blockaction.cc
+index 80265a458..9c9906f8f 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/blockaction.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/blockaction.cc
+@@ -16,6 +16,8 @@
+ #include "blockaction.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ /// Retrieve the current edge (as a \e top FlowBlock and the index of the outgoing edge).
+ /// If the end-points have been collapsed together, this returns NULL.
+ /// The top and bottom nodes of the edge are updated to FlowBlocks in the current collapsed graph.
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/callgraph.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/callgraph.cc
+index 26406c288..6b6a8d34b 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/callgraph.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/callgraph.cc
+@@ -16,6 +16,8 @@
+ #include "callgraph.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ ElementId ELEM_CALLGRAPH = ElementId("callgraph",226);
+ ElementId ELEM_NODE = ElementId("node",227);
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/capability.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/capability.cc
+index 87e40dbbf..481cf3378 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/capability.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/capability.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "capability.hh"
+ 
++using namespace std;
++
+ /// Access static vector of CapabilityPoint objects that are registered during static initialization
+ /// The list itself is created once on the first call to this method
+ /// \e after all the static initializers have run
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/cast.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/cast.cc
+index dc8baa764..0899dc5de 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/cast.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/cast.cc
+@@ -16,6 +16,8 @@
+ #include "cast.hh"
+ #include "op.hh"
+ 
++using namespace std;
++
+ /// Sets the TypeFactory used to produce data-types for the arithmeticOutputStandard() method
+ /// \param t is the TypeFactory
+ void CastStrategy::setTypeFactory(TypeFactory *t)
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/codedata.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/codedata.cc
+index 92690f422..1ba834bd6 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/codedata.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/codedata.cc
+@@ -17,6 +17,8 @@
+ #include "codedata.hh"
+ #include "loadimage_bfd.hh"
+ 
++using namespace std;
++
+ // Constructing this registers the capability
+ IfaceCodeDataCapability IfaceCodeDataCapability::ifaceCodeDataCapability;
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/comment.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/comment.cc
+index b5bc0a16d..e495b734e 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/comment.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/comment.cc
+@@ -16,6 +16,8 @@
+ #include "comment.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ ElementId ELEM_COMMENT = ElementId("comment",86);
+ ElementId ELEM_COMMENTDB = ElementId("commentdb",87);
+ ElementId ELEM_TEXT = ElementId("text",88);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/comment_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/comment_ghidra.cc
+index 04a4c2cf0..2ba980fc0 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/comment_ghidra.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/comment_ghidra.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "comment_ghidra.hh"
+ 
++using namespace std;
++
+ CommentDatabaseGhidra::CommentDatabaseGhidra(ArchitectureGhidra *g)
+   : CommentDatabase()
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/condexe.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/condexe.cc
+index 962f35d5d..0c41bb363 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/condexe.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/condexe.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "condexe.hh"
+ 
++using namespace std;
++
+ ConditionMarker::ConditionMarker(void)
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/consolemain.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/consolemain.cc
+index f40f3dd66..c4a628228 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/consolemain.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/consolemain.cc
+@@ -18,6 +18,8 @@
+ 
+ #include "libdecomp.hh"
+ 
++using namespace std;
++
+ class IfcLoadFile : public IfaceDecompCommand {
+ public:
+   virtual void execute(istream &s);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/context.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/context.cc
+index 51157f3a7..19ab8ddfa 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/context.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/context.cc
+@@ -17,6 +17,8 @@
+ #include "slghsymbol.hh"
+ #include "translate.hh"
+ 
++using namespace std;
++
+ ParserContext::ParserContext(ContextCache *ccache,Translate *trans)
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.cc
+index a4c6b71fc..dfe23cf03 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.cc
+@@ -18,6 +18,8 @@
+ #include "double.hh"
+ #include "subflow.hh"
+ 
++using namespace std;
++
+ /// \brief A stack equation
+ struct StackEqn {
+   int4 var1;			///< Variable with 1 coefficient
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/cover.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/cover.cc
+index 6e2b88a06..f41a8f745 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/cover.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/cover.cc
+@@ -16,6 +16,8 @@
+ #include "cover.hh"
+ #include "block.hh"
+ 
++using namespace std;
++
+ const CoverBlock Cover::emptyBlock;
+ 
+ /// PcodeOp objects and a CoverBlock start/stop boundaries have
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/cpool.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/cpool.cc
+index 42b1531ad..8e1fd1150 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/cpool.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/cpool.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "cpool.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_A = AttributeId("a",80);
+ AttributeId ATTRIB_B = AttributeId("b",81);
+ AttributeId ATTRIB_LENGTH = AttributeId("length",82);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/cpool_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/cpool_ghidra.cc
+index e8dee8256..1da445915 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/cpool_ghidra.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/cpool_ghidra.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "cpool_ghidra.hh"
+ 
++using namespace std;
++
+ ConstantPoolGhidra::ConstantPoolGhidra(ArchitectureGhidra *g)
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/crc32.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/crc32.cc
+index 2881ab711..3c68cb3ba 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/crc32.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/crc32.cc
+@@ -16,6 +16,8 @@
+  */
+ #include "crc32.hh"
+ 
++using namespace std;
++
+ // Table for bytewise calculation of a 32-bit Cyclic Redundancy Check
+ uint4 crc32tab[] = {
+   0x0,0x77073096,0xee0e612c,0x990951ba,0x76dc419,0x706af48f,
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/database.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/database.cc
+index 17127fe23..75d54f3bd 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/database.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/database.cc
+@@ -18,6 +18,8 @@
+ #include "crc32.hh"
+ #include <ctype.h>
+ 
++using namespace std;
++
+ AttributeId ATTRIB_CAT = AttributeId("cat",61);
+ AttributeId ATTRIB_FIELD = AttributeId("field",62);
+ AttributeId ATTRIB_MERGE = AttributeId("merge",63);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/database_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/database_ghidra.cc
+index 35030ffe0..93d390f97 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/database_ghidra.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/database_ghidra.cc
+@@ -16,6 +16,8 @@
+ #include "database_ghidra.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ Scope *ScopeGhidra::buildSubScope(uint8 id,const string &nm)
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/double.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/double.cc
+index ce5706bcd..14ad6929e 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/double.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/double.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "double.hh"
+ 
++using namespace std;
++
+ /// Internally, the \b lo and \b hi Varnodes are set to null, and the \b val field
+ /// holds the constant value.
+ /// \param sz is the size in bytes of the constant
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.cc
+index 3656c0df5..16dfa25ca 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.cc
+@@ -17,6 +17,8 @@
+ #include "funcdata.hh"
+ #include "crc32.hh"
+ 
++using namespace std;
++
+ // Table for how to hash opcodes, lumps certain operators (i.e. ADD SUB PTRADD PTRSUB) into one hash
+ // zero indicates the operator should be skipped
+ const uint4 DynamicHash::transtable[] = {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/emulate.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/emulate.cc
+index 88936cedd..5025d952d 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/emulate.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/emulate.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "emulate.hh"
+ 
++using namespace std;
++
+ /// Any time the emulator is about to execute a user-defined pcode op with the given name,
+ /// the indicated breakpoint is invoked first. The break table does \e not assume responsibility
+ /// for freeing the breakpoint object.
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/emulateutil.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/emulateutil.cc
+index fe37a7be2..8e022e3a3 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/emulateutil.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/emulateutil.cc
+@@ -16,6 +16,8 @@
+ #include "architecture.hh"
+ #include "emulateutil.hh"
+ 
++using namespace std;
++
+ /// \param g is the Architecture providing the LoadImage
+ EmulatePcodeOp::EmulatePcodeOp(Architecture *g)
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/filemanage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/filemanage.cc
+index 9ab665cd3..56cd2620f 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/filemanage.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/filemanage.cc
+@@ -29,6 +29,8 @@ extern "C" {
+ }
+ #endif
+ 
++using namespace std;
++
+ // Path name separator
+ #ifdef _WINDOWS
+ char FileManage::separator = '\\';
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/float.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/float.cc
+index 068c7e991..8f843d1da 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/float.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/float.cc
+@@ -19,6 +19,8 @@
+ #include <cmath>
+ #include "address.hh"
+ 
++using namespace std;
++
+ /// Set format for a given encoding size according to IEEE 754 standards
+ /// \param sz is the size of the encoding in bytes
+ FloatFormat::FloatFormat(int4 sz)
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/flow.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/flow.cc
+index c59ebdf61..c7c37dc6c 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/flow.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/flow.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "flow.hh"
+ 
++using namespace std;
++
+ /// Prepare for tracing flow for a new function.
+ /// The Funcdata object and references to its internal containers must be explicitly given.
+ /// \param d is the new function to trace
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
+index 937b57157..22960f3bf 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
+@@ -16,6 +16,8 @@
+ #include "fspec.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_CUSTOM = AttributeId("custom",114);
+ AttributeId ATTRIB_DOTDOTDOT = AttributeId("dotdotdot",115);
+ AttributeId ATTRIB_EXTENSION = AttributeId("extension",116);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.cc
+index 2412d35bb..602910d36 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_NOCODE = AttributeId("nocode",84);
+ 
+ ElementId ELEM_AST = ElementId("ast",115);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_block.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_block.cc
+index 83fafbc0a..70c7a09f5 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_block.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_block.cc
+@@ -16,6 +16,8 @@
+ #include "funcdata.hh"
+ #include "flow.hh"
+ 
++using namespace std;
++
+ // Funcdata members pertaining directly to blocks
+ 
+ /// A description of each block in the current structure hierarchy is
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_op.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_op.cc
+index d546e58b6..6a4d8be41 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_op.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_op.cc
+@@ -16,6 +16,8 @@
+ #include "funcdata.hh"
+ #include "flow.hh"
+ 
++using namespace std;
++
+ // Funcdata members pertaining directly to ops
+ 
+ /// \param op is the given PcodeOp
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
+index ff8bb6a23..4a19d6809 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ // Funcdata members pertaining directly to varnodes
+ 
+ /// Properties of a given storage location are gathered from symbol information and
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.cc
+index b5dd6c469..68e33edff 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_arch.cc
+@@ -23,6 +23,8 @@
+ #include "cpool_ghidra.hh"
+ #include "inject_ghidra.hh"
+ 
++using namespace std;
++
+ //AttributeId ATTRIB_BADDATA = AttributeId("baddata",145);
+ 
+ ElementId ELEM_COMMAND_ISNAMEUSED = ElementId("command_isnameused",239);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_context.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_context.cc
+index 226c3249c..80106670a 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_context.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_context.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "ghidra_context.hh"
+ 
++using namespace std;
++
+ const TrackedSet &ContextGhidra::getTrackedSet(const Address &addr) const
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.cc
+index a2cc2299b..1d73ebbb2 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.cc
+@@ -23,9 +23,12 @@
+ #endif
+ 
+ #ifdef __REMOTE_SOCKET__
+-
+ #include "ifacedecomp.hh"
++#endif
+ 
++using namespace std;
++
++#ifdef __REMOTE_SOCKET__
+ 
+ static IfaceStatus *ghidra_dcp = (IfaceStatus *)0;
+ static RemoteSocket *remote = (RemoteSocket *)0;
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_translate.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_translate.cc
+index dd2c0274a..bb5211a8f 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_translate.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_translate.cc
+@@ -16,6 +16,8 @@
+ #include "ghidra_translate.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ /// \brief Associate a Varnode with a register name
+ ///
+ /// \param nm is the register name
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/globalcontext.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/globalcontext.cc
+index 15badbad3..a70ec2686 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/globalcontext.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/globalcontext.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "globalcontext.hh"
+ 
++using namespace std;
++
+ ElementId ELEM_CONTEXT_DATA = ElementId("context_data",120);
+ ElementId ELEM_CONTEXT_POINTS = ElementId("context_points",121);
+ ElementId ELEM_CONTEXT_POINTSET = ElementId("context_pointset",122);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.cc
+index aab637f39..a87932dc8 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.cc
+@@ -89,6 +89,8 @@
+ 
+ #include "grammar.hh"
+ 
++using namespace std;
++
+ extern int yylex(void);
+ extern int yyerror(const char *str);
+ static CParse *parse;
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.y b/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.y
+index f210843fd..f9b3cca31 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.y
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.y
+@@ -16,6 +16,8 @@
+ %{
+ #include "grammar.hh"
+ 
++using namespace std;
++
+ extern int yylex(void);
+ extern int yyerror(const char *str);
+ static CParse *parse;
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/graph.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/graph.cc
+index 20d7cd196..31b69addd 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/graph.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/graph.cc
+@@ -16,6 +16,8 @@
+  */
+ #include "graph.hh"
+ 
++using namespace std;
++
+ static void print_varnode_vertex(Varnode *vn,ostream &s)
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc
+index e8af0c939..8ce556c80 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/heritage.cc
+@@ -17,6 +17,8 @@
+ #include "funcdata.hh"
+ #include "prefersplit.hh"
+ 
++using namespace std;
++
+ /// Update disjoint cover making sure (addr,size) is contained in a single element and return
+ /// an iterator to this element. The element's \b pass number is set to be the smallest value
+ /// of any previous intersecting element. Additionally an \b intersect code is passed back:
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.cc
+index 5e035d4a2..f4a1acfee 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.cc
+@@ -20,6 +20,8 @@ extern "C" {
+ #include "pcodeparse.hh"
+ #include "blockaction.hh"
+ 
++using namespace std;
++
+ // Constructing this registers the capability
+ IfaceDecompCapability IfaceDecompCapability::ifaceDecompCapability;
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.cc
+index 44a584305..ebcf1fcfd 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ifaceterm.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "ifaceterm.hh"
+ 
++using namespace std;
++
+ IfaceTerm::IfaceTerm(const string &prmpt,istream &is,ostream &os)
+   : IfaceStatus(prmpt,os)
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/inject_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/inject_ghidra.cc
+index 6ecde748c..5845276ce 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/inject_ghidra.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/inject_ghidra.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "inject_ghidra.hh"
+ 
++using namespace std;
++
+ void InjectContextGhidra::encode(Encoder &encoder) const
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/inject_sleigh.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/inject_sleigh.cc
+index e37e3f469..137d0402c 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/inject_sleigh.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/inject_sleigh.cc
+@@ -17,6 +17,8 @@
+ #include "pcodeparse.hh"
+ #include "architecture.hh"
+ 
++using namespace std;
++
+ InjectContextSleigh::~InjectContextSleigh(void)
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/interface.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/interface.cc
+index 8ac61f889..977703bbd 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/interface.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/interface.cc
+@@ -21,6 +21,8 @@
+ #include "ext/stdio_filebuf.h"
+ #endif
+ 
++using namespace std;
++
+ vector<IfaceCapability *> IfaceCapability::thelist;
+ 
+ void IfaceCapability::initialize(void)
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.cc
+index 63126e06e..86146b913 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.cc
+@@ -17,6 +17,8 @@
+ #include "emulate.hh"
+ #include "flow.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_LABEL = AttributeId("label",131);
+ AttributeId ATTRIB_NUM = AttributeId("num",132);
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/libdecomp.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/libdecomp.cc
+index b60a349fe..81ab37960 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/libdecomp.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/libdecomp.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "libdecomp.hh"
+ 
++using namespace std;
++
+ void startDecompilerLibrary(const char *sleighhome)
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage.cc
+index e14109b32..bba3e9674 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "loadimage.hh"
+ 
++using namespace std;
++
+ /// This is a convenience method wrapped around the core
+ /// loadFill() routine.  It automatically allocates an array
+ /// of the desired size, and then fills it with load image data.
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_bfd.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_bfd.cc
+index 7e9f1ad8a..6009dde95 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_bfd.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_bfd.cc
+@@ -16,6 +16,8 @@
+  */
+ #include "loadimage_bfd.hh"
+ 
++using namespace std;
++
+ int4 LoadImageBfd::bfdinit = 0;	// Global initialization variable
+ 
+ LoadImageBfd::LoadImageBfd(const string &f,const string &t) : LoadImage(f)
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_ghidra.cc
+index 069a1f956..2ede5182b 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_ghidra.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_ghidra.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "loadimage_ghidra.hh"
+ 
++using namespace std;
++
+ LoadImageGhidra::LoadImageGhidra(ArchitectureGhidra *g)
+   : LoadImage("ghidra_progam")
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.cc
+index b7a9a30c4..0de974108 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.cc
+@@ -16,6 +16,8 @@
+ #include "loadimage_xml.hh"
+ #include "translate.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_ARCH = AttributeId("arch",135);
+ 
+ ElementId ELEM_BINARYIMAGE = ElementId("binaryimage",230);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.cc
+index d9a63a047..c6225ea73 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/marshal.cc
+@@ -16,6 +16,8 @@
+ #include "marshal.hh"
+ #include "translate.hh"
+ 
++using namespace std;
++
+ using namespace PackedFormat;
+ 
+ unordered_map<string,uint4> AttributeId::lookupAttributeId;
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/memstate.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/memstate.cc
+index be9a570a0..621e2dda9 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/memstate.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/memstate.cc
+@@ -16,6 +16,8 @@
+ #include "memstate.hh"
+ #include "translate.hh"
+ 
++using namespace std;
++
+ /// This is a static convenience routine for decoding a value from a sequence of bytes depending
+ /// on the desired endianness
+ /// \param ptr is the pointer to the bytes to decode
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc
+index cb41351e2..3a856760e 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc
+@@ -16,6 +16,8 @@
+ #include "merge.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ /// This instance assumes the identity of the given Varnode and the defining index is
+ /// cached to facilitate quick sorting.
+ /// \param v is the given Varnode
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
+index 068393416..980300b23 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
+@@ -16,6 +16,8 @@
+ #include "op.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ ElementId ELEM_IOP = ElementId("iop",113);
+ ElementId ELEM_UNIMPL = ElementId("unimpl",114);
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
+index 3e0c39904..f3dcaed3c 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
+@@ -16,6 +16,8 @@
+ #include "opbehavior.hh"
+ #include "translate.hh"
+ 
++using namespace std;
++
+ /// This routine generates a vector of OpBehavior objects indexed by opcode
+ /// \param inst is the vector of behaviors to be filled
+ /// \param trans is the translator object needed by the floating point behaviors
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.cc
+index d116fe62d..100236b1e 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.cc
+@@ -16,6 +16,8 @@
+ #include "opcodes.hh"
+ #include "types.h"
+ 
++using namespace std;
++
+ /// \brief Names of operations associated with their opcode number
+ ///
+ /// Some of the names have been replaced with special placeholder
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/options.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/options.cc
+index 0ee439e44..ab042112c 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/options.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/options.cc
+@@ -18,6 +18,8 @@
+ #include "flow.hh"
+ #include "printc.hh"
+ 
++using namespace std;
++
+ ElementId ELEM_ALIASBLOCK = ElementId("aliasblock",174);
+ ElementId ELEM_ALLOWCONTEXTSET = ElementId("allowcontextset",175);
+ ElementId ELEM_ANALYZEFORLOOPS = ElementId("analyzeforloops",176);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/override.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/override.cc
+index f64cb03ca..ca5d726c9 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/override.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/override.cc
+@@ -16,6 +16,8 @@
+ #include "override.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ ElementId ELEM_DEADCODEDELAY = ElementId("deadcodedelay",218);
+ ElementId ELEM_FLOW = ElementId("flow",219);
+ ElementId ELEM_FORCEGOTO = ElementId("forcegoto",220);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/paramid.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/paramid.cc
+index 093a8b232..4ba724490 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/paramid.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/paramid.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "paramid.hh"
+ 
++using namespace std;
++
+ ElementId ELEM_PARAMMEASURES = ElementId("parammeasures",106);
+ ElementId ELEM_PROTO = ElementId("proto",107);
+ ElementId ELEM_RANK = ElementId("rank",108);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
+index 133da8178..ce8a0f834 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "pcodecompile.hh"
+ 
++using namespace std;
++
+ string Location::format(void) const
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeinject.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeinject.cc
+index 7a317f47f..d6678a5ca 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeinject.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeinject.cc
+@@ -16,6 +16,8 @@
+ #include "pcodeinject.hh"
+ #include "architecture.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_DYNAMIC = AttributeId("dynamic",70);
+ AttributeId ATTRIB_INCIDENTALCOPY = AttributeId("incidentalcopy",71);
+ AttributeId ATTRIB_INJECT = AttributeId("inject",72);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.cc
+index c562c0f83..4d67e8a6e 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.cc
+@@ -89,6 +89,8 @@
+ 
+ #include "pcodeparse.hh"
+ 
++using namespace std;
++
+   //#define YYERROR_VERBOSE
+   extern int yylex(void);
+   static PcodeSnippet *pcode;
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.y b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.y
+index c858fa148..46480a5ad 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.y
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.y
+@@ -16,6 +16,8 @@
+ %{
+ #include "pcodeparse.hh"
+ 
++using namespace std;
++
+   //#define YYERROR_VERBOSE
+   extern int yylex(void);
+   static PcodeSnippet *pcode;
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.cc
+index 317d4dbf1..5221185f8 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.cc
+@@ -16,6 +16,8 @@
+ #include "pcoderaw.hh"
+ #include "translate.hh"
+ 
++using namespace std;
++
+ /// Build this VarnodeData from an \<addr>, \<register>, or \<varnode> element.
+ /// \param decoder is the stream decoder
+ void VarnodeData::decode(Decoder &decoder)
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/prefersplit.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/prefersplit.cc
+index 635941885..e1267e610 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/prefersplit.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/prefersplit.cc
+@@ -16,6 +16,8 @@
+ #include "prefersplit.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ ElementId ELEM_PREFERSPLIT = ElementId("prefersplit",225);
+ 
+ bool PreferSplitRecord::operator<(const PreferSplitRecord &op2) const
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/prettyprint.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/prettyprint.cc
+index 388708030..fa631ccf1 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/prettyprint.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/prettyprint.cc
+@@ -16,6 +16,8 @@
+ #include "prettyprint.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_BLOCKREF = AttributeId("blockref",35);
+ AttributeId ATTRIB_CLOSE = AttributeId("close",36);
+ AttributeId ATTRIB_COLOR = AttributeId("color",37);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/printc.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/printc.cc
+index 5c90024a2..bd433b898 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/printc.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/printc.cc
+@@ -16,6 +16,8 @@
+ #include "printc.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ // Operator tokens for expressions
+ //                        token #in prec assoc   optype       space bump
+ OpToken PrintC::hidden = { "", "", 1, 70, false, OpToken::hiddenfunction, 0, 0, (OpToken *)0 };
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/printjava.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/printjava.cc
+index 473bab08a..a193e8688 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/printjava.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/printjava.cc
+@@ -16,6 +16,8 @@
+ #include "printjava.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ OpToken PrintJava::instanceof = { "instanceof", "", 2, 60, true, OpToken::binary, 1, 0, (OpToken *)0 };
+ 
+ // Constructing this registers the capability
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/printlanguage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/printlanguage.cc
+index f43d3e6f3..8f7a3c03b 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/printlanguage.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/printlanguage.cc
+@@ -17,6 +17,8 @@
+ #include "printlanguage.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ const string PrintLanguage::OPEN_PAREN = "(";
+ const string PrintLanguage::CLOSE_PAREN = ")";
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/rangeutil.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/rangeutil.cc
+index d98998426..3d17317f8 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/rangeutil.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/rangeutil.cc
+@@ -16,6 +16,8 @@
+ #include "rangeutil.hh"
+ #include "block.hh"
+ 
++using namespace std;
++
+ const char CircleRange::arrange[] = "gcgbegdagggggggeggggcgbggggggggcdfgggggggegdggggbgggfggggcgbegda";
+ 
+ /// All the instantiations where left == right represent the same set. We
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.cc
+index 3b83cf3ce..aab606e5d 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/raw_arch.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "raw_arch.hh"
+ 
++using namespace std;
++
+ ElementId ELEM_RAW_SAVEFILE = ElementId("raw_savefile",237);
+ 
+ // Constructing this object registers the capability
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
+index 3955b836b..81d62ac2a 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
+@@ -18,6 +18,8 @@
+ #include "subflow.hh"
+ #include "rangeutil.hh"
+ 
++using namespace std;
++
+ /// \class RuleEarlyRemoval
+ /// \brief Get rid of unused PcodeOp objects where we can guarantee the output is unused
+ int4 RuleEarlyRemoval::applyOp(PcodeOp *op,Funcdata &data)
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/rulecompile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/rulecompile.cc
+index af4e191c7..6af627ef8 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/rulecompile.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/rulecompile.cc
+@@ -892,6 +892,8 @@ Here is the original flex parser
+ %{
+ #include "rulecompile.hh"
+ #include "ruleparse.hh"
++
++using namespace std;
+ #define ruleparsewrap() 1
+ #define YY_SKIP_YYWRAP
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleparse.y b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleparse.y
+index 3d3ced687..aceb52b9a 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleparse.y
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleparse.y
+@@ -17,6 +17,8 @@
+ #ifdef CPUI_RULECOMPILE
+ #include "rulecompile.hh"
+ 
++using namespace std;
++
+ #define YYERROR_VERBOSE
+ 
+ extern RuleCompile *rulecompile;
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
+index 1c9ab7560..a791a3348 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
+@@ -16,6 +16,8 @@
+ #include "semantics.hh"
+ #include "translate.hh"
+ 
++using namespace std;
++
+ ConstTpl::ConstTpl(const_type tp)
+ 
+ {				// Constructor for relative jump constants and uniques
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh.cc
+index 0fd86e645..b33cf85d2 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh.cc
+@@ -16,6 +16,8 @@
+ #include "sleigh.hh"
+ #include "loadimage.hh"
+ 
++using namespace std;
++
+ PcodeCacher::PcodeCacher(void)
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.cc
+index aebec0e4c..4ff7b336d 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleigh_arch.cc
+@@ -16,6 +16,8 @@
+ #include "sleigh_arch.hh"
+ #include "inject_sleigh.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_DEPRECATED = AttributeId("deprecated",136);
+ AttributeId ATTRIB_ENDIAN = AttributeId("endian",137);
+ AttributeId ATTRIB_PROCESSOR = AttributeId("processor",138);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighbase.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighbase.cc
+index 6b170df8e..4511dbb65 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighbase.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighbase.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "sleighbase.hh"
+ 
++using namespace std;
++
+ const int4 SleighBase::SLA_FORMAT_VERSION = 3;
+ 
+ const uint4 SleighBase::MAX_UNIQUE_SIZE = 128;
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
+index 87a4d7980..3ed0c3390 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
+@@ -22,6 +22,8 @@
+ #include "emulate.hh"
+ #include <iostream>
+ 
++using namespace std;
++
+ // These are the bytes for an example x86 binary
+ // These bytes are loaded at address 0x80483b4
+ static uint1 myprog[] = {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
+index 40d731480..2c8eefab7 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
+@@ -17,6 +17,8 @@
+ #include "filemanage.hh"
+ #include <csignal>
+ 
++using namespace std;
++
+ SleighCompile *slgh;		// Global pointer to sleigh object for use with parser
+ #ifdef YYDEBUG
+ extern int yydebug;		// Global debugging state for parser
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.cc
+index 746d70a81..e2ac5dd79 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.cc
+@@ -110,6 +110,8 @@
+ 
+ /* In a future release of Bison, this section will be replaced
+    by #include "slghparse.hh".  */
++
++using namespace std;
+ #ifndef YY_YY_SLGHPARSE_HH_INCLUDED
+ # define YY_YY_SLGHPARSE_HH_INCLUDED
+ /* Debug traces.  */
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
+index b3fedb7b6..0e2172f79 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
+@@ -16,6 +16,8 @@
+ %{
+ #include "slgh_compile.hh"
+ 
++using namespace std;
++
+ #define YYERROR_VERBOSE
+ 
+   extern SleighCompile *slgh;
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
+index 3b7534f09..f6f4f029d 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
+@@ -16,6 +16,8 @@
+ #include "slghpatexpress.hh"
+ #include "sleighbase.hh"
+ 
++using namespace std;
++
+ int4 TokenPattern::resolveTokens(const TokenPattern &tok1,const TokenPattern &tok2)
+ 
+ {				// Use the token lists to decide how the two patterns
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpattern.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpattern.cc
+index 4ebeaa000..9cb0803eb 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpattern.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpattern.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "slghpattern.hh"
+ 
++using namespace std;
++
+ uintm DisjointPattern::getMask(int4 startbit,int4 size,bool context) const
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc
+index 1ac87e2cd..20cbf21e4 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc
+@@ -888,6 +888,9 @@ char *yytext;
+ #line 18 "slghscan.l"
+ #include "slgh_compile.hh"
+ #include "slghparse.hh"
++
++using namespace std;
++
+ #define yywrap() 1
+ #define YY_SKIP_YYWRAP
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l
+index 2df137019..f2341ef09 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l
+@@ -17,6 +17,9 @@
+ %{
+ #include "slgh_compile.hh"
+ #include "slghparse.hh"
++
++using namespace std;
++
+ #define yywrap() 1
+ #define YY_SKIP_YYWRAP
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
+index 85bd54261..22dc50d0d 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
+@@ -17,6 +17,8 @@
+ #include "sleighbase.hh"
+ #include <cmath>
+ 
++using namespace std;
++
+ SleighSymbol *SymbolScope::addSymbol(SleighSymbol *a)
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
+index ff6f282ca..b8ac04e72 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
+@@ -18,6 +18,8 @@
+ 
+ #include <climits>
+ 
++using namespace std;
++
+ AttributeId ATTRIB_BASE = AttributeId("base",89);
+ AttributeId ATTRIB_DEADCODEDELAY = AttributeId("deadcodedelay",90);
+ AttributeId ATTRIB_DELAY = AttributeId("delay", 91);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/string_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/string_ghidra.cc
+index 080f543ce..eb10514d1 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/string_ghidra.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/string_ghidra.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "string_ghidra.hh"
+ 
++using namespace std;
++
+ GhidraStringManager::GhidraStringManager(ArchitectureGhidra *g,int4 max)
+   : StringManager(max)
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc
+index 220210a1c..a1324ca46 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc
+@@ -16,6 +16,8 @@
+ #include "stringmanage.hh"
+ #include "architecture.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_TRUNC = AttributeId("trunc",69);
+ 
+ ElementId ELEM_BYTES = ElementId("bytes",83);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/subflow.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/subflow.cc
+index 8f6835b3f..2a79f2942 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/subflow.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/subflow.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "subflow.hh"
+ 
++using namespace std;
++
+ /// \brief Return \e slot of constant if INT_OR op sets all bits in mask, otherwise -1
+ ///
+ /// \param orop is the given CPUI_INT_OR op
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc
+index ebc049c29..cfac8815a 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc
+@@ -19,6 +19,8 @@
+ 
+ #include "libdecomp.hh"
+ 
++using namespace std;
++
+ vector<UnitTest *> UnitTest::tests;
+ 
+ /// Run all the tests unless a non-empty set of names is passed in.
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.cc
+index 4f7110bb4..a23cad3df 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/testfunction.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "ifacedecomp.hh"
+ 
++using namespace std;
++
+ void FunctionTestProperty::startTest(void) const
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/transform.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/transform.cc
+index 3c594169d..2e42baac0 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/transform.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/transform.cc
+@@ -16,6 +16,8 @@
+ #include "transform.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_VECTOR_LANE_SIZES = AttributeId("vector_lane_sizes",130);
+ 
+ /// \param op2 is the lane description to copy from
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/translate.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/translate.cc
+index 6e379031a..689583858 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/translate.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/translate.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "translate.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_CODE = AttributeId("code",43);
+ AttributeId ATTRIB_CONTAIN = AttributeId("contain",44);
+ AttributeId ATTRIB_DEFAULTSPACE = AttributeId("defaultspace",45);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
+index f50e07f84..b1c8124d9 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
+@@ -16,6 +16,8 @@
+ #include "type.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ /// The base propagation ordering associated with each meta-type.
+ /// The array elements correspond to the ordering of #type_metatype.
+ sub_metatype Datatype::base2sub[15] = {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/typegrp_ghidra.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/typegrp_ghidra.cc
+index 351e3df1a..dcc279aaf 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/typegrp_ghidra.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/typegrp_ghidra.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "typegrp_ghidra.hh"
+ 
++using namespace std;
++
+ Datatype *TypeFactoryGhidra::findById(const string &n,uint8 id,int4 sz)
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.cc
+index 11000806f..210d7ae99 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.cc
+@@ -17,6 +17,8 @@
+ #include "funcdata.hh"
+ #include <cmath>
+ 
++using namespace std;
++
+ /// \param inst will hold the array of TypeOp objects, indexed on op-code
+ /// \param tlst is the corresponding TypeFactory for the Architecture
+ /// \param trans is the Translate object for floating-point formats
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/unify.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/unify.cc
+index d848cfc7d..4caefde8d 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/unify.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/unify.cc
+@@ -16,6 +16,8 @@
+ #ifdef CPUI_RULECOMPILE
+ #include "unify.hh"
+ 
++using namespace std;
++
+ UnifyDatatype::UnifyDatatype(uint4 tp)
+ 
+ {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.cc
+index 940d33322..055662fb9 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.cc
+@@ -16,6 +16,8 @@
+ #include "unionresolve.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ /// The original parent must either be a union, a pointer to a union, or a partial union.
+ /// The object is set up initially to resolve to the parent.
+ /// \param parent is the original parent data-type
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/userop.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/userop.cc
+index e60353941..d32919020 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/userop.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/userop.cc
+@@ -16,6 +16,8 @@
+ #include "userop.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_FARPOINTER = AttributeId("farpointer",85);
+ AttributeId ATTRIB_INPUTOP = AttributeId("inputop",86);
+ AttributeId ATTRIB_OUTPUTOP = AttributeId("outputop",87);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc
+index b8fdd62c9..8574d7212 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc
+@@ -17,6 +17,8 @@
+ #include "op.hh"
+ #include "database.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_CLASS = AttributeId("class",66);
+ AttributeId ATTRIB_REPREF = AttributeId("repref",67);
+ AttributeId ATTRIB_SYMREF = AttributeId("symref",68);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc
+index 76f4ed86f..9674c5dfe 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc
+@@ -16,6 +16,8 @@
+ #include "varmap.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_LOCK = AttributeId("lock",133);
+ AttributeId ATTRIB_MAIN = AttributeId("main",134);
+ 
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc
+index 36203c8d6..65451d0a5 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc
+@@ -16,6 +16,8 @@
+ #include "varnode.hh"
+ #include "funcdata.hh"
+ 
++using namespace std;
++
+ AttributeId ATTRIB_ADDRTIED = AttributeId("addrtied",30);
+ AttributeId ATTRIB_GRP = AttributeId("grp",31);
+ AttributeId ATTRIB_INPUT = AttributeId("input",32);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc
+index fc4d1bf61..68778c5ca 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc
+@@ -98,6 +98,8 @@
+ #include <iostream>
+ #include <string>
+ 
++using namespace std;
++
+ string Attributes::bogus_uri("http://unused.uri");
+ 
+ /// \brief The XML character scanner
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.y b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.y
+index 8f5386237..5d5f702cc 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.y
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.y
+@@ -25,6 +25,8 @@
+ #include <iostream>
+ #include <string>
+ 
++using namespace std;
++
+ string Attributes::bogus_uri("http://unused.uri");
+ 
+ /// \brief The XML character scanner
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.cc
+index c5c533ba9..21e6e390a 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/xml_arch.cc
+@@ -15,6 +15,8 @@
+  */
+ #include "xml_arch.hh"
+ 
++using namespace std;
++
+ ElementId ELEM_XML_SAVEFILE = ElementId("xml_savefile",236);
+ 
+ // Constructing the singleton registers the capability
+diff --git a/Ghidra/Features/Decompiler/src/decompile/unittests/testcirclerange.cc b/Ghidra/Features/Decompiler/src/decompile/unittests/testcirclerange.cc
+index a8bf58ec5..6dcfc7930 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/unittests/testcirclerange.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/unittests/testcirclerange.cc
+@@ -16,6 +16,8 @@
+ #include "architecture.hh"
+ #include "test.hh"
+ 
++using namespace std;
++
+ class CircleRangeTestEnvironment {
+   Architecture *g;
+ public:
+diff --git a/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc b/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
+index 67d92c573..9cb08b3d1 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
+@@ -27,6 +27,8 @@
+ #include <limits>
+ #include <vector>
+ 
++using namespace std;
++
+ // utility functions
+ float floatFromRawBits(uintb e) {
+     float f;
+diff --git a/Ghidra/Features/Decompiler/src/decompile/unittests/testmarshal.cc b/Ghidra/Features/Decompiler/src/decompile/unittests/testmarshal.cc
+index 26c7d62d7..f409f4cb9 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/unittests/testmarshal.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/unittests/testmarshal.cc
+@@ -16,6 +16,8 @@
+ #include "translate.hh"
+ #include "test.hh"
+ 
++using namespace std;
++
+ class TestAddrSpaceManager : public AddrSpaceManager {
+ public:
+   TestAddrSpaceManager(Translate *t);
+diff --git a/Ghidra/Features/Decompiler/src/decompile/unittests/testtypes.cc b/Ghidra/Features/Decompiler/src/decompile/unittests/testtypes.cc
+index 4ce7cdde6..1ac3c3d5f 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/unittests/testtypes.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/unittests/testtypes.cc
+@@ -18,6 +18,8 @@
+ #include "test.hh"
+ #include <iostream>
+ 
++using namespace std;
++
+ static Architecture *glb;
+ static TypeFactory *types;
+ static CastStrategy *strategy;
+-- 
+2.40.0
+
