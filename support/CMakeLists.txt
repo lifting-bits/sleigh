@@ -59,6 +59,8 @@ target_include_directories(sleigh_support
   SYSTEM
   PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+  # For libconfig.h
+  "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
 )
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
