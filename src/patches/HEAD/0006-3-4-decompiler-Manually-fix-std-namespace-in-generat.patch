@@ -1,0 +1,51 @@
+From 24a158c4514567a0cc253f0c0a4b7a9f5df7384d Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.d.kilmer@gmail.com>
+Date: Wed, 15 Mar 2023 23:04:28 -0400
+Subject: [PATCH 6/7] (3/4) decompiler: Manually fix std namespace in generated
+ file
+
+We must manually fix the symbols from std namespace because the
+automated tool does not know how to parse yacc/bison files.
+---
+ .../Decompiler/src/decompile/cpp/slghparse.y       | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
+index 0e2172f79..039963cd5 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
+@@ -32,24 +32,24 @@ using namespace std;
+   char ch;
+   uintb *i;
+   intb *big;
+-  string *str;
+-  vector<string> *strlist;
+-  vector<intb> *biglist;
+-  vector<ExprTree *> *param;
++  std::string *str;
++  std::vector<std::string> *strlist;
++  std::vector<intb> *biglist;
++  std::vector<ExprTree *> *param;
+   SpaceQuality *spacequal;
+   FieldQuality *fieldqual;
+   StarQuality *starqual;
+   VarnodeTpl *varnode;
+   ExprTree *tree;
+-  vector<OpTpl *> *stmt;
++  std::vector<OpTpl *> *stmt;
+   ConstructTpl *sem;
+   SectionVector *sectionstart;
+   Constructor *construct;
+   PatternEquation *pateq;
+   PatternExpression *patexp;
+ 
+-  vector<SleighSymbol *> *symlist;
+-  vector<ContextChange *> *contop;
++  std::vector<SleighSymbol *> *symlist;
++  std::vector<ContextChange *> *contop;
+   SleighSymbol *anysym;
+   SpaceSymbol *spacesym;
+   SectionSymbol *sectionsym;
+-- 
+2.40.0
+

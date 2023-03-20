@@ -1,7 +1,7 @@
-From 0f35ed587ed7eabed6e87be0a09c9f2fddefdd7e Mon Sep 17 00:00:00 2001
+From 1f00ab9f7c53b6611fc1cf16455bb6069c0c0b69 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Mon, 7 Feb 2022 02:02:03 +1100
-Subject: [PATCH 2/4] Fix UBSAN errors in decompiler
+Subject: [PATCH 2/7] Fix UBSAN errors in decompiler
 
 ---
  .../Decompiler/src/decompile/cpp/address.cc    |  4 ++--
@@ -20,7 +20,7 @@ Subject: [PATCH 2/4] Fix UBSAN errors in decompiler
  13 files changed, 59 insertions(+), 23 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
-index b3758ddd1..0b3bf04c8 100644
+index 26694b558..395fee432 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
 @@ -685,7 +685,7 @@ uintb sign_extend(uintb in,int4 sizein,int4 sizeout)
@@ -42,10 +42,10 @@ index b3758ddd1..0b3bf04c8 100644
    mask <<= 1;
    val &= (~mask);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
-index 19ed41c63..d1bd842d8 100644
+index 0f8c95d60..95ab4b0ee 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
-@@ -2656,8 +2656,12 @@ void ProtoModelMerged::decode(Decoder &decoder)
+@@ -2659,8 +2659,12 @@ void ProtoModelMerged::decode(Decoder &decoder)
      modellist.push_back(mymodel);
    }
    decoder.closeElement(elemId);
@@ -80,10 +80,10 @@ index 0a641091b..70acfad8f 100644
    uint4 vnFlags = vn->getFlags() & (Varnode::directwrite|Varnode::addrforce);
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
-index 697e42372..6267ed750 100644
+index 4c0749590..24551ed11 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
-@@ -667,7 +667,11 @@ uintb PcodeOp::getNZMaskLocal(bool cliploop) const
+@@ -666,7 +666,11 @@ uintb PcodeOp::getNZMaskLocal(bool cliploop) const
      break;
    case CPUI_PIECE:
      resmask = getIn(0)->getNZMask();
@@ -159,7 +159,7 @@ index 49128f7e6..133da8178 100644
    return res;
  }
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index 652eefbe5..c84df0848 100644
+index 9068f2a81..216f2f45f 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 @@ -974,7 +974,12 @@ int4 RulePullsubIndirect::applyOp(PcodeOp *op,Funcdata &data)
@@ -188,7 +188,7 @@ index 652eefbe5..c84df0848 100644
    Varnode *vn1 = op->getIn(1);
    if (!vn1->isConstant()) return 0;
    Varnode *outvn = op->getOut();
-@@ -8467,7 +8473,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
+@@ -8469,7 +8475,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *outvn = op->getOut();
    int4 flowsize = outvn->getSize();
    uintb mask = calc_mask( flowsize );
@@ -235,7 +235,7 @@ index 3b836244c..1fbd169c9 100644
      type=op2.type; value=op2.value; value_real=op2.value_real; select=op2.select; }
    ConstTpl(const_type tp,uintb val);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-index fb9e94d34..7d09dd209 100644
+index b92a3de3b..ac9a70c93 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 @@ -2157,8 +2157,8 @@ string SleighCompile::checkSymbols(SymbolScope *scope)
@@ -249,10 +249,10 @@ index fb9e94d34..7d09dd209 100644
        msg << "   Label <" << sym->getName() << "> was placed but not used" << endl;
      else if (!sym->isPlaced())
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
-index dbb8f9e51..85bd54261 100644
+index 8516dbf10..352a0ae99 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghsymbol.cc
-@@ -2565,7 +2565,7 @@ void ContextOp::restoreXml(const Element *el,SleighBase *trans)
+@@ -2566,7 +2566,7 @@ void ContextOp::restoreXml(const Element *el,SleighBase *trans)
    const List &list(el->getChildren());
    List::const_iterator iter;
    iter = list.begin();
@@ -262,7 +262,7 @@ index dbb8f9e51..85bd54261 100644
  }
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index 844bb2776..1296b82dd 100644
+index 9fc48aa7d..8b75afb6d 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 @@ -3233,8 +3233,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
@@ -276,10 +276,10 @@ index 844bb2776..1296b82dd 100644
      ++iter;
      if (ptr->submeta == sub) {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc b/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
-index ab99382a3..67d92c573 100644
+index f88b4d000..3b16ed13c 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/unittests/testfloatemu.cc
-@@ -338,7 +338,7 @@ TEST(float_opTrunc_to_int) {
+@@ -343,7 +343,7 @@ TEST(float_opTrunc_to_int) {
  
      for(float f:float_test_values) {
          // avoid undefined behavior
@@ -289,5 +289,5 @@ index ab99382a3..67d92c573 100644
          uintb true_result = ((uintb)(int32_t)f) & 0xffffffff;
          uintb encoding = format.getEncoding(f);
 -- 
-2.39.0
+2.40.0
 
