@@ -22,7 +22,7 @@ set_property(CACHE sleigh_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 find_package(Git REQUIRED)
 
 # Ghidra pinned stable version commit
-set(ghidra_version "10.2.2")
+set(ghidra_version "10.2.3")
 set(ghidra_git_tag "Ghidra_${ghidra_version}_build")
 set(ghidra_shallow TRUE)
 
@@ -42,7 +42,10 @@ set(ghidra_patches
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0002-Add-include-guards-to-decompiler-C-headers.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0003-Fix-UBSAN-errors-in-decompiler.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0004-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-Remove-using-namespace-std-from-headers.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-1-4-decompiler-Add-using-namespace-std-to-all-.cc.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0006-2-4-decompiler-Remusing-automated-std-namespace-fix.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0007-3-4-decompiler-Manually-fix-std-namespace-in-generat.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0008-4-4-decompiler-Manually-fix-missed-std-variable-usag.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
@@ -51,7 +54,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "10.3")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "d55b7e9aa9e667359b097b6f07a077942cd259e8")
+  set(ghidra_head_git_tag "a6be09898f46e4c6bd2c48c3df7b89a1737e9af3")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
@@ -61,7 +64,10 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Add-include-guards-to-decompiler-C-headers.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Fix-UBSAN-errors-in-decompiler.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Remove-using-namespace-std-from-headers.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-1-4-decompiler-Add-using-namespace-std-to-all-.cc-fi.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-2-4-decompiler-Automated-std-namespace-fix-with-remu.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0006-3-4-decompiler-Manually-fix-std-namespace-in-generat.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0007-4-4-decompiler-Manually-fix-missed-std-variable-usag.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()

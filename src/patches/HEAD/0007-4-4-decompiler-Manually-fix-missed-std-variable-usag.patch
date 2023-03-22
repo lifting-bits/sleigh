@@ -1,0 +1,29 @@
+From ed427a72a0d2f70565752902f274a748835afa1a Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.d.kilmer@gmail.com>
+Date: Wed, 15 Mar 2023 23:10:22 -0400
+Subject: [PATCH 7/7] (4/4) decompiler: Manually fix missed std variable usage
+
+Unfortunately, the heuristics in remusing are unable to automatically
+fix this case of variables from the C++ standard library.
+
+This was fixed by resolving the error(s) produced by the compiler.
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.hh
+index 64fd45e35..428319a65 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.hh
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ghidra_process.hh
+@@ -79,7 +79,7 @@ class GhidraCommand {
+   virtual void loadParameters(void);	///< Read parameters directing command execution
+   virtual void sendResult(void);	///< Send results of the command (if any) back to the Ghidra client
+ public:
+-  GhidraCommand(void) : sin(cin),sout(cout) {
++  GhidraCommand(void) : sin(std::cin),sout(std::cout) {
+     ghidra = (ArchitectureGhidra *)0; 
+   }					///< Construct given i/o streams
+   virtual ~GhidraCommand(void) {}	///< Destructor
+-- 
+2.40.0
+

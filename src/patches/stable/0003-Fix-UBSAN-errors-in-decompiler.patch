@@ -1,7 +1,7 @@
-From e2eb3c6789bb5e84720174f9c3652165174c5c3a Mon Sep 17 00:00:00 2001
+From 4fa4b34e64c277f699a0c4d9cda1a2de739b9130 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Mon, 7 Feb 2022 02:02:03 +1100
-Subject: [PATCH 3/5] Fix UBSAN errors in decompiler
+Subject: [PATCH 3/8] Fix UBSAN errors in decompiler
 
 ---
  .../Decompiler/src/decompile/cpp/address.cc    |  4 ++--
@@ -42,10 +42,10 @@ index b3758ddd1..0b3bf04c8 100644
    mask <<= 1;
    val &= (~mask);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
-index 19ed41c63..d1bd842d8 100644
+index c52d92c80..937b57157 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
-@@ -2656,8 +2656,12 @@ void ProtoModelMerged::decode(Decoder &decoder)
+@@ -2649,8 +2649,12 @@ void ProtoModelMerged::decode(Decoder &decoder)
      modellist.push_back(mymodel);
    }
    decoder.closeElement(elemId);
@@ -61,7 +61,7 @@ index 19ed41c63..d1bd842d8 100644
  
  void ParameterBasic::setTypeLock(bool val)
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
-index 0c4275f15..bdbda0ae6 100644
+index 63784131d..ff8bb6a23 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 @@ -501,7 +501,13 @@ void Funcdata::setHighLevel(void)
@@ -262,7 +262,7 @@ index dbb8f9e51..85bd54261 100644
  }
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index 316074389..91bf4bc77 100644
+index 8d5dc17ed..f50e07f84 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 @@ -3233,8 +3233,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
@@ -289,5 +289,5 @@ index ab99382a3..67d92c573 100644
          uintb true_result = ((uintb)(int32_t)f) & 0xffffffff;
          uintb encoding = format.getEncoding(f);
 -- 
-2.39.0
+2.40.0
 

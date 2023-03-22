@@ -1,7 +1,7 @@
-From a208e9b0de5aba873248ceb583db842978868bd4 Mon Sep 17 00:00:00 2001
+From ad4a5782300ff499c1633da6923669545b78a2cc Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Wed, 3 Aug 2022 20:01:18 +1000
-Subject: [PATCH 3/4] Use `stroull` instead of `stroul` to parse address
+Subject: [PATCH 3/7] Use `stroull` instead of `stroul` to parse address
  offsets
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 3/4] Use `stroull` instead of `stroul` to parse address
  1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
-index 40a3e3bfe..ff6f282ca 100644
+index b511f8919..4ae8f18a6 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
 @@ -16,6 +16,8 @@
@@ -21,7 +21,7 @@ index 40a3e3bfe..ff6f282ca 100644
  AttributeId ATTRIB_BASE = AttributeId("base",89);
  AttributeId ATTRIB_DEADCODEDELAY = AttributeId("deadcodedelay",90);
  AttributeId ATTRIB_DELAY = AttributeId("delay", 91);
-@@ -268,7 +270,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
+@@ -288,7 +290,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
      }
    }
    catch(LowlevelError &err) {	// Name doesn't exist
@@ -34,5 +34,5 @@ index 40a3e3bfe..ff6f282ca 100644
      enddata = (const char *) tmpdata;
      if (enddata - s.c_str() == s.size()) { // If no size or offset override
 -- 
-2.39.0
+2.40.0
 
