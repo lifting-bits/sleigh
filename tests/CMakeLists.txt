@@ -52,3 +52,29 @@ add_test(
     -path "${library_root}/../datatests"
     datatests
 )
+
+
+#
+# Test for removal of using namespace std patches
+#
+if(sleigh_BUILD_SUPPORT)
+  add_executable(sleigh_namespace_std_test
+    no_using_namespace_std.cpp
+  )
+  target_link_libraries(sleigh_namespace_std_test
+    PRIVATE
+    sleigh::sla
+    sleigh::decomp
+    sleigh::support
+  )
+  if(WIN32)
+    # Ensure no issue with /permissive- and std::byte colliding deeply in the
+    # sleigh headers when compiling against Windows headers
+    target_compile_features(sleigh_namespace_std_test PRIVATE cxx_std_20)
+  endif()
+  # Really only testing that it compiles
+  add_test(
+    NAME sleigh_namespace_std_test
+    COMMAND sleigh_namespace_std_test
+  )
+endif()
