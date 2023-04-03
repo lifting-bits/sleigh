@@ -1,4 +1,4 @@
-From e805ecdc9520ee818a193c70838c72cb822fb0e0 Mon Sep 17 00:00:00 2001
+From e5c92ca0f00f112bdd4c0ddf466ecae3af70d55e Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Wed, 2 Nov 2022 19:41:19 -0400
 Subject: [PATCH 4/7] (1/4) decompiler: Add 'using namespace std' to all '.cc'
@@ -340,7 +340,7 @@ index 51157f3a7..19ab8ddfa 100644
  
  {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.cc
-index 1cbb3c039..0fba98fb3 100644
+index 686cf295b..fe2055898 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/coreaction.cc
 @@ -18,6 +18,8 @@
@@ -444,7 +444,7 @@ index ce5706bcd..14ad6929e 100644
  /// holds the constant value.
  /// \param sz is the size in bytes of the constant
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.cc
-index 3656c0df5..16dfa25ca 100644
+index 562584d8e..041d62339 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/dynamic.cc
 @@ -17,6 +17,8 @@
@@ -582,7 +582,7 @@ index d546e58b6..6a4d8be41 100644
  
  /// \param op is the given PcodeOp
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
-index 70acfad8f..d68294476 100644
+index a13b146df..ca1381b67 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 @@ -15,6 +15,8 @@
@@ -660,30 +660,30 @@ index 15badbad3..a70ec2686 100644
  ElementId ELEM_CONTEXT_POINTS = ElementId("context_points",121);
  ElementId ELEM_CONTEXT_POINTSET = ElementId("context_pointset",122);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.cc
-index aab637f39..a87932dc8 100644
+index 01c43f3ce..d78d71504 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.cc
-@@ -89,6 +89,8 @@
+@@ -90,6 +90,8 @@
  
  #include "grammar.hh"
  
 +using namespace std;
 +
- extern int yylex(void);
- extern int yyerror(const char *str);
+ extern int grammarlex(void);
+ extern int grammarerror(const char *str);
  static CParse *parse;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.y b/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.y
-index f210843fd..f9b3cca31 100644
+index c8ce15953..8bf7ec843 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.y
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/grammar.y
-@@ -16,6 +16,8 @@
+@@ -17,6 +17,8 @@
  %{
  #include "grammar.hh"
  
 +using namespace std;
 +
- extern int yylex(void);
- extern int yyerror(const char *str);
+ extern int grammarlex(void);
+ extern int grammarerror(const char *str);
  static CParse *parse;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/graph.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/graph.cc
 index 20d7cd196..31b69addd 100644
@@ -880,7 +880,7 @@ index be9a570a0..621e2dda9 100644
  /// on the desired endianness
  /// \param ptr is the pointer to the bytes to decode
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc
-index 096fbbf53..4bdaa5a22 100644
+index 1fa81812d..3eff8f51b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/merge.cc
 @@ -16,6 +16,8 @@
@@ -893,7 +893,7 @@ index 096fbbf53..4bdaa5a22 100644
  /// cached to facilitate quick sorting.
  /// \param v is the given Varnode
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
-index 24551ed11..36ed97bc6 100644
+index 71fd0047e..9b1d63700 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
 @@ -16,6 +16,8 @@
@@ -906,7 +906,7 @@ index 24551ed11..36ed97bc6 100644
  ElementId ELEM_UNIMPL = ElementId("unimpl",114);
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
-index 3e0c39904..f3dcaed3c 100644
+index add0487b7..d9b8387d9 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
 @@ -16,6 +16,8 @@
@@ -919,7 +919,7 @@ index 3e0c39904..f3dcaed3c 100644
  /// \param inst is the vector of behaviors to be filled
  /// \param trans is the translator object needed by the floating point behaviors
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.cc
-index d116fe62d..100236b1e 100644
+index 1c1a1ea27..f4df5bb3c 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/opcodes.cc
 @@ -16,6 +16,8 @@
@@ -997,30 +997,30 @@ index 7a317f47f..d6678a5ca 100644
  AttributeId ATTRIB_INCIDENTALCOPY = AttributeId("incidentalcopy",71);
  AttributeId ATTRIB_INJECT = AttributeId("inject",72);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.cc
-index c562c0f83..4d67e8a6e 100644
+index 844142717..df8186574 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.cc
-@@ -89,6 +89,8 @@
+@@ -90,6 +90,8 @@
  
  #include "pcodeparse.hh"
  
 +using namespace std;
 +
    //#define YYERROR_VERBOSE
-   extern int yylex(void);
+   extern int pcodelex(void);
    static PcodeSnippet *pcode;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.y b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.y
-index c858fa148..46480a5ad 100644
+index 9f93f7b0c..66c1f31f1 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.y
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodeparse.y
-@@ -16,6 +16,8 @@
+@@ -17,6 +17,8 @@
  %{
  #include "pcodeparse.hh"
  
 +using namespace std;
 +
    //#define YYERROR_VERBOSE
-   extern int yylex(void);
+   extern int pcodelex(void);
    static PcodeSnippet *pcode;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcoderaw.cc
 index 317d4dbf1..5221185f8 100644
@@ -1127,7 +1127,7 @@ index 3b83cf3ce..aab606e5d 100644
  
  // Constructing this object registers the capability
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index 216f2f45f..2f26d8fd2 100644
+index ccc2980e4..4ffde209f 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 @@ -18,6 +18,8 @@
@@ -1231,7 +1231,7 @@ index 87a4d7980..3ed0c3390 100644
  // These bytes are loaded at address 0x80483b4
  static uint1 myprog[] = {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-index ac9a70c93..b64b3dc11 100644
+index c7c9e12a0..b04d4cd50 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 @@ -17,6 +17,8 @@
@@ -1244,7 +1244,7 @@ index ac9a70c93..b64b3dc11 100644
  #ifdef YYDEBUG
  extern int yydebug;		// Global debugging state for parser
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.cc
-index 746d70a81..bd4aa1b77 100644
+index 6a57bcc0f..11d782cbc 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.cc
 @@ -81,6 +81,8 @@
@@ -1257,7 +1257,7 @@ index 746d70a81..bd4aa1b77 100644
  
    extern SleighCompile *slgh;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
-index b3fedb7b6..0e2172f79 100644
+index 51edd8612..ac10267fc 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
 @@ -16,6 +16,8 @@
@@ -1296,11 +1296,11 @@ index 4ebeaa000..9cb0803eb 100644
  
  {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc
-index 1ac87e2cd..20cbf21e4 100644
+index 1144098b3..75f425c9a 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc
-@@ -888,6 +888,9 @@ char *yytext;
- #line 18 "slghscan.l"
+@@ -881,6 +881,9 @@ char *yytext;
+  */
  #include "slgh_compile.hh"
  #include "slghparse.hh"
 +
@@ -1310,7 +1310,7 @@ index 1ac87e2cd..20cbf21e4 100644
  #define YY_SKIP_YYWRAP
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l
-index 2df137019..f2341ef09 100644
+index 58e0a1dca..1b537e529 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l
 @@ -17,6 +17,9 @@
@@ -1442,7 +1442,7 @@ index 61b8cc108..0eecb6cbc 100644
  AttributeId ATTRIB_CONTAIN = AttributeId("contain",44);
  AttributeId ATTRIB_DEFAULTSPACE = AttributeId("defaultspace",45);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index 8b75afb6d..18df2c557 100644
+index 17712a0fd..a8e607681 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 @@ -16,6 +16,8 @@
@@ -1468,7 +1468,7 @@ index 351e3df1a..dcc279aaf 100644
  
  {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.cc
-index 93970319f..2d19545f3 100644
+index f71e96e29..d757eea61 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/typeop.cc
 @@ -16,6 +16,8 @@
@@ -1494,7 +1494,7 @@ index d848cfc7d..4caefde8d 100644
  
  {
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.cc
-index 940d33322..055662fb9 100644
+index 5f8a22c85..1c4555214 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/unionresolve.cc
 @@ -16,6 +16,8 @@
@@ -1520,7 +1520,7 @@ index e60353941..d32919020 100644
  AttributeId ATTRIB_INPUTOP = AttributeId("inputop",86);
  AttributeId ATTRIB_OUTPUTOP = AttributeId("outputop",87);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc
-index c3b89df4c..156f1824e 100644
+index c8e3205af..8034fd24f 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/variable.cc
 @@ -17,6 +17,8 @@
@@ -1533,7 +1533,7 @@ index c3b89df4c..156f1824e 100644
  AttributeId ATTRIB_REPREF = AttributeId("repref",67);
  AttributeId ATTRIB_SYMREF = AttributeId("symref",68);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc
-index 76f4ed86f..9674c5dfe 100644
+index a382431cb..ea0c55a22 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/varmap.cc
 @@ -16,6 +16,8 @@
@@ -1546,7 +1546,7 @@ index 76f4ed86f..9674c5dfe 100644
  AttributeId ATTRIB_MAIN = AttributeId("main",134);
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc
-index 713fe9851..967d8b6fe 100644
+index d22276613..d534f0538 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/varnode.cc
 @@ -16,6 +16,8 @@
@@ -1559,10 +1559,10 @@ index 713fe9851..967d8b6fe 100644
  AttributeId ATTRIB_GRP = AttributeId("grp",31);
  AttributeId ATTRIB_INPUT = AttributeId("input",32);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc
-index fc4d1bf61..68778c5ca 100644
+index 901e37348..720d6e0ee 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.cc
-@@ -98,6 +98,8 @@
+@@ -99,6 +99,8 @@
  #include <iostream>
  #include <string>
  
@@ -1572,10 +1572,10 @@ index fc4d1bf61..68778c5ca 100644
  
  /// \brief The XML character scanner
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.y b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.y
-index 8f5386237..5d5f702cc 100644
+index 9a131710f..c9ea17ed8 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/xml.y
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/xml.y
-@@ -25,6 +25,8 @@
+@@ -26,6 +26,8 @@
  #include <iostream>
  #include <string>
  
