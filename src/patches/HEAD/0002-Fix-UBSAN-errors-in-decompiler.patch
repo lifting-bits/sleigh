@@ -1,4 +1,4 @@
-From 1f00ab9f7c53b6611fc1cf16455bb6069c0c0b69 Mon Sep 17 00:00:00 2001
+From fe9ae9a6a60d2e8560b3de62e375ffde322d56b2 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Mon, 7 Feb 2022 02:02:03 +1100
 Subject: [PATCH 2/7] Fix UBSAN errors in decompiler
@@ -61,7 +61,7 @@ index 0f8c95d60..95ab4b0ee 100644
  
  void ParameterBasic::setTypeLock(bool val)
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
-index 0a641091b..70acfad8f 100644
+index e5b85187d..a13b146df 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/funcdata_varnode.cc
 @@ -501,7 +501,13 @@ void Funcdata::setHighLevel(void)
@@ -80,10 +80,10 @@ index 0a641091b..70acfad8f 100644
    uint4 vnFlags = vn->getFlags() & (Varnode::directwrite|Varnode::addrforce);
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
-index 4c0749590..24551ed11 100644
+index 00962c6b3..71fd0047e 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
-@@ -666,7 +666,11 @@ uintb PcodeOp::getNZMaskLocal(bool cliploop) const
+@@ -670,7 +670,11 @@ uintb PcodeOp::getNZMaskLocal(bool cliploop) const
      break;
    case CPUI_PIECE:
      resmask = getIn(0)->getNZMask();
@@ -97,10 +97,10 @@ index 4c0749590..24551ed11 100644
      break;
    case CPUI_INT_MULT:
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
-index 3b84bac6a..3e0c39904 100644
+index bbf2de8f5..add0487b7 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
-@@ -747,7 +747,13 @@ uintb OpBehaviorPiece::evaluateBinary(int4 sizeout,int4 sizein,uintb in1,uintb i
+@@ -748,7 +748,13 @@ uintb OpBehaviorPiece::evaluateBinary(int4 sizeout,int4 sizein,uintb in1,uintb i
  uintb OpBehaviorSubpiece::evaluateBinary(int4 sizeout,int4 sizein,uintb in1,uintb in2) const
  
  {
@@ -159,7 +159,7 @@ index 49128f7e6..133da8178 100644
    return res;
  }
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index 9068f2a81..216f2f45f 100644
+index 036583ad6..ccc2980e4 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 @@ -974,7 +974,12 @@ int4 RulePullsubIndirect::applyOp(PcodeOp *op,Funcdata &data)
@@ -176,7 +176,7 @@ index 9068f2a81..216f2f45f 100644
    consume = ~consume;
    if ((consume & indir->getIn(0)->getConsume())!=0) return 0;
  
-@@ -6738,8 +6743,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
+@@ -6776,8 +6781,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *sb = op->getIn(0);
    Datatype *sbType = sb->getTypeReadFacing(op);
    if (sbType->getMetatype() != TYPE_PTR) return 0;
@@ -188,7 +188,7 @@ index 9068f2a81..216f2f45f 100644
    Varnode *vn1 = op->getIn(1);
    if (!vn1->isConstant()) return 0;
    Varnode *outvn = op->getOut();
-@@ -8469,7 +8475,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
+@@ -8507,7 +8513,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *outvn = op->getOut();
    int4 flowsize = outvn->getSize();
    uintb mask = calc_mask( flowsize );
@@ -235,10 +235,10 @@ index 3b836244c..1fbd169c9 100644
      type=op2.type; value=op2.value; value_real=op2.value_real; select=op2.select; }
    ConstTpl(const_type tp,uintb val);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-index b92a3de3b..ac9a70c93 100644
+index df6cbe4e4..c7c9e12a0 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-@@ -2157,8 +2157,8 @@ string SleighCompile::checkSymbols(SymbolScope *scope)
+@@ -2160,8 +2160,8 @@ string SleighCompile::checkSymbols(SymbolScope *scope)
    ostringstream msg;
    SymbolTree::const_iterator iter;
    for(iter=scope->begin();iter!=scope->end();++iter) {
@@ -262,10 +262,10 @@ index 8516dbf10..352a0ae99 100644
  }
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index 9fc48aa7d..8b75afb6d 100644
+index b35dcc339..17712a0fd 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-@@ -3233,8 +3233,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
+@@ -3294,8 +3294,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
    top.submeta = sub;			// Search on the incorrect submeta
    iter = tree.lower_bound(&top);
    while(iter != tree.end()) {

@@ -1,4 +1,4 @@
-From 0ca6d7c5c7f927a37482962df4399031581cf8af Mon Sep 17 00:00:00 2001
+From a89963a71d725fa9f85d06149d291bc1f6213ae1 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Thu, 28 Jul 2022 09:20:03 -0400
 Subject: [PATCH 1/7] Add include guards to decompiler C++ headers

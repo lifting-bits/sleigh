@@ -1,4 +1,4 @@
-From 24a158c4514567a0cc253f0c0a4b7a9f5df7384d Mon Sep 17 00:00:00 2001
+From 7f8f5fade8313ae50d8d9c38374495a706442a5b Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Wed, 15 Mar 2023 23:04:28 -0400
 Subject: [PATCH 6/7] (3/4) decompiler: Manually fix std namespace in generated
@@ -11,7 +11,7 @@ automated tool does not know how to parse yacc/bison files.
  1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
-index 0e2172f79..039963cd5 100644
+index ac10267fc..37eb2485b 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghparse.y
 @@ -32,24 +32,24 @@ using namespace std;
