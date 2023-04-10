@@ -12,6 +12,12 @@
 #include <iostream>
 #include <string>
 
+// NOTE: The ghidra symbols should be fully-qualified after the 'ghidra'
+// namespace changes make it into a stable release
+#ifdef sleigh_RELEASE_IS_HEAD
+using namespace ghidra;
+#endif
+
 static void PrintUsage(std::ostream &os) {
   os << "Usage: sleigh-lift [action] [sla_file] [bytes] [-a address] "
         "[-p root_sla_dir] [-s pspec_file]"

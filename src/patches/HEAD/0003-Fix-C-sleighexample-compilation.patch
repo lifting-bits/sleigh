@@ -1,0 +1,42 @@
+From 166e7aa2c37f51e48fb945e9b519b4997bbd4a57 Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.d.kilmer@gmail.com>
+Date: Mon, 10 Apr 2023 10:07:36 -0400
+Subject: [PATCH 3/3] Fix C++ sleighexample compilation
+
+---
+ .../Decompiler/src/decompile/cpp/sleighexample.cc        | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
+index 87a4d7980..f356825c9 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
+@@ -22,6 +22,11 @@
+ #include "emulate.hh"
+ #include <iostream>
+ 
++using std::cerr;
++using std::cout;
++
++namespace ghidra {
++
+ // These are the bytes for an example x86 binary
+ // These bytes are loaded at address 0x80483b4
+ static uint1 myprog[] = {
+@@ -283,9 +288,13 @@ static void doEmulation(Translate &trans,LoadImage &loader)
+   } while(!emulater.getHalt());
+ }
+ 
++} // End namespace ghidra
++
+ int main(int argc,char **argv)
+ 
+ {
++  using namespace ghidra;
++
+   if (argc != 2) {
+     cerr << "USAGE:  " << argv[0] << " disassemble" << endl;
+     cerr << "        " << argv[0] << " pcode" << endl;
+-- 
+2.40.0
+

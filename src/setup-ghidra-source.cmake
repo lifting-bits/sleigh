@@ -61,13 +61,9 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     PATCH_COMMAND "${GIT_EXECUTABLE}" config user.name "${ghidra_patch_user}" &&
     "${GIT_EXECUTABLE}" config user.email "${ghidra_patch_email}" &&
     "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Add-include-guards-to-decompiler-C-headers.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Fix-UBSAN-errors-in-decompiler.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-1-4-decompiler-Add-using-namespace-std-to-all-.cc-fi.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-2-4-decompiler-Automated-std-namespace-fix-with-remu.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0006-3-4-decompiler-Manually-fix-std-namespace-in-generat.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0007-4-4-decompiler-Manually-fix-missed-std-variable-usag.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Fix-UBSAN-errors-in-decompiler.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Fix-C-sleighexample-compilation.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
