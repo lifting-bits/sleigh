@@ -11,7 +11,7 @@
     treefmt-nix,
   }:
     {
-      overlay = final: prev: {
+      overlays.default = final: prev: {
         ghidra = with final;
           applyPatches {
             src = fetchFromGitHub {
@@ -54,10 +54,10 @@
       system: let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [self.overlay];
+          overlays = [self.overlays.default];
         };
       in {
-        defaultPackage = pkgs.sleigh;
+        packages.default = pkgs.sleigh;
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
             sleigh
