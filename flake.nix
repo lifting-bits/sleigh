@@ -48,6 +48,16 @@
               "-DFETCHCONTENT_SOURCE_DIR_GHIDRASOURCE=${ghidra}"
             ];
           };
+        sleigh-debug = with final;
+          final.sleigh.overrideAttrs (o: {
+            dontStrip = true;
+            enableDebugging = true;
+            separateDebugInfo = true;
+          });
+        sleigh-asan = with final;
+          final.sleigh-debug.overrideAttrs (o: {
+            cmakeFlags = o.cmakeFlags ++ ["-DCMAKE_C_FLAGS=-fsanitize=address" "-DCMAKE_CXX_FLAGS=-fsanitize=address"];
+          });
       };
     }
     // flake-utils.lib.eachDefaultSystem (
@@ -60,7 +70,7 @@
         packages.default = pkgs.sleigh;
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
-            sleigh
+            sleigh-asan
             clang-tools
           ];
         };
