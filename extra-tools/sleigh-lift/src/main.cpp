@@ -12,12 +12,6 @@
 #include <iostream>
 #include <string>
 
-// NOTE: The ghidra symbols should be fully-qualified after the 'ghidra'
-// namespace changes make it into a stable release
-#ifdef sleigh_RELEASE_IS_HEAD
-using namespace ghidra;
-#endif
-
 static void PrintUsage(std::ostream &os) {
   os << "Usage: sleigh-lift [action] [sla_file] [bytes] [-a address] "
         "[-p root_sla_dir] [-s pspec_file]"
@@ -51,7 +45,7 @@ static void PrintVersion(void) {
   }
 }
 
-class InMemoryLoadImage : public LoadImage {
+class InMemoryLoadImage : public ghidra::LoadImage {
 public:
   explicit InMemoryLoadImage(uint64_t base_addr)
       : LoadImage("nofile"), base_addr(base_addr) {}
@@ -61,7 +55,8 @@ public:
     image_buffer = std::move(buf);
   }
 
-  void loadFill(unsigned char *ptr, int size, const Address &addr) override {
+  void loadFill(unsigned char *ptr, int size,
+                const ghidra::Address &addr) override {
     uint64_t start = addr.getOffset();
     for (int i = 0; i < size; ++i) {
       uint64_t offset = start + i;
@@ -114,18 +109,18 @@ static std::string ParseHexBytes(std::string_view bytes, uint64_t addr,
   return buffer;
 }
 
-class AssemblyPrinter : public AssemblyEmit {
+class AssemblyPrinter : public ghidra::AssemblyEmit {
 public:
-  void dump(const Address &addr, const std::string &mnemonic,
+  void dump(const ghidra::Address &addr, const std::string &mnemonic,
             const std::string &body) override {
     addr.printRaw(std::cout);
     std::cout << ": " << mnemonic << ' ' << body << std::endl;
   }
 };
 
-static void PrintAssembly(Sleigh &engine, uint64_t addr, size_t len) {
+static void PrintAssembly(ghidra::Sleigh &engine, uint64_t addr, size_t len) {
   AssemblyPrinter asm_emit;
-  Address cur_addr(engine.getDefaultCodeSpace(), addr),
+  ghidra::Address cur_addr(engine.getDefaultCodeSpace(), addr),
       last_addr(engine.getDefaultCodeSpace(), addr + len);
   while (cur_addr < last_addr) {
     int32_t instr_len = engine.printAssembly(asm_emit, cur_addr);
@@ -133,15 +128,16 @@ static void PrintAssembly(Sleigh &engine, uint64_t addr, size_t len) {
   }
 }
 
-static void PrintVarData(std::ostream &s, VarnodeData &data) {
+static void PrintVarData(std::ostream &s, ghidra::VarnodeData &data) {
   s << '(' << data.space->getName() << ',';
   data.space->printOffset(s, data.offset);
   s << ',' << std::dec << data.size << ')';
 }
 
-class PcodePrinter : public PcodeEmit {
+class PcodePrinter : public ghidra::PcodeEmit {
 public:
-  void dump(const Address &, OpCode op, VarnodeData *outvar, VarnodeData *vars,
+  void dump(const ghidra::Address &, ghidra::OpCode op,
+            ghidra::VarnodeData *outvar, ghidra::VarnodeData *vars,
             int32_t isize) override {
     if (outvar) {
       PrintVarData(std::cout, *outvar);
@@ -156,9 +152,9 @@ public:
   }
 };
 
-static void PrintPcode(Sleigh &engine, uint64_t addr, size_t len) {
+static void PrintPcode(ghidra::Sleigh &engine, uint64_t addr, size_t len) {
   PcodePrinter pcode_emit;
-  Address cur_addr(engine.getDefaultCodeSpace(), addr),
+  ghidra::Address cur_addr(engine.getDefaultCodeSpace(), addr),
       last_addr(engine.getDefaultCodeSpace(), addr + len);
   while (cur_addr < last_addr) {
     int32_t instr_len = engine.oneInstruction(pcode_emit, cur_addr);
@@ -263,13 +259,14 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
   // Put together Sleigh components
-  AttributeId::initialize();
-  ElementId::initialize();
+  ghidra::AttributeId::initialize();
+  ghidra::ElementId::initialize();
   InMemoryLoadImage load_image(addr);
-  ContextInternal ctx;
-  Sleigh engine(&load_image, &ctx);
-  DocumentStorage storage;
-  Element *root = storage.openDocument(sla_file_path->string())->getRoot();
+  ghidra::ContextInternal ctx;
+  ghidra::Sleigh engine(&load_image, &ctx);
+  ghidra::DocumentStorage storage;
+  ghidra::Element *root =
+      storage.openDocument(sla_file_path->string())->getRoot();
   storage.registerTag(root);
   std::optional<std::filesystem::path> pspec_file_path;
   if (args->pspec_file_name) {
@@ -293,7 +290,8 @@ int main(int argc, char *argv[]) {
     }
   }
   if (pspec_file_path) {
-    Element *pspec_root = storage.openDocument(pspec_file_path->string())->getRoot();
+    ghidra::Element *pspec_root =
+        storage.openDocument(pspec_file_path->string())->getRoot();
     storage.registerTag(pspec_root);
   }
   engine.initialize(storage);
@@ -302,14 +300,15 @@ int main(int argc, char *argv[]) {
   // we can set the default context
   // This imitates what is done in
   //   void Architecture::parseProcessorConfig(DocumentStorage &store)
-  const Element *el = storage.getTag("processor_spec");
+  const ghidra::Element *el = storage.getTag("processor_spec");
   if (el) {
-    XmlDecode decoder(&engine, el);
-    uint4 elemId = decoder.openElement(ELEM_PROCESSOR_SPEC);
-    for(;;) {
-      uint4 subId = decoder.peekElement();
-      if (subId == 0) break;
-      else if (subId == ELEM_CONTEXT_DATA) {
+    ghidra::XmlDecode decoder(&engine, el);
+    ghidra::uint4 elemId = decoder.openElement(ghidra::ELEM_PROCESSOR_SPEC);
+    for (;;) {
+      ghidra::uint4 subId = decoder.peekElement();
+      if (subId == 0)
+        break;
+      else if (subId == ghidra::ELEM_CONTEXT_DATA) {
         ctx.decodeFromSpec(decoder);
         break;
       } else {
