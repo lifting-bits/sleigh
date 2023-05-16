@@ -93,13 +93,9 @@
 #include <sleigh/sleigh_arch.hh>
 #include <sleigh/sleighbase.hh>
 #include <sleigh/slgh_compile.hh>
-#ifdef sleigh_RELEASE_IS_HEAD
 namespace ghidra {
-#endif
 #include <sleigh/slghparse.hh>
-#ifdef sleigh_RELEASE_IS_HEAD
 } // End namespace ghidra
-#endif
 #include <sleigh/slghpatexpress.hh>
 #include <sleigh/slghpattern.hh>
 #include <sleigh/slghsymbol.hh>

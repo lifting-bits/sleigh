@@ -22,7 +22,7 @@ set_property(CACHE sleigh_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 find_package(Git REQUIRED)
 
 # Ghidra pinned stable version commit
-set(ghidra_version "10.2.3")
+set(ghidra_version "10.3")
 set(ghidra_git_tag "Ghidra_${ghidra_version}_build")
 set(ghidra_shallow TRUE)
 
@@ -38,23 +38,17 @@ set(ghidra_patches
   PATCH_COMMAND "${GIT_EXECUTABLE}" config user.name "${ghidra_patch_user}" &&
   "${GIT_EXECUTABLE}" config user.email "${ghidra_patch_email}" &&
   "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0001-Small-improvements-to-C-decompiler-testing-from-CLI.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0002-Add-include-guards-to-decompiler-C-headers.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0003-Fix-UBSAN-errors-in-decompiler.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0004-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-1-4-decompiler-Add-using-namespace-std-to-all-.cc.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0006-2-4-decompiler-Remusing-automated-std-namespace-fix.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0007-3-4-decompiler-Manually-fix-std-namespace-in-generat.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0008-4-4-decompiler-Manually-fix-missed-std-variable-usag.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0001-Fix-UBSAN-errors-in-decompiler.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
 if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: Try to remember to look at Ghidra/application.properties
   # TODO: CMake only likes numeric characters in the version string....
-  set(ghidra_head_version "10.3")
+  set(ghidra_head_version "10.4")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "b3616a6831320daf71d299ab988a0bf13e052174")
+  set(ghidra_head_git_tag "4b99900d2f2ce6efc444aed979f6c17b1f49a988")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches

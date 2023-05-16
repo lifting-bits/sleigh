@@ -1,7 +1,7 @@
-From a5f1be9df17f10db97dbd12243b001591d8b64d9 Mon Sep 17 00:00:00 2001
+From a2d412ce5edb750ee1f768a4a7ebfeaece6f7976 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Wed, 3 Aug 2022 20:01:18 +1000
-Subject: [PATCH 4/8] Use `stroull` instead of `stroul` to parse address
+Subject: [PATCH 2/3] Use `stroull` instead of `stroul` to parse address
  offsets
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 4/8] Use `stroull` instead of `stroul` to parse address
  1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
-index 40a3e3bfe..ff6f282ca 100644
+index bf4e1dc96..594b4583a 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
 @@ -16,6 +16,8 @@
@@ -18,10 +18,10 @@ index 40a3e3bfe..ff6f282ca 100644
  
 +#include <climits>
 +
+ namespace ghidra {
+ 
  AttributeId ATTRIB_BASE = AttributeId("base",89);
- AttributeId ATTRIB_DEADCODEDELAY = AttributeId("deadcodedelay",90);
- AttributeId ATTRIB_DELAY = AttributeId("delay", 91);
-@@ -268,7 +270,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
+@@ -290,7 +292,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
      }
    }
    catch(LowlevelError &err) {	// Name doesn't exist
