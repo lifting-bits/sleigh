@@ -14,6 +14,66 @@ on:
       - '*'
 
 jobs:
+  sanitizer:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        release: [stable, HEAD]
+    env: { CXX: clang++-14 }
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Git User for Applying Patches
+      # See this thread for more details https://github.community/t/github-actions-bot-email-address/17204/5
+      run: |
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+
+    - name: Configure the project
+      run: cmake --preset=ci-sanitize
+        -Dsleigh_RELEASE_TYPE=${{ matrix.release }}
+
+    - name: Build the project
+      run: cmake
+        --build build/sanitize
+        -j 2
+        -v
+
+    - name: Run the example
+      env:
+        ASAN_OPTIONS: "strict_string_checks=1:\
+          detect_stack_use_after_return=1:\
+          check_initialization_order=1:\
+          strict_init_order=1:\
+          detect_leaks=1"
+        UBSAN_OPTIONS: print_stacktrace=1
+      run: cmake
+        --build build/sanitize
+        -j 2
+        --target sleigh_example_runner
+
+    - name: Smoketest sleigh lift
+      env:
+        ASAN_OPTIONS: "strict_string_checks=1:\
+          detect_stack_use_after_return=1:\
+          check_initialization_order=1:\
+          strict_init_order=1:\
+          detect_leaks=1"
+        UBSAN_OPTIONS: print_stacktrace=1
+      run: ./build/sanitize/extra-tools/sleigh-lift/sleigh-lift disassemble x86-64.sla 4881ecc00f0000
+
+    - name: Run the tests
+      working-directory: build/sanitize
+      env:
+        ASAN_OPTIONS: "strict_string_checks=1:\
+          detect_stack_use_after_return=1:\
+          check_initialization_order=1:\
+          strict_init_order=1:\
+          detect_leaks=1"
+        UBSAN_OPTIONS: print_stacktrace=1
+      run: ctest -VV
+
   build:
     runs-on: ${{ matrix.os }}
 
