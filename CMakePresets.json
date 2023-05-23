@@ -26,8 +26,7 @@
       "hidden": true,
       "inherits": "cmake-pedantic",
       "cacheVariables": {
-        "sleigh_DEVELOPER_MODE": "ON",
-        "sleigh_BUILD_DOCUMENTATION": "ON"
+        "sleigh_DEVELOPER_MODE": "ON"
       }
     },
     {
