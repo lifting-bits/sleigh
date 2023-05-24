@@ -1,0 +1,67 @@
+From 0126a87fbebfdcdb0553af325d6880647050c287 Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.d.kilmer@gmail.com>
+Date: Wed, 24 May 2023 19:03:25 -0400
+Subject: [PATCH 3/4] Fix ASAN initialize-order-fiasco
+
+Use the "Constructo On First Use" idiom from
+https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Construct_On_First_Use
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/test.cc |  4 +---
+ Ghidra/Features/Decompiler/src/decompile/cpp/test.hh | 10 ++++++++--
+ 2 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc
+index 660f06940..603aaa5bb 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/test.cc
+@@ -18,8 +18,6 @@
+ 
+ namespace ghidra {
+ 
+-vector<UnitTest *> UnitTest::tests;
+-
+ /// Run all the tests unless a non-empty set of names is passed in.
+ /// In which case, only the named tests in the set are run.
+ /// \param testNames is the set of names
+@@ -30,7 +28,7 @@ int UnitTest::run(set<string> &testNames)
+   int total = 0;
+   int passed = 0;
+ 
+-  for(auto &t : UnitTest::tests) {
++  for(auto &t : UnitTest::tests()) {
+     if (testNames.size() > 0 && testNames.find(t->name) == testNames.end()) {
+       continue;
+     }
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/test.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/test.hh
+index 27c27bc21..78d7886a3 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/test.hh
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/test.hh
+@@ -53,7 +53,6 @@ typedef void (*testfunc_t)();	///< A unit-test function
+ /// The static run() method calls all the function pointers of all instantiated
+ /// objects.
+ struct UnitTest {
+-  static vector<UnitTest *> tests;		///< The collection of test objects
+   string name;					///< Name of the test
+   testfunc_t func;				///< Call-back function executing the test
+ 
+@@ -64,9 +63,16 @@ struct UnitTest {
+   UnitTest(const string &name,testfunc_t func) :
+       name(name), func(func)
+   {
+-    tests.push_back(this);
++    tests().push_back(this);
+   }
+ 
++  /// \brief The collection of test objects
++  static vector<UnitTest *> & tests() {
++    static vector<UnitTest *> tests;
++    return tests;
++  }
++
++
+   static int run(set<string> &testNames);	///< Run all the instantiated tests
+ };
+ 
+-- 
+2.40.1
+

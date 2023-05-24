@@ -40,6 +40,8 @@ set(ghidra_patches
   "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0001-Fix-UBSAN-errors-in-decompiler.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0003-Fix-ASAN-initialize-order-fiasco.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0004-Fix-memory-leak-after-xml-errors.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
@@ -48,7 +50,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "10.4")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "894bd3cfc2db78686727bbf2a1d369de92878033")
+  set(ghidra_head_git_tag "2daddb7d7c2ffda98a4efa8ea49ba5c6c0a98fc6")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
@@ -57,6 +59,8 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Fix-UBSAN-errors-in-decompiler.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Fix-ASAN-initialize-order-fiasco.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Fix-memory-leak-after-xml-errors.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
