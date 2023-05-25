@@ -1,0 +1,71 @@
+From 886f1a74b0469d391cf7c1013d1755540d03fd89 Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.d.kilmer@gmail.com>
+Date: Thu, 25 May 2023 16:17:43 -0400
+Subject: [PATCH 5/5] Fix UBSAN large bitshift errors
+
+While I believe this is technically the correct fix, the "Modulo #28"
+test now fails.
+
+Debugging can be performed by placing a breakpoint in
+`runTests` function in `testfunction.cc` to view the `result` variable
+with the output when running the datatests as follows:
+
+```
+sleigh_ghidra_test datatests modulo.xml
+```
+
+This output is compared against the `stringmatch` fields in modulo.xml
+in the `datatests` directory. Specifically, `stringmatch` with name
+"Modulo #28" fails to match.
+---
+ .../Decompiler/src/decompile/cpp/jumptable.cc         | 11 ++++++++---
+ .../Decompiler/src/decompile/cpp/ruleaction.cc        | 11 ++++++++---
+ 2 files changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.cc
+index ee449456c..3b84952cf 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/jumptable.cc
+@@ -726,9 +726,14 @@ Varnode *GuardRecord::quasiCopy(Varnode *vn,int4 &bitsPreserved)
+ {
+   bitsPreserved = mostsigbit_set(vn->getNZMask()) + 1;
+   if (bitsPreserved == 0) return vn;
+-  uintb mask = 1;
+-  mask <<= bitsPreserved;
+-  mask -= 1;
++  uintb mask;
++  if (bitsPreserved != sizeof(mask) * 8) {
++    mask = 1;
++    mask <<= bitsPreserved;
++    mask -= 1;
++  } else {
++    mask = ~(uintb)0;
++  }
+   PcodeOp *op = vn->getDef();
+   Varnode *constVn;
+   while(op != (PcodeOp *)0) {
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
+index d069d1c94..4a5995464 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
+@@ -7680,9 +7680,14 @@ uintb RuleDivOpt::calcDivisor(uintb n,uint8 y,int4 xsize)
+   // The optimization of division to multiplication
+   // by the reciprocal holds true, if the maximum value
+   // of x times the remainder is less than 2^n
+-  uint8 maxx = 1;
+-  maxx <<= xsize;
+-  maxx -= 1;			// Maximum possible x value
++  uint8 maxx;			// Maximum possible x value
++  if (xsize != sizeof(maxx) * 8) {
++    maxx = 1;
++    maxx <<= xsize;
++    maxx -= 1;
++  } else {
++    maxx = ~(uint8)0;
++  }
+   uint8 tmp;
+   if (n < 64)
+     tmp = power / (d-r);	// r < d => divisor is non-zero
+-- 
+2.40.1
+
