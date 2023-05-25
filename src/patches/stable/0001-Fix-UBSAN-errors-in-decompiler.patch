@@ -1,7 +1,7 @@
-From 7f760d9be3728818ae63e77e1748894710809144 Mon Sep 17 00:00:00 2001
+From 913326003d1b871669b68b20c16f2e602894d37a Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Mon, 7 Feb 2022 02:02:03 +1100
-Subject: [PATCH 1/4] Fix UBSAN errors in decompiler
+Subject: [PATCH 1/5] Fix UBSAN errors in decompiler
 
 ---
  .../Decompiler/src/decompile/cpp/address.cc    |  4 ++--

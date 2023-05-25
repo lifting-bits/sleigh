@@ -42,6 +42,7 @@ set(ghidra_patches
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0003-Fix-ASAN-initialize-order-fiasco.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0004-Fix-memory-leak-after-xml-errors.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-Fix-UBSAN-large-bitshift-errors.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
@@ -61,6 +62,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Fix-ASAN-initialize-order-fiasco.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Fix-memory-leak-after-xml-errors.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-Fix-UBSAN-large-bitshift-errors.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()

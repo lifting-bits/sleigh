@@ -1,7 +1,7 @@
-From aa60017f1d68af44ae198d51c318c7e911b56448 Mon Sep 17 00:00:00 2001
+From 81d96008df1ea0c0f4e648f85c473990ea2e8e37 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Wed, 24 May 2023 19:27:54 -0400
-Subject: [PATCH 4/4] Fix memory leak after xml errors
+Subject: [PATCH 4/5] Fix memory leak after xml errors
 
 Regenerated with bison 3.0.4 on AlmaLinux 8
 ---

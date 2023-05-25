@@ -1,7 +1,7 @@
-From e64380cd8fcf473d710180d9007a31dfc08eae6a Mon Sep 17 00:00:00 2001
+From b344b27d128f30aabbe8f7cd648d4be025fa4834 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Wed, 3 Aug 2022 20:01:18 +1000
-Subject: [PATCH 2/4] Use `stroull` instead of `stroul` to parse address
+Subject: [PATCH 2/5] Use `stroull` instead of `stroul` to parse address
  offsets
 
 ---

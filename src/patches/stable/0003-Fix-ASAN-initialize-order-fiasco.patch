@@ -1,7 +1,7 @@
-From 8fbbfed97dec5ddb0c687a783c009ac55f020969 Mon Sep 17 00:00:00 2001
+From 3019f9a4d415cf775f05ca4d3accd584792a3f28 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Wed, 24 May 2023 19:03:25 -0400
-Subject: [PATCH 3/4] Fix ASAN initialize-order-fiasco
+Subject: [PATCH 3/5] Fix ASAN initialize-order-fiasco
 
 Use the "Constructo On First Use" idiom from
 https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Construct_On_First_Use
