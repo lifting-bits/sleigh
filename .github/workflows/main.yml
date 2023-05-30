@@ -3,15 +3,15 @@ name: Build
 on:
   push:
     branches:
-      - '*'
+      - "*"
 
     # Version tags should start with "v"
     tags:
-      - 'v*'
+      - "v*"
 
   pull_request:
     branches:
-      - '*'
+      - "*"
 
 jobs:
   build:
