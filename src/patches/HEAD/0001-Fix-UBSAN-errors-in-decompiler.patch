@@ -1,10 +1,10 @@
-From 098585db4fa8c8eb9184851a40ef6706f1d176ed Mon Sep 17 00:00:00 2001
+From 4022dc7d62b9c5e8196b6e333fd6013c47d04319 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
-Date: Mon, 7 Feb 2022 02:02:03 +1100
-Subject: [PATCH 1/3] Fix UBSAN errors in decompiler
+Date: Mon, 5 Jun 2023 16:45:04 +1200
+Subject: [PATCH 1/2] Fix UBSAN errors in decompiler
 
 ---
- .../Decompiler/src/decompile/cpp/address.cc    |  4 ++--
+ .../Decompiler/src/decompile/cpp/address.cc    |  2 +-
  .../Decompiler/src/decompile/cpp/fspec.cc      |  8 ++++++--
  .../src/decompile/cpp/funcdata_varnode.cc      |  8 +++++++-
  .../Decompiler/src/decompile/cpp/op.cc         |  6 +++++-
@@ -17,32 +17,23 @@ Subject: [PATCH 1/3] Fix UBSAN errors in decompiler
  .../Decompiler/src/decompile/cpp/slghsymbol.cc |  2 +-
  .../Decompiler/src/decompile/cpp/type.cc       |  2 +-
  .../src/decompile/unittests/testfloatemu.cc    |  2 +-
- 13 files changed, 59 insertions(+), 23 deletions(-)
+ 13 files changed, 58 insertions(+), 22 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
-index 2eb08b96a..07bf3ba55 100644
+index 40526a88f..8a755ca82 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/address.cc
-@@ -687,7 +687,7 @@ uintb sign_extend(uintb in,int4 sizein,int4 sizeout)
- void sign_extend(intb &val,int4 bit)
+@@ -666,7 +666,7 @@ uintb uintb_negate(uintb in,int4 size)
+ uintb sign_extend(uintb in,int4 sizein,int4 sizeout)
  
  {
--  intb mask = 0;
-+  uintb mask = 0;
-   mask = (~mask)<<bit;
-   if (((val>>bit)&1)!=0)
-     val |= mask;
-@@ -701,7 +701,7 @@ void sign_extend(intb &val,int4 bit)
- void zero_extend(intb &val,int4 bit)
- 
- {
--  intb mask = 0;
-+  uintb mask = 0;
-   mask = (~mask)<<bit;
-   mask <<= 1;
-   val &= (~mask);
+-  intb sval = in;
++  uintb sval = in;
+   sval <<= (sizeof(intb) - sizein) * 8;
+   uintb res = (uintb)(sval >> (sizeout - sizein) * 8);
+   res >>= (sizeof(uintb) - sizeout)*8;
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
-index 1402bbd80..4b271e055 100644
+index 8380d3cdb..a18d50076 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
 @@ -2661,8 +2661,12 @@ void ProtoModelMerged::decode(Decoder &decoder)
@@ -97,10 +88,10 @@ index 0e3decc80..403ec35a7 100644
      break;
    case CPUI_INT_MULT:
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
-index fcd75cc7d..6da2a2a7c 100644
+index aebcfd910..cf079f20e 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
-@@ -750,7 +750,13 @@ uintb OpBehaviorPiece::evaluateBinary(int4 sizeout,int4 sizein,uintb in1,uintb i
+@@ -746,7 +746,13 @@ uintb OpBehaviorPiece::evaluateBinary(int4 sizeout,int4 sizein,uintb in1,uintb i
  uintb OpBehaviorSubpiece::evaluateBinary(int4 sizeout,int4 sizein,uintb in1,uintb in2) const
  
  {
@@ -159,7 +150,7 @@ index ca9d71ab9..85d4dd281 100644
    return res;
  }
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index f11ab8dea..66a0b32fc 100644
+index ae2e502c1..a22b8ebdc 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 @@ -976,7 +976,12 @@ int4 RulePullsubIndirect::applyOp(PcodeOp *op,Funcdata &data)
@@ -176,7 +167,7 @@ index f11ab8dea..66a0b32fc 100644
    consume = ~consume;
    if ((consume & indir->getIn(0)->getConsume())!=0) return 0;
  
-@@ -6778,8 +6783,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
+@@ -6789,8 +6794,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *sb = op->getIn(0);
    Datatype *sbType = sb->getTypeReadFacing(op);
    if (sbType->getMetatype() != TYPE_PTR) return 0;
@@ -188,7 +179,7 @@ index f11ab8dea..66a0b32fc 100644
    Varnode *vn1 = op->getIn(1);
    if (!vn1->isConstant()) return 0;
    Varnode *outvn = op->getOut();
-@@ -8509,7 +8515,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
+@@ -8600,7 +8606,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *outvn = op->getOut();
    int4 flowsize = outvn->getSize();
    uintb mask = calc_mask( flowsize );
@@ -225,7 +216,7 @@ diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh b/Ghidra/
 index 8e283dca0..652600c16 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
-@@ -48,7 +48,7 @@ class ConstTpl {
+@@ -48,7 +48,7 @@ private:
    static void printHandleSelector(ostream &s,v_field val);
    static v_field readHandleSelector(const string &name);
  public:
@@ -262,10 +253,10 @@ index b308e1b71..af2982aee 100644
  }
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index f1c0b6452..68de180fc 100644
+index ec735c541..f6d685057 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-@@ -3296,8 +3296,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
+@@ -3390,8 +3390,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
    top.submeta = sub;			// Search on the incorrect submeta
    iter = tree.lower_bound(&top);
    while(iter != tree.end()) {
