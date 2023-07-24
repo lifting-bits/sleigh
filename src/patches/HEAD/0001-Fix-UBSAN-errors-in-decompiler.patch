@@ -83,7 +83,7 @@ index aebcfd910..cf079f20e 100644
  {
 -  uintb res = (in1>>(in2*8)) & calc_mask(sizeout);
 +  uintb res = in1;
-+  if ((in2*8) < sizeof(in1)) {
++  if (in2 < sizeof(in1)) {
 +    res >>= (in2*8);
 +  } else {
 +    res = 0;
