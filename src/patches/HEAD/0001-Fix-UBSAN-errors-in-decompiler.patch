@@ -1,7 +1,7 @@
-From 4022dc7d62b9c5e8196b6e333fd6013c47d04319 Mon Sep 17 00:00:00 2001
+From 67ac779382508ab0d5ff10bcb0a8453068cce5a2 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Mon, 5 Jun 2023 16:45:04 +1200
-Subject: [PATCH 1/3] Fix UBSAN errors in decompiler
+Subject: [PATCH 1/2] Fix UBSAN errors in decompiler
 
 ---
  .../Decompiler/src/decompile/cpp/fspec.cc      |  8 ++++++--
@@ -19,7 +19,7 @@ Subject: [PATCH 1/3] Fix UBSAN errors in decompiler
  12 files changed, 57 insertions(+), 21 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
-index 8380d3cdb..a18d50076 100644
+index 82771cc04..da78c8071 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
 @@ -2661,8 +2661,12 @@ void ProtoModelMerged::decode(Decoder &decoder)
@@ -74,7 +74,7 @@ index 0e3decc80..403ec35a7 100644
      break;
    case CPUI_INT_MULT:
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
-index aebcfd910..cf079f20e 100644
+index aebcfd910..6c47e6eb1 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
 @@ -746,7 +746,13 @@ uintb OpBehaviorPiece::evaluateBinary(int4 sizeout,int4 sizein,uintb in1,uintb i
@@ -239,10 +239,10 @@ index b308e1b71..af2982aee 100644
  }
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index ec735c541..f6d685057 100644
+index 32ede6b0f..238d97f40 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-@@ -3390,8 +3390,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
+@@ -3384,8 +3384,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
    top.submeta = sub;			// Search on the incorrect submeta
    iter = tree.lower_bound(&top);
    while(iter != tree.end()) {
@@ -266,5 +266,5 @@ index c35bde877..061e53677 100644
          uintb true_result = ((uintb)(int32_t)f) & 0xffffffff;
          uintb encoding = format.getEncoding(f);
 -- 
-2.40.0
+2.39.2 (Apple Git-143)
 
