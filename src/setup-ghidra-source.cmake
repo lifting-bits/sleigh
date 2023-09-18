@@ -46,9 +46,9 @@ set(ghidra_patches
 if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: Try to remember to look at Ghidra/application.properties
   # TODO: CMake only likes numeric characters in the version string....
-  set(ghidra_head_version "10.4")
+  set(ghidra_head_version "10.5")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "d7d6b44e296ac4a215766916d5c24e8b53b2909a")
+  set(ghidra_head_git_tag "4561e8335d3b62329c4afdf5a91bc6ce113b7002")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
