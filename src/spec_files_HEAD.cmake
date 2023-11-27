@@ -126,6 +126,8 @@ set(spec_file_list
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Toy/data/languages/toy_wsz_be.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Toy/data/languages/toy_wsz_le.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/V850/data/languages/V850.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Xtensa/data/languages/xtensa_be.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Xtensa/data/languages/xtensa_le.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Z80/data/languages/z180.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Z80/data/languages/z80.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/eBPF/data/languages/eBPF_le.slaspec"
