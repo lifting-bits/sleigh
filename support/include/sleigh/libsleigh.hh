@@ -93,6 +93,7 @@
 #include <sleigh/sleigh_arch.hh>
 #include <sleigh/sleighbase.hh>
 #include <sleigh/slgh_compile.hh>
+// This is required because slghparse.hh does not have a namespace block
 namespace ghidra {
 #include <sleigh/slghparse.hh>
 } // End namespace ghidra
