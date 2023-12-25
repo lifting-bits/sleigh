@@ -91,6 +91,8 @@ set(spec_file_list
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_be.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_e500_be.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_e500_le.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_e500mc_be.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_e500mc_le.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_le.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_quicciii_be.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_32_quicciii_le.slaspec"
