@@ -121,6 +121,13 @@ namespace ghidra {
 #include <sleigh/unionresolve.hh>
 #include <sleigh/marshal.hh>
 
+#ifdef sleigh_RELEASE_IS_HEAD
+#include <sleigh/analyzesigs.hh>
+#include <sleigh/modelrules.hh>
+#include <sleigh/signature.hh>
+#include <sleigh/signature_ghidra.hh>
+#endif
+
 #ifndef _MSC_VER
 #pragma GCC diagnostic pop
 #endif
