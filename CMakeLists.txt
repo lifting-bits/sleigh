@@ -30,7 +30,7 @@ include(cmake/project-is-top-level.cmake)
 include(cmake/options.cmake)
 
 #
-# Move headers so we can prefix with "sleigh/"
+# Move headers so we can prefix with "ghidra/"
 #
 set(public_include_header_list
   "${library_root}/action.hh"
@@ -147,13 +147,14 @@ endif()
 # Create custom target so that IDEs know these files are part of the sources
 add_custom_target(sleigh_all_headers SOURCES ${public_include_header_list})
 set(public_headers_dir ${CMAKE_CURRENT_BINARY_DIR}/include)
-file(MAKE_DIRECTORY "${public_headers_dir}/sleigh")
-configure_file(cmake/libconfig.h.in "${public_headers_dir}/sleigh/libconfig.h")
+file(MAKE_DIRECTORY "${public_headers_dir}/ghidra")
 # Copy the public headers into our build directory so that we can control the layout.
-# Ideally, we want to let people '#include <sleigh/{header}>' without installing sleigh
+# Ideally, we want to let people '#include <ghidra/{header}>' without installing sleigh
 foreach(public_header ${public_include_header_list})
-  configure_file("${public_header}" "${public_headers_dir}/sleigh" COPYONLY)
+  configure_file("${public_header}" "${public_headers_dir}/ghidra" COPYONLY)
 endforeach()
+# This project also generates a helper header for managing sleigh versions
+configure_file(cmake/libconfig.h.in "${public_headers_dir}/sleigh/libconfig.h")
 
 #
 # sla
