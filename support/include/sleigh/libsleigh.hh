@@ -58,7 +58,7 @@
 #include <ghidra/ifacedecomp.hh>
 #include <ghidra/ifaceterm.hh>
 #include <ghidra/inject_ghidra.hh>
-#include <ghidra/inject_ghidra.hh>
+#include <ghidra/inject_sleigh.hh>
 #include <ghidra/interface.hh>
 #include <ghidra/jumptable.hh>
 #include <ghidra/libdecomp.hh>
