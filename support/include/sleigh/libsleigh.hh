@@ -121,7 +121,7 @@ namespace ghidra {
 #include <ghidra/unionresolve.hh>
 #include <ghidra/marshal.hh>
 
-#ifdef ghidra_RELEASE_IS_HEAD
+#ifdef sleigh_RELEASE_IS_HEAD
 #include <ghidra/analyzesigs.hh>
 #include <ghidra/modelrules.hh>
 #include <ghidra/signature.hh>
