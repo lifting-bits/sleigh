@@ -153,7 +153,9 @@ file(MAKE_DIRECTORY "${public_headers_dir}/ghidra")
 foreach(public_header ${public_include_header_list})
   configure_file("${public_header}" "${public_headers_dir}/ghidra" COPYONLY)
 endforeach()
-# This project also generates a helper header for managing sleigh versions
+# This project also generates a helper header for managing sleigh versions.
+# We intentionally use the `sleigh` directory for this header because it's
+# not from upstream.
 configure_file(cmake/libconfig.h.in "${public_headers_dir}/sleigh/libconfig.h")
 
 #
