@@ -90,7 +90,7 @@
 #include <ghidra/rulecompile.hh>
 #include <ghidra/semantics.hh>
 #include <ghidra/sleigh.hh>
-#include <ghidra/ghidra_arch.hh>
+#include <ghidra/sleigh_arch.hh>
 #include <ghidra/sleighbase.hh>
 #include <ghidra/slgh_compile.hh>
 // This is required because slghparse.hh does not have a namespace block
