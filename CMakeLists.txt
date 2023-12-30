@@ -135,15 +135,15 @@ set(public_include_header_list
   "${library_root}/xml_arch.hh"
   "${library_root}/unionresolve.hh"
   "${library_root}/marshal.hh"
+  "${library_root}/analyzesigs.hh"
+  "${library_root}/modelrules.hh"
+  "${library_root}/signature.hh"
+  "${library_root}/signature_ghidra.hh"
 )
-if(sleigh_RELEASE_IS_HEAD)
-  list(APPEND public_include_header_list
-    "${library_root}/analyzesigs.hh"
-    "${library_root}/modelrules.hh"
-    "${library_root}/signature.hh"
-    "${library_root}/signature_ghidra.hh"
-  )
-endif()
+# if(sleigh_RELEASE_IS_HEAD)
+#   list(APPEND public_include_header_list
+#   )
+# endif()
 # Create custom target so that IDEs know these files are part of the sources
 add_custom_target(sleigh_all_headers SOURCES ${public_include_header_list})
 set(public_headers_dir ${CMAKE_CURRENT_BINARY_DIR}/include)
