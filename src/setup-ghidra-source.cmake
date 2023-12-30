@@ -162,13 +162,13 @@ set(sleigh_deccore_source_list
   "${library_root}/opbehavior.cc"
   "${library_root}/paramid.cc"
   "${library_root}/unionresolve.cc"
+  "${library_root}/modelrules.cc"
+  "${library_root}/signature.cc"
 )
-if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-  list(APPEND sleigh_deccore_source_list
-    "${library_root}/modelrules.cc"
-    "${library_root}/signature.cc"
-  )
-endif()
+# if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+#   list(APPEND sleigh_deccore_source_list
+#   )
+# endif()
 
 set(sleigh_extra_source_list
   "${library_root}/callgraph.cc"
@@ -211,12 +211,12 @@ set(sleigh_ghidra_source_list
   "${library_root}/ghidra_process.cc"
   "${library_root}/comment_ghidra.cc"
   "${library_root}/string_ghidra.cc"
+  "${library_root}/signature_ghidra.cc"
 )
-if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-  list(APPEND sleigh_ghidra_source_list
-    "${library_root}/signature_ghidra.cc"
-  )
-endif()
+# if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+#   list(APPEND sleigh_ghidra_source_list
+#   )
+# endif()
 
 set(sleigh_slacomp_source_list
   "${library_root}/slgh_compile.cc"
