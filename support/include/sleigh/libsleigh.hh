@@ -120,13 +120,13 @@ namespace ghidra {
 #include <ghidra/xml_arch.hh>
 #include <ghidra/unionresolve.hh>
 #include <ghidra/marshal.hh>
-
-#ifdef sleigh_RELEASE_IS_HEAD
 #include <ghidra/analyzesigs.hh>
 #include <ghidra/modelrules.hh>
 #include <ghidra/signature.hh>
 #include <ghidra/signature_ghidra.hh>
-#endif
+
+// #ifdef sleigh_RELEASE_IS_HEAD
+// #endif
 
 #ifndef _MSC_VER
 #pragma GCC diagnostic pop

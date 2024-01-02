@@ -23,13 +23,13 @@ add_executable(sleigh_ghidra_test
   "${library_root}/../unittests/testfuncproto.cc"
   "${library_root}/../unittests/testtypes.cc"
   "${library_root}/../unittests/testmarshal.cc"
+  "${library_root}/../unittests/testparamstore.cc"
 )
 
-if(sleigh_RELEASE_IS_HEAD)
-  target_sources(sleigh_ghidra_test PRIVATE
-    "${library_root}/../unittests/testparamstore.cc"
-  )
-endif()
+# if(sleigh_RELEASE_IS_HEAD)
+#   target_sources(sleigh_ghidra_test PRIVATE
+#   )
+# endif()
 
 target_compile_features(sleigh_ghidra_test PRIVATE cxx_std_11)
 target_include_directories(sleigh_ghidra_test PRIVATE "${library_root}")
