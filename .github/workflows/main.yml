@@ -127,7 +127,10 @@ jobs:
         --prefix install
 
     - name: Smoketest sleigh lift
-      run: ./install/bin/sleigh-lift disassemble x86-64.sla 4881ecc00f0000
+      run: |
+        ./install/bin/sleigh-lift --version
+        ./install/bin/sleigh-lift disassemble x86-64.sla 4881ecc00f0000
+        ./install/bin/sleigh-lift pcode x86-64.sla 4881ecc00f0000
 
     - name: Test install directory
       working-directory: tests/find_package
