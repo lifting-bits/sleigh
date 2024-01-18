@@ -65,7 +65,7 @@ jobs:
         file(APPEND "$ENV{GITHUB_ENV}" "CACHE_TIMESTAMP=${current_date}\n")
 
     - name: Update the cache (ccache)
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: "${{ github.workspace }}/ccache"
         key: ${{ env.CACHE_KEY }}_ccache_${{ env.CACHE_TIMESTAMP }}
