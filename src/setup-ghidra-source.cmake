@@ -10,7 +10,7 @@
 include_guard(GLOBAL)
 
 # Set up Ghidra repo human-readable version settings
-set(sleigh_RELEASE_TYPE "stable" CACHE
+set(sleigh_RELEASE_TYPE "HEAD" CACHE
   STRING "Release type to use. 'HEAD' is used for active development purposes."
 )
 
