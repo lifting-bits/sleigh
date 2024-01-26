@@ -48,7 +48,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "11.1")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "85d276bce0bb2055c5556825afc810d3163ed15f")
+  set(ghidra_head_git_tag "584d92f1fc35f5fe4959d7611ee4bece75c6fbbb")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
@@ -74,7 +74,7 @@ set(FETCHCONTENT_QUIET OFF)
 
 # Write out source directory with identifiable version info
 FetchContent_Declare(GhidraSource
-  GIT_REPOSITORY https://github.com/NationalSecurityAgency/ghidra
+  GIT_REPOSITORY https://github.com/Grouzy/ghidra
   GIT_TAG ${ghidra_git_tag}
   GIT_PROGRESS TRUE
   GIT_SHALLOW ${ghidra_shallow}
