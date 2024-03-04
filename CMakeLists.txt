@@ -198,7 +198,7 @@ set_target_properties(sleigh_sla PROPERTIES
 )
 
 if(sleigh_RELEASE_IS_HEAD)
-  target_link_libraries(sleigh_sla PRIVATE ZLIB::ZLIB)
+  target_link_libraries(sleigh_sla PUBLIC ZLIB::ZLIB)
 endif()
 
 #
@@ -229,7 +229,7 @@ set_target_properties(sleigh_decomp PROPERTIES
 )
 
 if(sleigh_RELEASE_IS_HEAD)
-  target_link_libraries(sleigh_decomp PRIVATE ZLIB::ZLIB)
+  target_link_libraries(sleigh_decomp PUBLIC ZLIB::ZLIB)
 endif()
 
 # This is the root directory where all individual processor spec file directories will be created.
