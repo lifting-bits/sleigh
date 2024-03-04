@@ -109,6 +109,10 @@ jobs:
         -j 2
         -v
 
+    - name: Test the project
+      working-directory: build
+      run: ctest -VV -C ${{ matrix.build_type }}
+
     - name: Build the docs
       run: cmake
         --build build
@@ -137,7 +141,7 @@ jobs:
     - name: Test install directory
       working-directory: tests/find_package
       run: |
-        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ${{ runner.os == 'Windows' && '-DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_INSTALLATION_ROOT}}/scripts/buildsystems/vcpkg.cmake' || '' }}
         cmake --build build -j 2 --config ${{ matrix.build_type }}
         cd build
         ctest -V -C ${{ matrix.build_type }}
@@ -145,7 +149,7 @@ jobs:
     - name: Test tool install directory
       working-directory: extra-tools/sleigh-lift
       run: |
-        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ${{ runner.os == 'Windows' && '-DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_INSTALLATION_ROOT}}/scripts/buildsystems/vcpkg.cmake' || '' }}
         cmake --build build -j 2 --config ${{ matrix.build_type }}
         cmake --install build --config ${{ matrix.build_type }} --prefix install
         ./install/bin/sleigh-lift --version
@@ -225,15 +229,6 @@ jobs:
       if: matrix.build_type == 'RelWithDebInfo' && startsWith(github.ref, 'refs/tags/') && matrix.release == 'stable'
       with:
         files: ${{ env.TGZ_PACKAGE_PATH }}
-
-    # This step is down at the bottom because Windows fails but we still want
-    # to upload the built binaries, regardless. We also want to see if/when
-    # Windows tests start passing or are still failing, so there is no special
-    # handling. GitHub Actions does not support the concept of an allowable
-    # failure state
-    - name: Run the tests
-      working-directory: build
-      run: ctest -VV -C ${{ matrix.build_type }}
 
     - name: ccache stats
       run: ccache -s
