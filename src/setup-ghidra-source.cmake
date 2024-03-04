@@ -198,6 +198,12 @@ set(sleigh_source_list
   "${library_root}/context.cc"
   "${library_root}/filemanage.cc"
 )
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND sleigh_source_list
+    "${library_root}/slaformat.cc"
+    "${library_root}/compression.cc"
+  )
+endif()
 
 set(sleigh_ghidra_source_list
   "${library_root}/ghidra_arch.cc"
