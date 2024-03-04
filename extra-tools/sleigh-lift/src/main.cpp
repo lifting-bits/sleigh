@@ -265,9 +265,14 @@ int main(int argc, char *argv[]) {
   ghidra::ContextInternal ctx;
   ghidra::Sleigh engine(&load_image, &ctx);
   ghidra::DocumentStorage storage;
+#ifdef sleigh_RELEASE_IS_HEAD
   std::istringstream sla("<sleigh>" + sla_file_path->string() + "</sleigh>");
   ghidra::Element *root =
       storage.parseDocument(sla)->getRoot();
+#else
+  ghidra::Element *root =
+      storage.openDocument(sla_file_path->string())->getRoot();
+#endif
   storage.registerTag(root);
   std::optional<std::filesystem::path> pspec_file_path;
   if (args->pspec_file_name) {
