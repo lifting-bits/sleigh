@@ -55,7 +55,7 @@ jobs:
       with:
         timeout_minutes: 10
         max_attempts: 3
-        command: choco install ccache doxygen.install graphviz
+        command: choco install ccache doxygen.install graphviz zlib
 
     - name: Generate cache key
       shell: cmake -P {0}
