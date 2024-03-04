@@ -150,6 +150,7 @@ jobs:
         cmake --install build --config ${{ matrix.build_type }} --prefix install
         ./install/bin/sleigh-lift --version
         ./install/bin/sleigh-lift disassemble x86-64.sla 4881ecc00f0000
+        ./install/bin/sleigh-lift pcode x86-64.sla 4881ecc00f0000
 
     - name: Create the packages
       run: cmake
