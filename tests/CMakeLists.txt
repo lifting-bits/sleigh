@@ -42,10 +42,6 @@ if(HAVE_TERMIOS_H)
 endif()
 sleigh_add_optional_defines(sleigh_ghidra_test PRIVATE)
 
-if(sleigh_RELEASE_IS_HEAD)
-  target_link_libraries(sleigh_ghidra_test PRIVATE ZLIB::ZLIB)
-endif()
-
 add_test(
   NAME sleigh_ghidra_unittest
   COMMAND sleigh_ghidra_test -sleighpath "${PROJECT_BINARY_DIR}" unittests
@@ -58,6 +54,18 @@ add_test(
     datatests
 )
 
+if(sleigh_RELEASE_IS_HEAD)
+  target_link_libraries(sleigh_ghidra_test PRIVATE ZLIB::ZLIB)
+
+  if(WIN32)
+    cmake_minimum_required(VERSION 3.27)
+    # Ensure the required DLLs can be found at runtime
+    set_tests_properties(
+      sleigh_ghidra_unittest sleigh_ghidra_datatest
+      PROPERTIES ENVIRONMENT_MODIFICATION PATH=path_list_append:PATH=path_list_append:$<TARGET_RUNTIME_DLL_DIRS:sleigh_ghidra_test>
+    )
+  endif()
+endif()
 
 #
 # Test for removal of using namespace std patches
