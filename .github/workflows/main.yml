@@ -57,7 +57,7 @@ jobs:
         max_attempts: 3
         command: |
           choco install ccache doxygen.install graphviz
-          powershell -Command "(Invoke-WebRequest -Uri https://raw.githubusercontent.com/horta/zlib.install/40ddd411521846fa3d6da5db7920a83e013847f4/install.bat -OutFile install_zlib.bat)"; ./install_zlib.bat; del install_zlib.bat
+          vcpkg install zlib
 
     - name: Generate cache key
       shell: cmake -P {0}
