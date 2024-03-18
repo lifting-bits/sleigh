@@ -28,6 +28,8 @@ set(spec_file_list
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/ARM/data/languages/ARM7_le.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/ARM/data/languages/ARM8_be.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/ARM/data/languages/ARM8_le.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/ARM/data/languages/ARM8m_be.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/ARM/data/languages/ARM8m_le.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Atmel/data/languages/avr32a.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Atmel/data/languages/avr8.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Atmel/data/languages/avr8e.slaspec"
