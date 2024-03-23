@@ -57,7 +57,7 @@ jobs:
         max_attempts: 3
         command: |
           choco install ccache doxygen.install graphviz
-          vcpkg install zlib
+          vcpkg install zlib:x64-windows-static
 
     - name: Generate cache key
       shell: cmake -P {0}
@@ -150,7 +150,7 @@ jobs:
       if: runner.os == 'Windows'
       working-directory: tests/find_package
       run: |
-        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-static
         cmake --build build -j 2 --config ${{ matrix.build_type }}
         cd build
         ctest -V -C ${{ matrix.build_type }}
@@ -169,7 +169,7 @@ jobs:
       if: runner.os == 'Windows'
       working-directory: extra-tools/sleigh-lift
       run: |
-        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-static
         cmake --build build -j 2 --config ${{ matrix.build_type }}
         cmake --install build --config ${{ matrix.build_type }} --prefix install
         ./install/bin/sleigh-lift --version
