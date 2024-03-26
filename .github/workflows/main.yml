@@ -55,7 +55,9 @@ jobs:
       with:
         timeout_minutes: 10
         max_attempts: 3
-        command: choco install ccache doxygen.install graphviz
+        command: |
+          choco install ccache doxygen.install graphviz
+          vcpkg install zlib:x64-windows-static
 
     - name: Generate cache key
       shell: cmake -P {0}
@@ -107,6 +109,10 @@ jobs:
         -j 2
         -v
 
+    - name: Test the project
+      working-directory: build
+      run: ctest -VV -C ${{ matrix.build_type }}
+
     - name: Build the docs
       run: cmake
         --build build
@@ -132,15 +138,25 @@ jobs:
         ./install/bin/sleigh-lift disassemble x86-64.sla 4881ecc00f0000
         ./install/bin/sleigh-lift pcode x86-64.sla 4881ecc00f0000
 
-    - name: Test install directory
+    - name: Test install directory Unix
+      if: runner.os != 'Windows'
       working-directory: tests/find_package
       run: |
         cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         cmake --build build -j 2 --config ${{ matrix.build_type }}
         cd build
         ctest -V -C ${{ matrix.build_type }}
+    - name: Test install directory Windows
+      if: runner.os == 'Windows'
+      working-directory: tests/find_package
+      run: |
+        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-static
+        cmake --build build -j 2 --config ${{ matrix.build_type }}
+        cd build
+        ctest -V -C ${{ matrix.build_type }}
 
-    - name: Test tool install directory
+    - name: Test tool install directory Unix
+      if: runner.os != 'Windows'
       working-directory: extra-tools/sleigh-lift
       run: |
         cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
@@ -148,6 +164,17 @@ jobs:
         cmake --install build --config ${{ matrix.build_type }} --prefix install
         ./install/bin/sleigh-lift --version
         ./install/bin/sleigh-lift disassemble x86-64.sla 4881ecc00f0000
+        ./install/bin/sleigh-lift pcode x86-64.sla 4881ecc00f0000
+    - name: Test tool install directory Windows
+      if: runner.os == 'Windows'
+      working-directory: extra-tools/sleigh-lift
+      run: |
+        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-static
+        cmake --build build -j 2 --config ${{ matrix.build_type }}
+        cmake --install build --config ${{ matrix.build_type }} --prefix install
+        ./install/bin/sleigh-lift --version
+        ./install/bin/sleigh-lift disassemble x86-64.sla 4881ecc00f0000
+        ./install/bin/sleigh-lift pcode x86-64.sla 4881ecc00f0000
 
     - name: Create the packages
       run: cmake
@@ -222,15 +249,6 @@ jobs:
       if: matrix.build_type == 'RelWithDebInfo' && startsWith(github.ref, 'refs/tags/') && matrix.release == 'stable'
       with:
         files: ${{ env.TGZ_PACKAGE_PATH }}
-
-    # This step is down at the bottom because Windows fails but we still want
-    # to upload the built binaries, regardless. We also want to see if/when
-    # Windows tests start passing or are still failing, so there is no special
-    # handling. GitHub Actions does not support the concept of an allowable
-    # failure state
-    - name: Run the tests
-      working-directory: build
-      run: ctest -VV -C ${{ matrix.build_type }}
 
     - name: ccache stats
       run: ccache -s

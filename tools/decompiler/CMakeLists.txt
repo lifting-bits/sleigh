@@ -50,6 +50,11 @@ set_target_properties(sleigh_decompiler PROPERTIES
   OUTPUT_NAME_DEBUG decomp_dbg
 )
 
+if(sleigh_RELEASE_IS_HEAD)
+  find_package(ZLIB REQUIRED)
+  target_link_libraries(sleigh_decompiler PRIVATE ZLIB::ZLIB)
+endif()
+
 if(NOT CMAKE_SKIP_INSTALL_RULES)
   include("GNUInstallDirs")
 

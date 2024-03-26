@@ -1,0 +1,31 @@
+From 73d6f5a2a9a39dba3117947b3e27fe112c7d7074 Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.d.kilmer@gmail.com>
+Date: Mon, 4 Mar 2024 11:18:57 -0500
+Subject: [PATCH 3/3] Fix sleighexample
+
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
+index f356825c9..5cab3f85c 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc
+@@ -315,12 +315,12 @@ int main(int argc,char **argv)
+   ContextInternal context;
+ 
+   // Set up the assembler/pcode-translator
+-  string sleighfilename = "specfiles/x86.sla";
++  istringstream sleighfilename("<sleigh>specfiles/x86.sla</sleigh>");
+   Sleigh trans(&loader,&context);
+ 
+   // Read sleigh file into DOM
+   DocumentStorage docstorage;
+-  Element *sleighroot = docstorage.openDocument(sleighfilename)->getRoot();
++  Element *sleighroot = docstorage.parseDocument(sleighfilename)->getRoot();
+   docstorage.registerTag(sleighroot);
+   trans.initialize(docstorage); // Initialize the translator
+ 
+-- 
+2.44.0
+
