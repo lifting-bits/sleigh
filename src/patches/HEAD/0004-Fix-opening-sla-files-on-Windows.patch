@@ -1,7 +1,7 @@
 From 2b6f5b2a70158503c844e8259717b7168ced9bc0 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Sat, 30 Mar 2024 18:26:27 -0400
-Subject: [PATCH 4/4] Fix opening sla files on Windows
+Subject: [PATCH 4/5] Fix opening sla files on Windows
 
 Compressed files need to be opened as binaries when reading.
 ---

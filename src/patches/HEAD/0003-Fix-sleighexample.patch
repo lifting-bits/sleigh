@@ -1,7 +1,7 @@
 From 73d6f5a2a9a39dba3117947b3e27fe112c7d7074 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Mon, 4 Mar 2024 11:18:57 -0500
-Subject: [PATCH 3/4] Fix sleighexample
+Subject: [PATCH 3/5] Fix sleighexample
 
 ---
  Ghidra/Features/Decompiler/src/decompile/cpp/sleighexample.cc | 4 ++--

@@ -1,7 +1,7 @@
 From 6c36965500d26d5a35dfbc91725956ae1d51e394 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Mon, 5 Jun 2023 16:45:04 +1200
-Subject: [PATCH 1/4] Fix UBSAN errors in decompiler
+Subject: [PATCH 1/5] Fix UBSAN errors in decompiler
 
 ---
  .../Decompiler/src/decompile/cpp/fspec.cc      |  8 ++++++--
