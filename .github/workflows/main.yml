@@ -99,6 +99,8 @@ jobs:
       run: cmake "--preset=ci-$("${{ matrix.os }}".split("-")[0])"
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -Dsleigh_RELEASE_TYPE=${{ matrix.release }}
+        -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        -DCMAKE_C_COMPILER_LAUNCHER=ccache
 
     - name: Build the project
       run: cmake
@@ -135,7 +137,7 @@ jobs:
     - name: Test install directory
       working-directory: tests/find_package
       run: |
-        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
         cmake --build build -j 2 --config ${{ matrix.build_type }}
         cd build
         ctest -V -C ${{ matrix.build_type }}
@@ -143,7 +145,7 @@ jobs:
     - name: Test tool install directory
       working-directory: extra-tools/sleigh-lift
       run: |
-        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
         cmake --build build -j 2 --config ${{ matrix.build_type }}
         cmake --install build --config ${{ matrix.build_type }} --prefix install
         ./install/bin/sleigh-lift --version
@@ -161,7 +163,7 @@ jobs:
       run: |
         sudo dpkg -i build/*.deb
 
-        cmake -S tests/find_package -B find_package_build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake -S tests/find_package -B find_package_build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}  -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
         cmake --build find_package_build -j 2 --config ${{ matrix.build_type }} --verbose
 
     - name: Locate the packages (RelWithDebInfo only)
