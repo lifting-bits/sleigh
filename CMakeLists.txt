@@ -140,10 +140,12 @@ set(public_include_header_list
   "${library_root}/signature.hh"
   "${library_root}/signature_ghidra.hh"
 )
-# if(sleigh_RELEASE_IS_HEAD)
-#   list(APPEND public_include_header_list
-#   )
-# endif()
+if(sleigh_RELEASE_IS_HEAD)
+  list(APPEND public_include_header_list
+    "${library_root}/compression.hh"
+    "${library_root}/slaformat.hh"
+  )
+endif()
 # Create custom target so that IDEs know these files are part of the sources
 add_custom_target(sleigh_all_headers SOURCES ${public_include_header_list})
 set(public_headers_dir ${CMAKE_CURRENT_BINARY_DIR}/include)
@@ -157,6 +159,11 @@ endforeach()
 # We intentionally use the `sleigh` directory for this header because it's
 # not from upstream.
 configure_file(cmake/libconfig.h.in "${public_headers_dir}/sleigh/libconfig.h")
+
+# External Dependencies
+if(sleigh_RELEASE_IS_HEAD)
+  find_package(ZLIB REQUIRED)
+endif()
 
 #
 # sla
@@ -190,6 +197,10 @@ set_target_properties(sleigh_sla PROPERTIES
   OUTPUT_NAME_DEBUG sla_dbg
 )
 
+if(sleigh_RELEASE_IS_HEAD)
+  target_link_libraries(sleigh_sla PUBLIC ZLIB::ZLIB)
+endif()
+
 #
 # decomp
 #
@@ -216,6 +227,10 @@ set_target_properties(sleigh_decomp PROPERTIES
   OUTPUT_NAME decomp
   OUTPUT_NAME_DEBUG decomp_dbg
 )
+
+if(sleigh_RELEASE_IS_HEAD)
+  target_link_libraries(sleigh_decomp PUBLIC ZLIB::ZLIB)
+endif()
 
 # This is the root directory where all individual processor spec file directories will be created.
 # NOTE: Needs to be defined here before the install rules

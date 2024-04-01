@@ -15,10 +15,14 @@
 
 @PACKAGE_INIT@
 
-include("${CMAKE_CURRENT_LIST_DIR}/sleighTargets.cmake")
-
 # Extra version details. Either 'stable' or 'HEAD'
 set(sleigh_RELEASE_IS_HEAD "@sleigh_RELEASE_IS_HEAD@")
+if(sleigh_RELEASE_IS_HEAD)
+  include(CMakeFindDependencyMacro)
+  find_dependency(ZLIB)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/sleighTargets.cmake")
 
 # Helpers exposed by default when finding sleigh
 include("${CMAKE_CURRENT_LIST_DIR}/modules/sleighCompile.cmake")

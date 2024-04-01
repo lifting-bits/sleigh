@@ -48,7 +48,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "11.1")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "c5bad0a88f31b4b63bd75ca669486ebd1eeec3fb")
+  set(ghidra_head_git_tag "317a8814883804f0c4f18c64d97411b1c6d6283e")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
@@ -57,6 +57,9 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Fix-UBSAN-errors-in-decompiler.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Fix-sleighexample.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Fix-opening-sla-files-on-Windows.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
@@ -198,6 +201,12 @@ set(sleigh_source_list
   "${library_root}/context.cc"
   "${library_root}/filemanage.cc"
 )
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND sleigh_source_list
+    "${library_root}/slaformat.cc"
+    "${library_root}/compression.cc"
+  )
+endif()
 
 set(sleigh_ghidra_source_list
   "${library_root}/ghidra_arch.cc"

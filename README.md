@@ -18,6 +18,7 @@ This repository provides a CMake-based build project for Sleigh so that it can b
 
 | Name | Version | Linux Package to Install | macOS Homebrew Package to Install |
 | ---- | ------- | ------------------------ | --------------------------------- |
+| (HEAD builds) [zlib](https://www.zlib.net/) | Recent | zlib1g-dev | zlib |
 | [Git](https://git-scm.com/) | Latest | git | N/A |
 | [CMake](https://cmake.org/) | 3.18+ | cmake | cmake |
 
