@@ -143,6 +143,7 @@ set(public_include_header_list
 if(sleigh_RELEASE_IS_HEAD)
   list(APPEND public_include_header_list
     "${library_root}/compression.hh"
+    "${library_root}/multiprecision.hh"
     "${library_root}/slaformat.hh"
   )
 endif()

@@ -166,10 +166,11 @@ set(sleigh_deccore_source_list
   "${library_root}/modelrules.cc"
   "${library_root}/signature.cc"
 )
-# if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-#   list(APPEND sleigh_deccore_source_list
-#   )
-# endif()
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND sleigh_deccore_source_list
+    "${library_root}/multiprecision.cc"
+  )
+endif()
 
 set(sleigh_extra_source_list
   "${library_root}/callgraph.cc"
