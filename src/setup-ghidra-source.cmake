@@ -22,7 +22,7 @@ set_property(CACHE sleigh_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 find_package(Git REQUIRED)
 
 # Ghidra pinned stable version commit
-set(ghidra_version "11.0.3")
+set(ghidra_version "11.1")
 set(ghidra_git_tag "Ghidra_${ghidra_version}_build")
 set(ghidra_shallow TRUE)
 
@@ -40,6 +40,7 @@ set(ghidra_patches
   "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0001-Fix-UBSAN-errors-in-decompiler.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
@@ -165,12 +166,12 @@ set(sleigh_deccore_source_list
   "${library_root}/unionresolve.cc"
   "${library_root}/modelrules.cc"
   "${library_root}/signature.cc"
+  "${library_root}/multiprecision.cc"
 )
-if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-  list(APPEND sleigh_deccore_source_list
-    "${library_root}/multiprecision.cc"
-  )
-endif()
+# if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+#   list(APPEND sleigh_deccore_source_list
+#   )
+# endif()
 
 set(sleigh_extra_source_list
   "${library_root}/callgraph.cc"
@@ -199,13 +200,13 @@ set(sleigh_source_list
   "${library_root}/semantics.cc"
   "${library_root}/context.cc"
   "${library_root}/filemanage.cc"
+  "${library_root}/slaformat.cc"
+  "${library_root}/compression.cc"
 )
-if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-  list(APPEND sleigh_source_list
-    "${library_root}/slaformat.cc"
-    "${library_root}/compression.cc"
-  )
-endif()
+# if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+#   list(APPEND sleigh_source_list
+#   )
+# endif()
 
 set(sleigh_ghidra_source_list
   "${library_root}/ghidra_arch.cc"
