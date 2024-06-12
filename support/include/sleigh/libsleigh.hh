@@ -124,6 +124,9 @@ namespace ghidra {
 #include <ghidra/modelrules.hh>
 #include <ghidra/signature.hh>
 #include <ghidra/signature_ghidra.hh>
+#include <ghidra/compression.hh>
+#include <ghidra/multiprecision.hh>
+#include <ghidra/slaformat.hh>
 
 // #ifdef sleigh_RELEASE_IS_HEAD
 // #endif

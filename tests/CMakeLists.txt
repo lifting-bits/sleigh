@@ -42,9 +42,7 @@ if(HAVE_TERMIOS_H)
 endif()
 sleigh_add_optional_defines(sleigh_ghidra_test PRIVATE)
 
-if(sleigh_RELEASE_IS_HEAD)
-  target_link_libraries(sleigh_ghidra_test PRIVATE ZLIB::ZLIB)
-endif()
+target_link_libraries(sleigh_ghidra_test PRIVATE ZLIB::ZLIB)
 
 add_test(
   NAME sleigh_ghidra_unittest

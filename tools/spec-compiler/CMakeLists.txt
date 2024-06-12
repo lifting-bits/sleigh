@@ -36,10 +36,8 @@ set_target_properties(sleigh_sleigh PROPERTIES
   OUTPUT_NAME_DEBUG sleigh_dbg
 )
 
-if(sleigh_RELEASE_IS_HEAD)
-  find_package(ZLIB REQUIRED)
-  target_link_libraries(sleigh_sleigh PRIVATE ZLIB::ZLIB)
-endif()
+find_package(ZLIB REQUIRED)
+target_link_libraries(sleigh_sleigh PRIVATE ZLIB::ZLIB)
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
   include("GNUInstallDirs")
