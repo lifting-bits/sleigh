@@ -42,6 +42,8 @@ if(HAVE_TERMIOS_H)
 endif()
 sleigh_add_optional_defines(sleigh_ghidra_test PRIVATE)
 
+target_link_libraries(sleigh_ghidra_test PRIVATE ZLIB::ZLIB)
+
 add_test(
   NAME sleigh_ghidra_unittest
   COMMAND sleigh_ghidra_test -sleighpath "${PROJECT_BINARY_DIR}" unittests

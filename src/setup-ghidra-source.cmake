@@ -22,7 +22,7 @@ set_property(CACHE sleigh_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 find_package(Git REQUIRED)
 
 # Ghidra pinned stable version commit
-set(ghidra_version "11.0")
+set(ghidra_version "11.1.1")
 set(ghidra_git_tag "Ghidra_${ghidra_version}_build")
 set(ghidra_shallow TRUE)
 
@@ -40,15 +40,16 @@ set(ghidra_patches
   "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0001-Fix-UBSAN-errors-in-decompiler.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
 if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: Try to remember to look at Ghidra/application.properties
   # TODO: CMake only likes numeric characters in the version string....
-  set(ghidra_head_version "11.1")
+  set(ghidra_head_version "11.2")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "0d63e682b5cc83eaa159e88aed25fbd7ced91a69")
+  set(ghidra_head_git_tag "3ec2dfb2011579933c43177e4d38d204ff248b7d")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
@@ -57,6 +58,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Fix-UBSAN-errors-in-decompiler.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
@@ -164,6 +166,7 @@ set(sleigh_deccore_source_list
   "${library_root}/unionresolve.cc"
   "${library_root}/modelrules.cc"
   "${library_root}/signature.cc"
+  "${library_root}/multiprecision.cc"
 )
 # if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
 #   list(APPEND sleigh_deccore_source_list
@@ -197,7 +200,13 @@ set(sleigh_source_list
   "${library_root}/semantics.cc"
   "${library_root}/context.cc"
   "${library_root}/filemanage.cc"
+  "${library_root}/slaformat.cc"
+  "${library_root}/compression.cc"
 )
+# if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+#   list(APPEND sleigh_source_list
+#   )
+# endif()
 
 set(sleigh_ghidra_source_list
   "${library_root}/ghidra_arch.cc"
