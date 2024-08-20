@@ -58,7 +58,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Fix-UBSAN-errors-in-decompiler.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
@@ -168,10 +168,11 @@ set(sleigh_deccore_source_list
   "${library_root}/signature.cc"
   "${library_root}/multiprecision.cc"
 )
-# if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-#   list(APPEND sleigh_deccore_source_list
-#   )
-# endif()
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND sleigh_deccore_source_list
+    "${library_root}/constseq.cc"
+  )
+endif()
 
 set(sleigh_extra_source_list
   "${library_root}/callgraph.cc"
