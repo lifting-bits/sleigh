@@ -60,6 +60,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Use-string-resize-instead-of-reserve.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-Ignore-floating-point-test-due-to-compilation-differ.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
