@@ -22,7 +22,7 @@ set_property(CACHE sleigh_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 find_package(Git REQUIRED)
 
 # Ghidra pinned stable version commit
-set(ghidra_version "11.1.1")
+set(ghidra_version "11.1.2")
 set(ghidra_git_tag "Ghidra_${ghidra_version}_build")
 set(ghidra_shallow TRUE)
 
@@ -40,7 +40,7 @@ set(ghidra_patches
   "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0001-Fix-UBSAN-errors-in-decompiler.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0003-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
