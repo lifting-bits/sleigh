@@ -1,7 +1,7 @@
-From 0be97746f512af054a0428cdddb9b6b8445b6ccf Mon Sep 17 00:00:00 2001
+From 9a96513822566b201e50ca26a38aaafafc8f4520 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Sat, 30 Mar 2024 18:46:16 -0400
-Subject: [PATCH 3/3] Add missing index check to prevent errors in Windows
+Subject: [PATCH 3/4] Add missing index check to prevent errors in Windows
 
 Not sure why this only appears when testing on Windows.
 ---
@@ -22,5 +22,5 @@ index 0237adb820..5048a9d480 100644
    if (i == dcp->fd->numCalls())
      throw IfaceExecutionError("No call is made at this address");
 -- 
-2.46.0
+2.47.0
 
