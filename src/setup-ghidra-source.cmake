@@ -49,7 +49,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "11.2")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "3ec2dfb2011579933c43177e4d38d204ff248b7d")
+  set(ghidra_head_git_tag "a1db2dac166973a381e7a98630bc11901f47d2d2")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
@@ -58,7 +58,8 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Fix-UBSAN-errors-in-decompiler.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Use-string-resize-instead-of-reserve.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
@@ -168,10 +169,11 @@ set(sleigh_deccore_source_list
   "${library_root}/signature.cc"
   "${library_root}/multiprecision.cc"
 )
-# if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-#   list(APPEND sleigh_deccore_source_list
-#   )
-# endif()
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND sleigh_deccore_source_list
+    "${library_root}/constseq.cc"
+  )
+endif()
 
 set(sleigh_extra_source_list
   "${library_root}/callgraph.cc"
