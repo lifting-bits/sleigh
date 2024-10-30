@@ -1,7 +1,7 @@
-From 33e8049a11cb5a27541130568bf3bfdbac605570 Mon Sep 17 00:00:00 2001
+From e853cd1dc018c0f8a76f936de0391bbdf467a907 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Sat, 30 Mar 2024 18:46:16 -0400
-Subject: [PATCH 3/3] Add missing index check to prevent errors in Windows
+Subject: [PATCH 3/5] Add missing index check to prevent errors in Windows
 
 Not sure why this only appears when testing on Windows.
 ---
