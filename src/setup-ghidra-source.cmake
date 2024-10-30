@@ -47,9 +47,9 @@ set(ghidra_patches
 if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: Try to remember to look at Ghidra/application.properties
   # TODO: CMake only likes numeric characters in the version string....
-  set(ghidra_head_version "11.2")
+  set(ghidra_head_version "11.3")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "a1db2dac166973a381e7a98630bc11901f47d2d2")
+  set(ghidra_head_git_tag "fd1a448bf517939b5f3b7e369a8c10e8b1b22136")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
@@ -60,6 +60,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Use-string-resize-instead-of-reserve.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-Ignore-floating-point-test-due-to-compilation-differ.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()

@@ -1,7 +1,7 @@
-From 7321d6fa0d5098f0f0db17ec8c37ff35f59be688 Mon Sep 17 00:00:00 2001
+From 0d09640f2d770db6cac6f9a02f5d85373477e5a9 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Tue, 29 Oct 2024 15:30:57 -0400
-Subject: [PATCH 4/4] Use string resize instead of reserve
+Subject: [PATCH 4/5] Use string resize instead of reserve
 
 assign will fix up the size to hold all of what's copied
 ---
@@ -9,7 +9,7 @@ assign will fix up the size to hold all of what's copied
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc
-index 193c2db051..5c9f25b57c 100644
+index 5f5fa0c7b3..4cd77156f2 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc
 @@ -67,7 +67,6 @@ void StringManager::assignStringData(StringData &data,const uint1 *buf,int4 size
