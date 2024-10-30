@@ -1,0 +1,37 @@
+From ce0148e9dd6d4a9ba92ee44fb50be1f01b7a8858 Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.d.kilmer@gmail.com>
+Date: Wed, 30 Oct 2024 14:26:57 -0400
+Subject: [PATCH 6/6] Allow positive or negative NAN in decompiler floating
+ point test
+
+At least on Apple Silicon, this test reports positive NAN.
+
+Use the regex optional operator '?' to allow for positive or negative
+NAN.
+---
+ .../Decompiler/src/decompile/datatests/floatprint.xml         | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/datatests/floatprint.xml b/Ghidra/Features/Decompiler/src/decompile/datatests/floatprint.xml
+index f8108d3d32..1060a3e193 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/datatests/floatprint.xml
++++ b/Ghidra/Features/Decompiler/src/decompile/datatests/floatprint.xml
+@@ -58,13 +58,13 @@ bbbdd7d9df7cdb3d000000000000f03f
+ <stringmatch name="Float print #3" min="1" max="1">floatv3 = -0.001;</stringmatch>
+ <stringmatch name="Float print #4" min="1" max="1">floatv4 = 1e-06;</stringmatch>
+ <stringmatch name="Float print #5" min="1" max="1">floatv5 = INFINITY;</stringmatch>
+-<stringmatch name="Float print #6" min="1" max="1">floatv6 = -NAN;</stringmatch>
++<stringmatch name="Float print #6" min="1" max="1">floatv6 = -?NAN;</stringmatch>
+ <stringmatch name="Float print #7" min="1" max="1">floatv7 = 3.141592e-06;</stringmatch>
+ <stringmatch name="Float print #8" min="1" max="1">double1 = 0.6666666666666666;</stringmatch>
+ <stringmatch name="Float print #9" min="1" max="1">double2 = 2.0;</stringmatch>
+ <stringmatch name="Float print #10" min="1" max="1">double3 = -0.001;</stringmatch>
+ <stringmatch name="Float print #11" min="1" max="1">double4 = 1e-10;</stringmatch>
+ <stringmatch name="Float print #12" min="1" max="1">double5 = INFINITY;</stringmatch>
+-<stringmatch name="Float print #13" min="1" max="1">double6 = -NAN;</stringmatch>
++<stringmatch name="Float print #13" min="1" max="1">double6 = -?NAN;</stringmatch>
+ <stringmatch name="Float print #14" min="1" max="1">double7 = 3.1415926535897933e-06;</stringmatch>
+ </decompilertest>
+-- 
+2.47.0
+

@@ -43,6 +43,7 @@ set(ghidra_patches
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0003-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0004-Use-string-resize-instead-of-reserve.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-Ignore-floating-point-test-due-to-compilation-differ.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0006-Allow-positive-or-negative-NAN-in-decompiler-floatin.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
@@ -63,6 +64,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Use-string-resize-instead-of-reserve.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-Ignore-floating-point-test-due-to-compilation-differ.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0006-Allow-positive-or-negative-NAN-in-decompiler-floatin.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()

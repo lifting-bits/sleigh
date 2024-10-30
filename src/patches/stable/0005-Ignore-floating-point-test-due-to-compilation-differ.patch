@@ -1,7 +1,7 @@
-From 163be34210f69068f89e20acf89a4fbd50a88b76 Mon Sep 17 00:00:00 2001
+From 9b118da968eac4a5ad910dc51d7d70150bab0408 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Tue, 29 Oct 2024 17:51:09 -0400
-Subject: [PATCH 5/5] Ignore floating point test due to compilation differences
+Subject: [PATCH 5/6] Ignore floating point test due to compilation differences
 
 This test fails on macOS and Windows. I'm unsure whether it's an OS or
 compiler issue.
