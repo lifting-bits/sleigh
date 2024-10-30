@@ -1,4 +1,4 @@
-From fc4ac7901ae08cd018d94ce78027cd6636251d39 Mon Sep 17 00:00:00 2001
+From 76289be82722d1a076bb9718507ce57748b40543 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Mon, 12 Aug 2024 12:02:35 -0400
 Subject: [PATCH 1/5] Fix UBSAN errors in decompiler
@@ -18,7 +18,7 @@ Co-authored-by: Alex Cameron <asc@tetsuo.sh>
  10 files changed, 49 insertions(+), 19 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
-index 6ebec206c9..e5a1ad598c 100644
+index d78b78731c..caf4b24d15 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
 @@ -2868,8 +2868,12 @@ void ProtoModelMerged::decode(Decoder &decoder)
@@ -37,7 +37,7 @@ index 6ebec206c9..e5a1ad598c 100644
  
  void ParameterBasic::setTypeLock(bool val)
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
-index d76a799960..37ba971a34 100644
+index d51460be84..45bf394862 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/op.cc
 @@ -666,7 +666,11 @@ uintb PcodeOp::getNZMaskLocal(bool cliploop) const
@@ -116,7 +116,7 @@ index ca9d71ab99..85d4dd281d 100644
    return res;
  }
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index f667c6ca95..6ea3916520 100644
+index bfca3d6ee5..5819bcd732 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 @@ -977,7 +977,12 @@ int4 RulePullsubIndirect::applyOp(PcodeOp *op,Funcdata &data)
@@ -133,7 +133,7 @@ index f667c6ca95..6ea3916520 100644
    consume = ~consume;
    if ((consume & indir->getIn(0)->getConsume())!=0) return 0;
  
-@@ -7026,8 +7031,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
+@@ -7028,8 +7033,9 @@ int4 RulePtrsubCharConstant::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *sb = op->getIn(0);
    Datatype *sbType = sb->getTypeReadFacing(op);
    if (sbType->getMetatype() != TYPE_PTR) return 0;
@@ -145,7 +145,7 @@ index f667c6ca95..6ea3916520 100644
    Varnode *vn1 = op->getIn(1);
    if (!vn1->isConstant()) return 0;
    Varnode *outvn = op->getOut();
-@@ -8831,7 +8837,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
+@@ -8833,7 +8839,11 @@ int4 RuleSubvarSubpiece::applyOp(PcodeOp *op,Funcdata &data)
    Varnode *outvn = op->getOut();
    int4 flowsize = outvn->getSize();
    uintb mask = calc_mask( flowsize );
@@ -206,10 +206,10 @@ index 50d85e22ba..9f3b456229 100644
        msg << "   Label <" << sym->getName() << "> was placed but not used" << endl;
      else if (!sym->isPlaced())
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index 7cda43127f..20a5bc1c83 100644
+index 59dcc55949..5944db5905 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-@@ -3661,8 +3661,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
+@@ -3658,8 +3658,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
    top.submeta = sub;			// Search on the incorrect submeta
    iter = tree.lower_bound(&top);
    while(iter != tree.end()) {

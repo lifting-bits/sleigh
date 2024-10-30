@@ -1,4 +1,4 @@
-From 832fb17127459f0fe6bb141dd499d94dfd6f4e6f Mon Sep 17 00:00:00 2001
+From 26a110b55617237c910447b576752fa0acb6a146 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Sat, 30 Mar 2024 18:46:16 -0400
 Subject: [PATCH 3/5] Add missing index check to prevent errors in Windows
@@ -9,10 +9,10 @@ Not sure why this only appears when testing on Windows.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.cc
-index 0237adb820..5048a9d480 100644
+index 455d35bffe..04bc55619c 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ifacedecomp.cc
-@@ -1844,7 +1844,7 @@ void IfcProtooverride::execute(istream &s)
+@@ -1848,7 +1848,7 @@ void IfcProtooverride::execute(istream &s)
    s >> ws;
    Address callpoint(parse_machaddr(s,discard,*dcp->conf->types));
    int4 i;
