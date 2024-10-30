@@ -1,7 +1,7 @@
-From c62057f5051b485f4eee43367d9a2ddb06a28b3e Mon Sep 17 00:00:00 2001
+From 60b1bb423c10b2e53ad72e7b84ac647e56282aca Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Wed, 3 Aug 2022 20:01:18 +1000
-Subject: [PATCH 2/3] Use `stroull` instead of `stroul` to parse address
+Subject: [PATCH 2/5] Use `stroull` instead of `stroul` to parse address
  offsets
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 2/3] Use `stroull` instead of `stroul` to parse address
  1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
-index bda09fc94c..d077ee375e 100644
+index dbaa2e775f..72927bf379 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
 @@ -16,6 +16,8 @@
@@ -21,7 +21,7 @@ index bda09fc94c..d077ee375e 100644
  namespace ghidra {
  
  AttributeId ATTRIB_BASE = AttributeId("base",89);
-@@ -274,7 +276,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
+@@ -277,7 +279,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
      }
    }
    catch(LowlevelError &err) {	// Name doesn't exist

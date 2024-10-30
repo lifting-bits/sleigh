@@ -63,6 +63,8 @@ set(spec_file_list
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Loongarch/data/languages/loongarch32_f64.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Loongarch/data/languages/loongarch64_f32.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Loongarch/data/languages/loongarch64_f64.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/M16C/data/languages/M16C_60.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/M16C/data/languages/M16C_80.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/M8C/data/languages/m8c.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/MC6800/data/languages/6805.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/MC6800/data/languages/6809.slaspec"
