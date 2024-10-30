@@ -1,0 +1,36 @@
+From 7321d6fa0d5098f0f0db17ec8c37ff35f59be688 Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.d.kilmer@gmail.com>
+Date: Tue, 29 Oct 2024 15:30:57 -0400
+Subject: [PATCH 4/4] Use string resize instead of reserve
+
+assign will fix up the size to hold all of what's copied
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc
+index 193c2db051..5c9f25b57c 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/stringmanage.cc
+@@ -67,7 +67,6 @@ void StringManager::assignStringData(StringData &data,const uint1 *buf,int4 size
+ 
+ {
+   if (charsize == 1 && numChars < maximumChars) {
+-    data.byteData.reserve(size);
+     data.byteData.assign(buf,buf+size);
+   }
+   else {
+@@ -77,9 +76,9 @@ void StringManager::assignStringData(StringData &data,const uint1 *buf,int4 size
+       return;
+     string resString = s.str();
+     int4 newSize = resString.size();
+-    data.byteData.reserve(newSize + 1);
+     const uint1 *ptr = (const uint1 *)resString.c_str();
+     data.byteData.assign(ptr,ptr+newSize);
++    data.byteData.resize(newSize + 1, 0);
+     data.byteData[newSize] = 0;		// Make sure there is a null terminator
+   }
+   data.isTruncated = (numChars >= maximumChars);
+-- 
+2.47.0
+
