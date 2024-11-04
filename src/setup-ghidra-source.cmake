@@ -61,7 +61,6 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Fix-UBSAN-errors-in-decompiler.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Add-missing-index-check-to-prevent-errors-in-Windows.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Use-string-resize-instead-of-reserve.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-Ignore-floating-point-test-due-to-compilation-differ.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0006-Allow-positive-or-negative-NAN-in-decompiler-floatin.patch"
