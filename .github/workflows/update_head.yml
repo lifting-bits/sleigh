@@ -17,7 +17,7 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         # Use oldest supported version for maximum script compatibility
-        python-version: '3.7'
+        python-version: '3.10'
 
     - name: Run Update Script
       id: head_update
