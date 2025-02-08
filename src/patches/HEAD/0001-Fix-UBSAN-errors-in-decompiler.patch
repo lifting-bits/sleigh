@@ -1,7 +1,7 @@
-From 5b07c4118a9c6fe8f9d240419aaf5b8ce49becdf Mon Sep 17 00:00:00 2001
+From 7c6e51dd1234387b98e1ad61d3f88a0565364b28 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Mon, 12 Aug 2024 12:02:35 -0400
-Subject: [PATCH 1/5] Fix UBSAN errors in decompiler
+Subject: [PATCH 1/6] Fix UBSAN errors in decompiler
 
 Co-authored-by: Alex Cameron <asc@tetsuo.sh>
 ---
@@ -220,5 +220,5 @@ index 2571f55f1a..fe40e22b1b 100644
          uintb true_result = ((uintb)(int32_t)f) & 0xffffffff;
          uintb encoding = format.getEncoding(f);
 -- 
-2.47.0
+2.48.1
 
