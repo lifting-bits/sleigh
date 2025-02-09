@@ -52,7 +52,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "11.3")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "30ef757d81c88c5fc413d9136127cfeb4c6fbf81")
+  set(ghidra_head_git_tag "2333ab6111a5fac503960bfddb069d6009ba21ad")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
@@ -61,9 +61,10 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0001-Fix-UBSAN-errors-in-decompiler.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Use-string-resize-instead-of-reserve.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-Ignore-floating-point-test-due-to-compilation-differ.patch"
-    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0006-Allow-positive-or-negative-NAN-in-decompiler-floatin.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Use-string-resize-instead-of-reserve.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Ignore-floating-point-test-due-to-compilation-differ.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-Allow-positive-or-negative-NAN-in-decompiler-floatin.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0006-decompiler-Fix-strict-weak-ordering-TypePartialEnum.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
