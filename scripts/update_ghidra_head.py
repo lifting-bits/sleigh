@@ -71,6 +71,7 @@ def git_get_changed_files(
         .strip()
         .splitlines()
     )
+    changed_files = list(filter(lambda p: not p.endswith(".java"), changed_files))
     num_changed = len(changed_files)
     if num_changed > 0:
         msg(f"Found {num_changed} changed sleigh files:")
