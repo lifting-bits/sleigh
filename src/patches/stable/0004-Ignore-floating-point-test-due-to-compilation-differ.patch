@@ -1,7 +1,7 @@
-From 9b118da968eac4a5ad910dc51d7d70150bab0408 Mon Sep 17 00:00:00 2001
+From 43b0f78ca2ce8e2adbcc4f3b3298940c72dc9b5b Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Tue, 29 Oct 2024 17:51:09 -0400
-Subject: [PATCH 5/6] Ignore floating point test due to compilation differences
+Subject: [PATCH 4/6] Ignore floating point test due to compilation differences
 
 This test fails on macOS and Windows. I'm unsure whether it's an OS or
 compiler issue.
@@ -24,5 +24,5 @@ index fe40e22b1b..91440e2510 100644
    ASSERT_EQUALS(ff.printDecimal(f2, false), "0.33333334");
    double f3 = doubleFromRawBits(0x3fd0000000000000);
 -- 
-2.47.0
+2.48.1
 
