@@ -49,6 +49,10 @@ jobs:
           Changed files:
 
           ${{ steps.head_update.outputs.changed_files }}
+
+          Commit details:
+
+          ${{ steps.head_update.outputs.commit_details }}
         branch: cron/update-ghidra-${{ steps.head_update.outputs.short_sha }}
         delete-branch: true
         token: ${{ steps.generate-token.outputs.token }}
