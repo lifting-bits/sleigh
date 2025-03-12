@@ -76,7 +76,7 @@ def git_get_commit_info(
 
     commits = []
     if log_output:
-        commit_sections = log_output.split("\n====\n")
+        commit_sections = log_output.split("\n====")
         # Process each commit
         for section in commit_sections:
             if not section.strip():
@@ -170,7 +170,7 @@ def git_get_changed_files(
                 print(f"Date: {commit['date']}")
                 print(f"Message: {commit['message']}")
                 if commit["body"]:
-                    print(f"Details: {commit['body']}")
+                    print(f"Details:\n{commit['body']}")
                 print("\nFiles changed:")
                 for file in commit["files"]:
                     print(f"  {file}")
@@ -192,7 +192,7 @@ def git_get_changed_files(
                         gh_out.write(f"Date: {commit['date']}\n")
                         gh_out.write(f"Message: {commit['message']}\n")
                         if commit["body"]:
-                            gh_out.write(f"Details: {commit['body']}\n")
+                            gh_out.write(f"Details:\n{commit['body']}\n")
                         gh_out.write("\nFiles changed:\n")
                         for file in commit["files"]:
                             gh_out.write(f"  {file}\n")
