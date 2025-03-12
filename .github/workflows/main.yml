@@ -108,7 +108,7 @@ jobs:
       run: cmake
         --build build
         --config ${{ matrix.build_type }}
-        -j 2
+        -j 4
         -v
 
     - name: Test the project
@@ -125,7 +125,7 @@ jobs:
     - name: Run the example
       run: cmake
         --build build
-        -j 2
+        -j 4
         --config ${{ matrix.build_type }}
         --target sleigh_example_runner
 
@@ -145,7 +145,7 @@ jobs:
       working-directory: tests/find_package
       run: |
         cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        cmake --build build -j 2 --config ${{ matrix.build_type }}
+        cmake --build build -j 4 --config ${{ matrix.build_type }}
         cd build
         ctest -V -C ${{ matrix.build_type }}
     - name: Test install directory Windows
@@ -153,7 +153,7 @@ jobs:
       working-directory: tests/find_package
       run: |
         cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-static
-        cmake --build build -j 2 --config ${{ matrix.build_type }}
+        cmake --build build -j 4 --config ${{ matrix.build_type }}
         cd build
         ctest -V -C ${{ matrix.build_type }}
 
@@ -162,7 +162,7 @@ jobs:
       working-directory: extra-tools/sleigh-lift
       run: |
         cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        cmake --build build -j 2 --config ${{ matrix.build_type }}
+        cmake --build build -j 4 --config ${{ matrix.build_type }}
         cmake --install build --config ${{ matrix.build_type }} --prefix install
         ./install/bin/sleigh-lift --version
         ./install/bin/sleigh-lift disassemble x86-64.sla 4881ecc00f0000
@@ -172,7 +172,7 @@ jobs:
       working-directory: extra-tools/sleigh-lift
       run: |
         cmake -B build -S . "-Dsleigh_DIR=${{ github.workspace }}/install/lib/cmake/sleigh" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-static
-        cmake --build build -j 2 --config ${{ matrix.build_type }}
+        cmake --build build -j 4 --config ${{ matrix.build_type }}
         cmake --install build --config ${{ matrix.build_type }} --prefix install
         ./install/bin/sleigh-lift --version
         ./install/bin/sleigh-lift disassemble x86-64.sla 4881ecc00f0000
@@ -181,7 +181,7 @@ jobs:
     - name: Create the packages
       run: cmake
           --build build
-          -j 2
+          -j 4
           --config ${{ matrix.build_type }}
           --target package
 
@@ -191,7 +191,7 @@ jobs:
         sudo dpkg -i build/*.deb
 
         cmake -S tests/find_package -B find_package_build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        cmake --build find_package_build -j 2 --config ${{ matrix.build_type }} --verbose
+        cmake --build find_package_build -j 4 --config ${{ matrix.build_type }} --verbose
 
     - name: Locate the packages (RelWithDebInfo only)
       if: matrix.build_type == 'RelWithDebInfo'
