@@ -1,4 +1,4 @@
-From ef11bf80063c80967a6ddb8726e710bd207575f3 Mon Sep 17 00:00:00 2001
+From 27d5d7afc21a3620362df245682748fdbaec570a Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Wed, 30 Oct 2024 14:26:57 -0400
 Subject: [PATCH 5/6] Allow positive or negative NAN in decompiler floating
