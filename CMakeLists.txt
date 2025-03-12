@@ -8,6 +8,9 @@
 
 cmake_minimum_required(VERSION 3.18)
 
+# For MSVC ccache to use /Z7 with CMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded
+cmake_policy(SET CMP0141 NEW)
+
 include(cmake/prelude.cmake)
 
 # Sets "library_root" variable for decompiler cpp root directory
