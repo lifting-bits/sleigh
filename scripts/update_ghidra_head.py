@@ -378,6 +378,61 @@ class GhidraUpdater:
             if temp_dir:
                 temp_dir.cleanup()
 
+    def compare_commits(
+        self, repo_dir: Path, start_commit: str, end_commit: Optional[str] = None
+    ) -> None:
+        """Compare changes between two commits without updating any files"""
+        # If end_commit is not provided, use HEAD
+        if end_commit is None:
+            end_commit = self.git.get_head_commit(repo_dir)
+            print(f"Using HEAD as end commit: {end_commit}")
+
+        print(f"Comparing commits {start_commit} to {end_commit}")
+
+        # Check if the commits exist
+        try:
+            self.git.run(
+                ["cat-file", "-e", start_commit], repo_dir, capture_output=True
+            )
+            self.git.run(["cat-file", "-e", end_commit], repo_dir, capture_output=True)
+        except subprocess.CalledProcessError:
+            raise ValueError(
+                "One or both of the specified commits do not exist in the repository"
+            )
+
+        # Get changed files
+        changed_files = self.git.get_changed_files(
+            repo_dir, start_commit, end_commit, SLEIGH_PATHS
+        )
+
+        if not changed_files:
+            print("No sleigh files were modified between these commits")
+            return
+
+        # Output changes for logging
+        num_changed = len(changed_files)
+        print(f"Found {num_changed} changed sleigh files:")
+        for file in changed_files:
+            print(f"  {file}")
+
+        # Get detailed commit info for logging
+        commit_info = self.git.get_commit_info(
+            repo_dir, start_commit, end_commit, SLEIGH_PATHS
+        )
+
+        if commit_info:
+            print(f"\nCommits affecting sleigh files ({len(commit_info)}):")
+            for i, commit in enumerate(commit_info, 1):
+                print(f"\n[Commit {i}/{len(commit_info)}]")
+                print(f"Hash: {commit['hash']}")
+                print(f"Date: {commit['date']}")
+                print(f"Message: {commit['message']}")
+                if commit["body"]:
+                    print(f"Details:\n{commit['body']}")
+                print("\nFiles changed:")
+                for file in commit["files"]:
+                    print(f"  {file}")
+
 
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments"""
@@ -403,6 +458,20 @@ def parse_args() -> argparse.Namespace:
         help="Show what would be changed without actually modifying any files",
     )
 
+    parser.add_argument(
+        "start_commit",
+        nargs="?",
+        type=str,
+        help="Starting commit for comparison. When specified, no CMake files will be updated.",
+    )
+
+    parser.add_argument(
+        "end_commit",
+        nargs="?",
+        type=str,
+        help="Ending commit for comparison. If not specified, uses HEAD of the repo. Requires start_commit.",
+    )
+
     args = parser.parse_args()
 
     # Convert ghidra-repo path if provided
@@ -411,6 +480,14 @@ def parse_args() -> argparse.Namespace:
         if not repo_path.is_dir():
             parser.error(f"Ghidra repo directory does not exist: {repo_path}")
         args.ghidra_repo = repo_path
+
+    # Validate commit arguments
+    if args.end_commit and not args.start_commit:
+        parser.error("Cannot specify end_commit without start_commit")
+
+    # If commits are specified, a Ghidra repo is required
+    if args.start_commit and not args.ghidra_repo:
+        parser.error("--ghidra-repo is required when specifying commits")
 
     return args
 
@@ -421,14 +498,28 @@ def main() -> None:
 
     try:
         updater = GhidraUpdater(ci_mode=args.ci, dry_run=args.dry_run)
-        did_update = updater.update(args.ghidra_repo)
 
-        if not did_update:
-            print("No update required")
-        elif args.dry_run:
-            print("Update would be required!")
+        # If start_commit is specified, run in comparison mode
+        if args.start_commit:
+            if not args.ghidra_repo:
+                print(
+                    "Error: Ghidra repository path is required when specifying commits",
+                    file=sys.stderr,
+                )
+                sys.exit(1)
+            updater.compare_commits(
+                args.ghidra_repo, args.start_commit, args.end_commit
+            )
         else:
-            print("Update required!")
+            # Normal update mode
+            did_update = updater.update(args.ghidra_repo)
+
+            if not did_update:
+                print("No update required")
+            elif args.dry_run:
+                print("Update would be required!")
+            else:
+                print("Update required!")
 
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
