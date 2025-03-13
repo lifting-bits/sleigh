@@ -1,64 +1,72 @@
+#!/usr/bin/env python3
 """Script to update CMake files for latest Ghidra Sleigh changes"""
 
+import argparse
+import os
 import re
 import shutil
 import subprocess
 import sys
 import tempfile
-import os
 from pathlib import Path
-from typing import AnyStr, Union, List, Dict
+from typing import List, Dict, Optional, Any, Tuple
 
+
+# Constants
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 HEAD_SPEC_FILE = PROJECT_ROOT / "src" / "spec_files_HEAD.cmake"
-assert HEAD_SPEC_FILE.exists()
 SETUP_GHIDRA_FILE = PROJECT_ROOT / "src" / "setup-ghidra-source.cmake"
-assert SETUP_GHIDRA_FILE.exists()
 
-# Paths in Ghidra repo that affect this repo. Used with git diff
-SLEIGH_PATHS: List[str] = [
-    # Source code and tests
-    "Ghidra/Features/Decompiler/src/decompile",
-    # Sleigh files
-    "Ghidra/Processors",
+# Paths in Ghidra repo that affect this repo
+SLEIGH_PATHS = [
+    "Ghidra/Features/Decompiler/src/decompile",  # Source code and tests
+    "Ghidra/Processors",  # Sleigh files
 ]
 
-GIT_EXE = shutil.which("git")
-assert GIT_EXE is not None
+# Regex patterns
+HEAD_COMMIT_PATTERN = r"set\(ghidra_head_git_tag \"([0-9A-Fa-f]+)\"\)"
+VERSION_PATTERN = r"set\(ghidra_head_version \"([0-9]+(\.[0-9]+)*)\"\)"
+APP_VERSION_PATTERN = r"application.version=([0-9]+(\.[0-9]+)*)"
 
 
-def msg(s: str, end: str = "\n") -> None:
-    print(f"[!] {s}", end=end)
+class GitHelper:
+    """Helper class for Git operations"""
 
+    def __init__(self) -> None:
+        self.git_exe = shutil.which("git")
+        if self.git_exe is None:
+            raise RuntimeError("Git executable not found in PATH")
 
-PathString = Union[AnyStr, Path]
+    def run(
+        self, args: List[str], cwd: Path, capture_output: bool = False
+    ) -> subprocess.CompletedProcess:
+        """Run a git command with the given arguments"""
+        cmd = [self.git_exe] + args
+        return subprocess.run(
+            cmd,
+            cwd=cwd,
+            stdout=subprocess.PIPE if capture_output else sys.stdout,
+            stderr=subprocess.PIPE if capture_output else sys.stderr,
+            check=True,
+            text=True if capture_output else False,
+        )
 
+    def clone(self, repo_url: str, target_dir: Path) -> None:
+        """Clone a git repository"""
+        print(f"Cloning {repo_url} to {target_dir}...")
+        self.run(["clone", repo_url, str(target_dir)], cwd=PROJECT_ROOT)
 
-def clone_ghidra_git(clone_dir: PathString) -> None:
-    """Clone the Ghidra git dir at specified directory"""
-    assert GIT_EXE is not None
-    subprocess.run(
-        [
-            GIT_EXE,
-            "clone",
-            "https://github.com/NationalSecurityAgency/ghidra",
-            clone_dir,
-        ],
-        stdout=sys.stdout,
-        stderr=sys.stderr,
-        check=True,
-    )
+    def get_head_commit(self, repo_dir: Path) -> str:
+        """Get the HEAD commit SHA of the repository"""
+        result = self.run(["rev-parse", "HEAD"], cwd=repo_dir, capture_output=True)
+        return result.stdout.strip()
 
-
-def git_get_commit_info(
-    repo: Path, old_commit: str, new_commit: str, paths: List[str]
-) -> List[Dict[str, str]]:
-    """Get detailed information about commits that modified the specified paths"""
-    assert GIT_EXE is not None
-    log_output = (
-        subprocess.run(
+    def get_commit_info(
+        self, repo_dir: Path, old_commit: str, new_commit: str, paths: List[str]
+    ) -> List[Dict[str, Any]]:
+        """Get detailed information about commits affecting specified paths"""
+        result = self.run(
             [
-                GIT_EXE,
                 "log",
                 "--pretty=format:%H%n%ad%n%s%n%b%n====",
                 "--date=iso",
@@ -66,32 +74,29 @@ def git_get_commit_info(
                 "--",
                 *paths,
             ],
-            cwd=repo,
+            cwd=repo_dir,
             capture_output=True,
-            check=True,
         )
-        .stdout.decode()
-        .strip()
-    )
 
-    commits = []
-    if log_output:
-        commit_sections = log_output.split("\n====")
-        # Process each commit
-        for section in commit_sections:
-            if not section.strip():
-                continue
-            lines = section.strip().split("\n")
-            commit_hash = lines[0]
-            commit_date = lines[1]
-            commit_msg = lines[2]
-            body = "\n".join(lines[3:]) if len(lines) > 3 else ""
+        log_output = result.stdout.strip()
+        commits = []
 
-            # Get the files modified in this commit
-            commit_files = (
-                subprocess.run(
+        if log_output:
+            commit_sections = log_output.split("\n====")
+
+            for section in commit_sections:
+                if not section.strip():
+                    continue
+
+                lines = section.strip().split("\n")
+                commit_hash = lines[0]
+                commit_date = lines[1]
+                commit_msg = lines[2]
+                body = "\n".join(lines[3:]) if len(lines) > 3 else ""
+
+                # Get files modified in this commit
+                files_result = self.run(
                     [
-                        GIT_EXE,
                         "diff-tree",
                         "--no-commit-id",
                         "--name-status",
@@ -100,70 +105,143 @@ def git_get_commit_info(
                         "--",
                         *paths,
                     ],
-                    cwd=repo,
+                    cwd=repo_dir,
                     capture_output=True,
-                    check=True,
-                )
-                .stdout.decode()
-                .strip()
-                .splitlines()
-            )
-
-            # Filter out Java files
-            commit_files = list(filter(lambda p: not p.endswith(".java"), commit_files))
-
-            if commit_files:
-                commits.append(
-                    {
-                        "hash": commit_hash,
-                        "date": commit_date,
-                        "message": commit_msg,
-                        "body": body,
-                        "files": commit_files,
-                    }
                 )
 
-    return commits
+                commit_files = files_result.stdout.strip().splitlines()
+                # Filter out Java files
+                commit_files = [f for f in commit_files if not f.endswith(".java")]
 
+                if commit_files:
+                    commits.append(
+                        {
+                            "hash": commit_hash,
+                            "date": commit_date,
+                            "message": commit_msg,
+                            "body": body,
+                            "files": commit_files,
+                        }
+                    )
 
-def git_get_changed_files(
-    repo: Path, old_commit: str, new_commit: str, paths: List[str], ci: bool
-) -> List[str]:
-    """Get list of changed files from old_commit to new_commit at the specified paths"""
-    assert GIT_EXE is not None
+        return commits
 
-    # Get all commits that change the relevant files
-    commit_info = git_get_commit_info(repo, old_commit, new_commit, paths)
-
-    # Also get the overall diff for summary
-    changed_files = (
-        subprocess.run(
+    def get_changed_files(
+        self, repo_dir: Path, old_commit: str, new_commit: str, paths: List[str]
+    ) -> List[str]:
+        """Get list of files changed between commits"""
+        result = self.run(
             [
-                GIT_EXE,
                 "diff",
                 "--name-status",
                 f"{old_commit}...{new_commit}",
                 "--",
                 *paths,
             ],
-            cwd=repo,
+            cwd=repo_dir,
             capture_output=True,
-            check=True,
         )
-        .stdout.decode()
-        .strip()
-        .splitlines()
-    )
-    changed_files = list(filter(lambda p: not p.endswith(".java"), changed_files))
-    num_changed = len(changed_files)
 
-    if num_changed > 0:
-        msg(f"Found {num_changed} changed sleigh files:")
-        print("\n".join(changed_files))
+        changed_files = result.stdout.strip().splitlines()
+        # Filter out Java files
+        changed_files = [f for f in changed_files if not f.endswith(".java")]
 
-        # Display detailed commit information
+        return changed_files
+
+
+class GhidraUpdater:
+    """Handles updating Ghidra-related CMake files"""
+
+    def __init__(self, ci_mode: bool = False, dry_run: bool = False) -> None:
+        self.git = GitHelper()
+        self.ci_mode = ci_mode
+        self.dry_run = dry_run
+
+        # Validate required paths
+        if not HEAD_SPEC_FILE.exists():
+            raise FileNotFoundError(f"HEAD spec file not found: {HEAD_SPEC_FILE}")
+        if not SETUP_GHIDRA_FILE.exists():
+            raise FileNotFoundError(f"Setup Ghidra file not found: {SETUP_GHIDRA_FILE}")
+
+        # Set up GitHub Actions outputs if in CI mode
+        if self.ci_mode and "GITHUB_OUTPUT" not in os.environ:
+            raise RuntimeError("CI mode requires GITHUB_OUTPUT environment variable")
+
+    def clone_ghidra_if_needed(
+        self, repo_dir: Optional[Path] = None
+    ) -> Tuple[Path, Optional[tempfile.TemporaryDirectory]]:
+        """Clone Ghidra repo if a directory is not provided"""
+        temp_dir = None
+
+        if repo_dir is None:
+            temp_dir = tempfile.TemporaryDirectory()
+            repo_dir = Path(temp_dir.name) / "ghidra"
+            self.git.clone("https://github.com/NationalSecurityAgency/ghidra", repo_dir)
+
+        return repo_dir, temp_dir
+
+    def log_github_output(self, key: str, value: str) -> None:
+        """Log output for GitHub Actions"""
+        if self.ci_mode:
+            with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                f.write(f"{key}={value}\n")
+
+    def log_github_multiline_output(self, key: str, value: str) -> None:
+        """Log multiline output for GitHub Actions"""
+        if self.ci_mode:
+            with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                f.write(f"{key}<<EOF\n")
+                f.write(value)
+                f.write("\nEOF\n")
+
+    def update_head_commit(
+        self, repo_dir: Path, setup_file: Path
+    ) -> Tuple[bool, str, str]:
+        """Update the HEAD commit in the setup file if needed"""
+        # Get latest commit hash
+        latest_commit = self.git.get_head_commit(repo_dir)
+        current_commit = None
+
+        # Find current commit hash in setup file
+        with setup_file.open("r") as f:
+            for line in f:
+                match = re.search(HEAD_COMMIT_PATTERN, line)
+                if match:
+                    current_commit = match.group(1)
+                    break
+
+        if current_commit is None:
+            raise ValueError("Could not find current commit in setup file")
+
+        # Check if update is needed
+        if current_commit == latest_commit:
+            print(f"Already at the latest commit: {latest_commit}")
+            return False, current_commit, latest_commit
+
+        print(f"Found new commit: {latest_commit}")
+
+        # Check if sleigh files were updated
+        changed_files = self.git.get_changed_files(
+            repo_dir, current_commit, latest_commit, SLEIGH_PATHS
+        )
+
+        if not changed_files:
+            print("No sleigh files updated")
+            return False, current_commit, latest_commit
+
+        # Output changes for logging
+        num_changed = len(changed_files)
+        print(f"Found {num_changed} changed sleigh files:")
+        for file in changed_files:
+            print(f"  {file}")
+
+        # Get detailed commit info for logging
+        commit_info = self.git.get_commit_info(
+            repo_dir, current_commit, latest_commit, SLEIGH_PATHS
+        )
+
         if commit_info:
-            msg(f"Commits affecting sleigh files ({len(commit_info)}):", "")
+            print(f"\nCommits affecting sleigh files ({len(commit_info)}):")
             for i, commit in enumerate(commit_info, 1):
                 print(f"\n[Commit {i}/{len(commit_info)}]")
                 print(f"Hash: {commit['hash']}")
@@ -175,259 +253,187 @@ def git_get_changed_files(
                 for file in commit["files"]:
                     print(f"  {file}")
 
-        if ci:
-            with open(os.environ["GITHUB_OUTPUT"], "a") as gh_out:
-                gh_out.write("changed_files<<EOF\n")
-                gh_out.write("```\n")
-                gh_out.write("\n".join(changed_files))
-                gh_out.write("\n```\n")
-                gh_out.write("EOF\n")
+        # Log outputs for GitHub Actions
+        if self.ci_mode:
+            self.log_github_output("short_sha", latest_commit[:9])
+            self.log_github_output("did_update", "true")
 
-                if commit_info:
-                    gh_out.write("commit_details<<EOF\n")
-                    gh_out.write("```")
-                    for i, commit in enumerate(commit_info, 1):
-                        gh_out.write(f"\n[Commit {i}/{len(commit_info)}]\n")
-                        gh_out.write(f"Hash: {commit['hash']}\n")
-                        gh_out.write(f"Date: {commit['date']}\n")
-                        gh_out.write(f"Message: {commit['message']}\n")
-                        if commit["body"]:
-                            gh_out.write(f"Details:\n{commit['body']}\n")
-                        gh_out.write("\nFiles changed:\n")
-                        for file in commit["files"]:
-                            gh_out.write(f"  {file}\n")
-                    gh_out.write("```\n")
-                    gh_out.write("EOF\n")
+            # Log changed files
+            changed_files_str = "```\n" + "\n".join(changed_files) + "\n```"
+            self.log_github_multiline_output("changed_files", changed_files_str)
 
-    return changed_files
+            # Log commit details
+            if commit_info:
+                details = ["```"]
+                for i, commit in enumerate(commit_info, 1):
+                    details.append(f"\n[Commit {i}/{len(commit_info)}]")
+                    details.append(f"Hash: {commit['hash']}")
+                    details.append(f"Date: {commit['date']}")
+                    details.append(f"Message: {commit['message']}")
+                    if commit["body"]:
+                        details.append(f"Details:\n{commit['body']}")
+                    details.append("\nFiles changed:")
+                    for file in commit["files"]:
+                        details.append(f"  {file}")
+                details.append("```")
 
+                self.log_github_multiline_output("commit_details", "\n".join(details))
 
-def is_sleigh_updated(
-    ghidra_repo: Path, old_commit: str, new_commit: str, ci: bool
-) -> bool:
-    """Check if files we're interested in have been touched at all"""
-    changed_files = git_get_changed_files(
-        ghidra_repo, old_commit, new_commit, SLEIGH_PATHS, ci
-    )
-    return len(changed_files) > 0
+        # Update the setup file if not in dry run mode
+        if not self.dry_run:
+            self._replace_in_file(
+                setup_file,
+                HEAD_COMMIT_PATTERN,
+                f'set(ghidra_head_git_tag "{latest_commit}")',
+            )
 
+        return True, current_commit, latest_commit
 
-def update_head_commit(
-    setup_file: Path,
-    ghidra_repo_dir: PathString,
-    latest_commit: str,
-    ci: bool,
-    dry_run: bool = False,
-) -> bool:
-    """Edit the Ghidra script to point to the latest commit"""
-    head_commit_line = r"set\(ghidra_head_git_tag \"([0-9A-Fa-f]+)\"\)"
-    updated = False
+    def update_version(self, repo_dir: Path, setup_file: Path) -> None:
+        """Update the Ghidra version in the setup file if needed"""
+        # Get source version from application.properties
+        app_properties_file = repo_dir / "Ghidra" / "application.properties"
 
-    fd, abspath = tempfile.mkstemp()
-    with open(fd, "w") as w:
-        with setup_file.open("r") as r:
-            for line in r:
-                match = re.search(head_commit_line, line)
-                if match is not None:
-                    current_commit = match.group(1)
-                    if current_commit != latest_commit:
-                        msg(f"Found new commit: {latest_commit}")
-                        if is_sleigh_updated(
-                            ghidra_repo_dir, current_commit, latest_commit, ci
-                        ):
-                            if dry_run:
-                                msg(
-                                    f"Would update commit from {current_commit} to {latest_commit}"
-                                )
-                                updated = True
-                            else:
-                                line = re.sub(
-                                    head_commit_line,
-                                    f'set(ghidra_head_git_tag "{latest_commit}")',
-                                    line,
-                                )
-                                updated = True
-                        else:
-                            msg("No sleigh files updated")
-                w.write(line)
+        with app_properties_file.open("r") as f:
+            content = f.read()
+            match = re.search(APP_VERSION_PATTERN, content)
+            if not match:
+                raise ValueError("Could not find version in application.properties")
+            source_version = match.group(1)
 
-    # Make the swap with the new content
-    if not dry_run:
-        shutil.copymode(setup_file, abspath)
-        os.remove(setup_file)
-        shutil.move(abspath, setup_file)
-    else:
-        os.remove(abspath)  # Clean up the temp file in dry run mode
-    return updated
+        # Get current version from setup file
+        with setup_file.open("r") as f:
+            content = f.read()
+            match = re.search(VERSION_PATTERN, content)
+            if not match:
+                raise ValueError("Could not find version in setup file")
+            cmake_version = match.group(1)
 
+        # Check if update is needed
+        if cmake_version == source_version:
+            print("No new version bump")
+            return
 
-def update_head_version_file(
-    setup_file: Path, ghidra_root_dir: PathString, dry_run: bool = False
-) -> None:
-    """Edit the Ghidra script to point to the latest version"""
-    cmake_head_version_line = (
-        r"set\(ghidra_head_version \"([0-9]+(\.[0-9]+)?(\.[0-9]+)?)\"\)"
-    )
+        print(f"Found new version: {source_version}")
 
-    with (ghidra_root_dir / "Ghidra" / "application.properties").open("r") as f:
-        content = f.read()
-        match = re.search(
-            r"application.version=([0-9]+(\.[0-9]+)?(\.[0-9]+)?)", content
-        )
-        assert match is not None
-        source_version = match.group(1)
+        # Update the setup file if not in dry run mode
+        if not self.dry_run:
+            self._replace_in_file(
+                setup_file,
+                VERSION_PATTERN,
+                f'set(ghidra_head_version "{source_version}")',
+            )
 
-    with setup_file.open("r") as f:
-        content = f.read()
-        match = re.search(cmake_head_version_line, content)
-        assert match is not None
-        cmake_version = match.group(1)
+    def update_spec_files(self, repo_dir: Path, spec_file: Path) -> None:
+        """Update the list of spec files in the CMake file"""
+        # Find all .slaspec files
+        spec_files = []
+        processors_dir = repo_dir / "Ghidra" / "Processors"
 
-    if cmake_version == source_version:
-        msg("No new version bump")
-        return
+        for path in processors_dir.glob("**/*.slaspec"):
+            spec_files.append(path.relative_to(repo_dir))
 
-    msg(f"Found new version: {source_version}")
-    if dry_run:
-        msg(f"Would update version from {cmake_version} to {source_version}")
-        return
+        spec_files.sort()
+        print(f"Found {len(spec_files)} slaspec files")
 
-    fd, abspath = tempfile.mkstemp()
-    with open(fd, "w") as w:
-        with setup_file.open("r") as r:
-            for line in r:
-                match = re.search(cmake_head_version_line, line)
-                if match is not None:
-                    line = re.sub(
-                        cmake_head_version_line,
-                        f'set(ghidra_head_version "{source_version}")',
-                        line,
-                    )
-                w.write(line)
+        # Write the updated spec file list
+        if not self.dry_run and spec_files:
+            with spec_file.open("w") as f:
+                f.write("set(spec_file_list\n")
+                for spec in spec_files:
+                    f.write(f'  "${{ghidrasource_SOURCE_DIR}}/{spec}"\n')
+                f.write(")\n")
 
-    # Make the swap with the new content
-    shutil.copymode(setup_file, abspath)
-    os.remove(setup_file)
-    shutil.move(abspath, setup_file)
+    def _replace_in_file(self, file_path: Path, pattern: str, replacement: str) -> None:
+        """Replace text in a file matching the pattern with the replacement"""
+        temp_file = tempfile.NamedTemporaryFile(mode="w", delete=False)
+
+        with file_path.open("r") as src, open(temp_file.name, "w") as dst:
+            for line in src:
+                dst.write(re.sub(pattern, replacement, line))
+
+        # Replace the original file with the modified one
+        shutil.copymode(file_path, temp_file.name)
+        os.remove(file_path)
+        shutil.move(temp_file.name, file_path)
+
+    def update(self, repo_dir: Optional[Path] = None) -> bool:
+        """Main update method to orchestrate the update process"""
+        # Clone repo if not provided
+        repo_dir, temp_dir = self.clone_ghidra_if_needed(repo_dir)
+
+        try:
+            # Update the HEAD commit
+            did_update, _, _ = self.update_head_commit(repo_dir, SETUP_GHIDRA_FILE)
+
+            # If commit was updated, also update version and spec files
+            if did_update:
+                self.update_version(repo_dir, SETUP_GHIDRA_FILE)
+                self.update_spec_files(repo_dir, HEAD_SPEC_FILE)
+
+            return did_update
+
+        finally:
+            # Clean up temp directory if created
+            if temp_dir:
+                temp_dir.cleanup()
 
 
-def update_spec_files(
-    ghidra_repo_dir: PathString, cmake_file: PathString, dry_run: bool = False
-):
-    """Based on the files in the Ghidra repo, write an updated list of spec files."""
-    spec_files = []
-    for dirpath, _, fnames in os.walk(ghidra_repo_dir / "Ghidra" / "Processors"):
-        for file in fnames:
-            if file.endswith(".slaspec"):
-                spec_files.append((Path(dirpath) / file).relative_to(ghidra_repo_dir))
-    assert len(spec_files) > 0
-    spec_files.sort()
-
-    msg(f"Found {len(spec_files)} slaspec files")
-
-    with open(cmake_file, "w") as f:
-        f.write("set(spec_file_list\n")
-        for spec in spec_files:
-            f.write(f'  "${{ghidrasource_SOURCE_DIR}}/{spec}"\n')
-        f.write(")\n")
-
-
-def get_latest_commit(ghidra_repo_dir: PathString) -> str:
-    """Get the commit SHA that the repo is currently at"""
-    assert GIT_EXE is not None
-    return (
-        subprocess.run(
-            [GIT_EXE, "rev-parse", "HEAD"],
-            cwd=ghidra_repo_dir,
-            capture_output=True,
-            check=True,
-        )
-        .stdout.decode()
-        .strip()
-    )
-
-
-def update_head(
-    setup_file: Path,
-    spec_file: Path,
-    ghidra_repo_dir: PathString,
-    ci: bool,
-    dry_run: bool = False,
-) -> bool:
-    """Update to latest head and make changes to the CMake files"""
-    tmpdirname = None
-    if ghidra_repo_dir is None:
-        tmpdirname = tempfile.TemporaryDirectory()
-        ghidra_repo_dir = Path(tmpdirname.name) / "ghidra"
-        clone_ghidra_git(ghidra_repo_dir)
-
-    latest_commit = get_latest_commit(ghidra_repo_dir)
-    did_update_commit = update_head_commit(
-        setup_file, ghidra_repo_dir, latest_commit, ci, dry_run
-    )
-    if did_update_commit:
-        if ci:
-            with open(os.environ["GITHUB_OUTPUT"], "a") as gh_out:
-                gh_out.write(f"short_sha={latest_commit[:9]}\n")
-                gh_out.write("did_update=true\n")
-        update_spec_files(ghidra_repo_dir, spec_file, dry_run)
-        update_head_version_file(setup_file, ghidra_repo_dir, dry_run)
-    else:
-        msg(f"Already at the latest commit: {latest_commit}")
-
-    if tmpdirname is not None:
-        tmpdirname.cleanup()
-
-    if did_update_commit:
-        return True
-    else:
-        return False
-
-
-if __name__ == "__main__":
-    import argparse
-    import os
-
-    def dir_path(string):
-        if string is None:
-            return string
-        string = Path(string).expanduser().resolve()
-        if string.is_dir():
-            return string
-        else:
-            raise NotADirectoryError(string)
-
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments"""
     parser = argparse.ArgumentParser(
         description="Update CMake files to latest Ghidra commit."
     )
+
     parser.add_argument(
         "--ghidra-repo",
-        type=dir_path,
+        type=str,
         help="Use a specific Ghidra repo directory instead of downloading it from the internet",
     )
+
     parser.add_argument(
         "--ci",
         action="store_true",
         help="Output GitHub Actions commands for recording information in CI",
     )
+
     parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Show what would be changed without actually modifying any files",
     )
+
     args = parser.parse_args()
 
-    if args.ci:
-        assert "GITHUB_OUTPUT" in os.environ, (
-            "CI needs `GITHUB_OUTPUT` environment variable set to a file location"
-        )
+    # Convert ghidra-repo path if provided
+    if args.ghidra_repo:
+        repo_path = Path(args.ghidra_repo).expanduser().resolve()
+        if not repo_path.is_dir():
+            parser.error(f"Ghidra repo directory does not exist: {repo_path}")
+        args.ghidra_repo = repo_path
 
-    if not update_head(
-        SETUP_GHIDRA_FILE, HEAD_SPEC_FILE, args.ghidra_repo, args.ci, args.dry_run
-    ):
-        msg("No update required")
-    else:
-        if args.dry_run:
-            msg("Update would be required!")
+    return args
+
+
+def main() -> None:
+    """Main entry point"""
+    args = parse_args()
+
+    try:
+        updater = GhidraUpdater(ci_mode=args.ci, dry_run=args.dry_run)
+        did_update = updater.update(args.ghidra_repo)
+
+        if not did_update:
+            print("No update required")
+        elif args.dry_run:
+            print("Update would be required!")
         else:
-            msg("Update required!")
+            print("Update required!")
+
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
