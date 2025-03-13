@@ -61,6 +61,14 @@ class GitHelper:
         result = self.run(["rev-parse", "HEAD"], cwd=repo_dir, capture_output=True)
         return result.stdout.strip()
 
+    def check_commit_exists(self, repo_dir: Path, commit: str) -> bool:
+        """Check if a commit exists in the repository"""
+        try:
+            self.run(["cat-file", "-e", commit], repo_dir, capture_output=True)
+            return True
+        except subprocess.CalledProcessError:
+            return False
+
     def get_commit_info(
         self, repo_dir: Path, old_commit: str, new_commit: str, paths: List[str]
     ) -> List[Dict[str, Any]]:
@@ -194,6 +202,71 @@ class GhidraUpdater:
                 f.write(value)
                 f.write("\nEOF\n")
 
+    def display_changes(
+        self, repo_dir: Path, start_commit: str, end_commit: str
+    ) -> Tuple[List[str], List[Dict[str, Any]]]:
+        """Display changes between two commits and return the changed files and commit info"""
+        # Get changed files
+        changed_files = self.git.get_changed_files(
+            repo_dir, start_commit, end_commit, SLEIGH_PATHS
+        )
+
+        if not changed_files:
+            print("No sleigh files were modified between these commits")
+            return [], []
+
+        # Output changes for logging
+        num_changed = len(changed_files)
+        print(f"Found {num_changed} changed sleigh files:")
+        for file in changed_files:
+            print(f"  {file}")
+
+        # Get detailed commit info for logging
+        commit_info = self.git.get_commit_info(
+            repo_dir, start_commit, end_commit, SLEIGH_PATHS
+        )
+
+        if commit_info:
+            print(f"\nCommits affecting sleigh files ({len(commit_info)}):")
+            for i, commit in enumerate(commit_info, 1):
+                print(f"\n[Commit {i}/{len(commit_info)}]")
+                print(f"Hash: {commit['hash']}")
+                print(f"Date: {commit['date']}")
+                print(f"Message: {commit['message']}")
+                if commit["body"]:
+                    print(f"Details:\n{commit['body']}")
+                print("\nFiles changed:")
+                for file in commit["files"]:
+                    print(f"  {file}")
+
+        # Log outputs for GitHub Actions
+        if self.ci_mode:
+            self.log_github_output("short_sha", end_commit[:9])
+            self.log_github_output("did_update", "true")
+
+            # Log changed files
+            changed_files_str = "```\n" + "\n".join(changed_files) + "\n```"
+            self.log_github_multiline_output("changed_files", changed_files_str)
+
+            # Log commit details
+            if commit_info:
+                details = ["```"]
+                for i, commit in enumerate(commit_info, 1):
+                    details.append(f"\n[Commit {i}/{len(commit_info)}]")
+                    details.append(f"Hash: {commit['hash']}")
+                    details.append(f"Date: {commit['date']}")
+                    details.append(f"Message: {commit['message']}")
+                    if commit["body"]:
+                        details.append(f"Details:\n{commit['body']}")
+                    details.append("\nFiles changed:")
+                    for file in commit["files"]:
+                        details.append(f"  {file}")
+                details.append("```")
+
+                self.log_github_multiline_output("commit_details", "\n".join(details))
+
+        return changed_files, commit_info
+
     def update_head_commit(
         self, repo_dir: Path, setup_file: Path
     ) -> Tuple[bool, str, str]:
@@ -220,64 +293,13 @@ class GhidraUpdater:
 
         print(f"Found new commit: {latest_commit}")
 
-        # Check if sleigh files were updated
-        changed_files = self.git.get_changed_files(
-            repo_dir, current_commit, latest_commit, SLEIGH_PATHS
+        # Check if sleigh files were updated and display changes
+        changed_files, commit_info = self.display_changes(
+            repo_dir, current_commit, latest_commit
         )
 
         if not changed_files:
-            print("No sleigh files updated")
             return False, current_commit, latest_commit
-
-        # Output changes for logging
-        num_changed = len(changed_files)
-        print(f"Found {num_changed} changed sleigh files:")
-        for file in changed_files:
-            print(f"  {file}")
-
-        # Get detailed commit info for logging
-        commit_info = self.git.get_commit_info(
-            repo_dir, current_commit, latest_commit, SLEIGH_PATHS
-        )
-
-        if commit_info:
-            print(f"\nCommits affecting sleigh files ({len(commit_info)}):")
-            for i, commit in enumerate(commit_info, 1):
-                print(f"\n[Commit {i}/{len(commit_info)}]")
-                print(f"Hash: {commit['hash']}")
-                print(f"Date: {commit['date']}")
-                print(f"Message: {commit['message']}")
-                if commit["body"]:
-                    print(f"Details:\n{commit['body']}")
-                print("\nFiles changed:")
-                for file in commit["files"]:
-                    print(f"  {file}")
-
-        # Log outputs for GitHub Actions
-        if self.ci_mode:
-            self.log_github_output("short_sha", latest_commit[:9])
-            self.log_github_output("did_update", "true")
-
-            # Log changed files
-            changed_files_str = "```\n" + "\n".join(changed_files) + "\n```"
-            self.log_github_multiline_output("changed_files", changed_files_str)
-
-            # Log commit details
-            if commit_info:
-                details = ["```"]
-                for i, commit in enumerate(commit_info, 1):
-                    details.append(f"\n[Commit {i}/{len(commit_info)}]")
-                    details.append(f"Hash: {commit['hash']}")
-                    details.append(f"Date: {commit['date']}")
-                    details.append(f"Message: {commit['message']}")
-                    if commit["body"]:
-                        details.append(f"Details:\n{commit['body']}")
-                    details.append("\nFiles changed:")
-                    for file in commit["files"]:
-                        details.append(f"  {file}")
-                details.append("```")
-
-                self.log_github_multiline_output("commit_details", "\n".join(details))
 
         # Update the setup file if not in dry run mode
         if not self.dry_run:
@@ -390,48 +412,12 @@ class GhidraUpdater:
         print(f"Comparing commits {start_commit} to {end_commit}")
 
         # Check if the commits exist
-        try:
-            self.git.run(
-                ["cat-file", "-e", start_commit], repo_dir, capture_output=True
-            )
-            self.git.run(["cat-file", "-e", end_commit], repo_dir, capture_output=True)
-        except subprocess.CalledProcessError:
-            raise ValueError(
-                "One or both of the specified commits do not exist in the repository"
-            )
+        for commit in [start_commit, end_commit]:
+            if not self.git.check_commit_exists(repo_dir, commit):
+                raise ValueError(f"Commit {commit} does not exist in the repository")
 
-        # Get changed files
-        changed_files = self.git.get_changed_files(
-            repo_dir, start_commit, end_commit, SLEIGH_PATHS
-        )
-
-        if not changed_files:
-            print("No sleigh files were modified between these commits")
-            return
-
-        # Output changes for logging
-        num_changed = len(changed_files)
-        print(f"Found {num_changed} changed sleigh files:")
-        for file in changed_files:
-            print(f"  {file}")
-
-        # Get detailed commit info for logging
-        commit_info = self.git.get_commit_info(
-            repo_dir, start_commit, end_commit, SLEIGH_PATHS
-        )
-
-        if commit_info:
-            print(f"\nCommits affecting sleigh files ({len(commit_info)}):")
-            for i, commit in enumerate(commit_info, 1):
-                print(f"\n[Commit {i}/{len(commit_info)}]")
-                print(f"Hash: {commit['hash']}")
-                print(f"Date: {commit['date']}")
-                print(f"Message: {commit['message']}")
-                if commit["body"]:
-                    print(f"Details:\n{commit['body']}")
-                print("\nFiles changed:")
-                for file in commit["files"]:
-                    print(f"  {file}")
+        # Display changes
+        self.display_changes(repo_dir, start_commit, end_commit)
 
 
 def parse_args() -> argparse.Namespace:
@@ -501,12 +487,6 @@ def main() -> None:
 
         # If start_commit is specified, run in comparison mode
         if args.start_commit:
-            if not args.ghidra_repo:
-                print(
-                    "Error: Ghidra repository path is required when specifying commits",
-                    file=sys.stderr,
-                )
-                sys.exit(1)
             updater.compare_commits(
                 args.ghidra_repo, args.start_commit, args.end_commit
             )
