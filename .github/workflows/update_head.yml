@@ -45,6 +45,10 @@ jobs:
           Changed files:
 
           ${{ steps.head_update.outputs.changed_files }}
+
+          Commit details:
+
+          ${{ steps.head_update.outputs.commit_details }}
         body: |
           Changed files:
 
