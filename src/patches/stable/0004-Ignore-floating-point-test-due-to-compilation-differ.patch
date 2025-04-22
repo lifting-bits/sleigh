@@ -1,4 +1,4 @@
-From a898b0df5865d8aafab60bdaae04c8fc373cd476 Mon Sep 17 00:00:00 2001
+From 643f66ceb6add640d24a7c4b001e5236dfb8428f Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Tue, 29 Oct 2024 17:51:09 -0400
 Subject: [PATCH 4/6] Ignore floating point test due to compilation differences
@@ -24,5 +24,5 @@ index fe40e22b1b..91440e2510 100644
    ASSERT_EQUALS(ff.printDecimal(f2, false), "0.33333334");
    double f3 = doubleFromRawBits(0x3fd0000000000000);
 -- 
-2.48.1
+2.49.0
 
