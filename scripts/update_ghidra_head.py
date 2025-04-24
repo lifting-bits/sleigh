@@ -41,6 +41,7 @@ class GitHelper:
         self, args: List[str], cwd: Path, capture_output: bool = False
     ) -> subprocess.CompletedProcess:
         """Run a git command with the given arguments"""
+        assert self.git_exe is not None
         cmd = [self.git_exe] + args
         return subprocess.run(
             cmd,
@@ -227,9 +228,9 @@ class GhidraUpdater:
         )
 
         if commit_info:
-            print(f"\nCommits affecting sleigh files ({len(commit_info)}):")
+            print(f"\nCommits affecting sleigh files ({len(commit_info)}):\n")
             for i, commit in enumerate(commit_info, 1):
-                print(f"\n[Commit {i}/{len(commit_info)}]")
+                print(f"[Commit {i}/{len(commit_info)}]")
                 print(f"Hash: {commit['hash']}")
                 print(f"Date: {commit['date']}")
                 print(f"Message: {commit['message']}")
@@ -238,6 +239,7 @@ class GhidraUpdater:
                 print("\nFiles changed:")
                 for file in commit["files"]:
                     print(f"  {file}")
+                print("")
 
         # Log outputs for GitHub Actions
         if self.ci_mode:
@@ -252,7 +254,7 @@ class GhidraUpdater:
             if commit_info:
                 details = ["```"]
                 for i, commit in enumerate(commit_info, 1):
-                    details.append(f"\n[Commit {i}/{len(commit_info)}]")
+                    details.append(f"[Commit {i}/{len(commit_info)}]")
                     details.append(f"Hash: {commit['hash']}")
                     details.append(f"Date: {commit['date']}")
                     details.append(f"Message: {commit['message']}")
@@ -261,7 +263,9 @@ class GhidraUpdater:
                     details.append("\nFiles changed:")
                     for file in commit["files"]:
                         details.append(f"  {file}")
-                details.append("```")
+                    details.append("")
+                # Replace trailing newline for last entry
+                details[-1] = "```"
 
                 self.log_github_multiline_output("commit_details", "\n".join(details))
 
@@ -423,7 +427,7 @@ class GhidraUpdater:
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(
-        description="Update CMake files to latest Ghidra commit."
+        description="Find and collect changes between two Ghidra commits. Update CMake files to latest Ghidra commit if specified."
     )
 
     parser.add_argument(
@@ -435,7 +439,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--ci",
         action="store_true",
-        help="Output GitHub Actions commands for recording information in CI",
+        help="Output GitHub Actions commands for recording information in CI. Requires GITHUB_OUTPUT environment variable.",
     )
 
     parser.add_argument(
@@ -455,7 +459,7 @@ def parse_args() -> argparse.Namespace:
         "end_commit",
         nargs="?",
         type=str,
-        help="Ending commit for comparison. If not specified, uses HEAD of the repo. Requires start_commit.",
+        help="Ending commit for comparison. If not specified, uses current HEAD of the repo. Requires start_commit.",
     )
 
     args = parser.parse_args()
