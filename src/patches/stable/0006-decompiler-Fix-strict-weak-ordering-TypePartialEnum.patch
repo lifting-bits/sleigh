@@ -1,4 +1,4 @@
-From d8ff76548dceea9e1a3a034dfd4967f246a7f716 Mon Sep 17 00:00:00 2001
+From 67aaf9f6de139ec24b66974c04218224bf8c2ed0 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Sat, 8 Feb 2025 17:59:57 -0500
 Subject: [PATCH 6/6] decompiler: Fix strict weak ordering TypePartialEnum
@@ -22,5 +22,5 @@ index f25b019a4f..2f1337a740 100644
    if (parent != tp->parent) return (parent < tp->parent) ? -1 : 1;	// Compare absolute pointers
    if (offset != tp->offset) return (offset < tp->offset) ? -1 : 1;
 -- 
-2.49.0
+2.50.1
 
