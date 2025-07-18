@@ -1,7 +1,7 @@
-From 67aaf9f6de139ec24b66974c04218224bf8c2ed0 Mon Sep 17 00:00:00 2001
+From 3330b9d1de3370d933bf7c3063fd4ca3744d1630 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Sat, 8 Feb 2025 17:59:57 -0500
-Subject: [PATCH 6/6] decompiler: Fix strict weak ordering TypePartialEnum
+Subject: [PATCH 6/7] decompiler: Fix strict weak ordering TypePartialEnum
 
 This fixes Windows Debug error encountered in testing where it was
 complaining about lack of strict weak ordering.

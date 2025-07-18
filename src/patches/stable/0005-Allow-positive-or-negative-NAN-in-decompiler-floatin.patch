@@ -1,7 +1,7 @@
-From f830617da91d9876f543b4f476c8c7aad67b6d5c Mon Sep 17 00:00:00 2001
+From c5524b18432739e441c4347f2d836d56faa74c77 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Wed, 30 Oct 2024 14:26:57 -0400
-Subject: [PATCH 5/6] Allow positive or negative NAN in decompiler floating
+Subject: [PATCH 5/7] Allow positive or negative NAN in decompiler floating
  point test
 
 At least on Apple Silicon, this test reports positive NAN.

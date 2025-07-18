@@ -1,7 +1,7 @@
-From d3479a94d521f066976f684f60b1ab8ab365ca7d Mon Sep 17 00:00:00 2001
+From 54276cc9def6836b02a3f77471b84a7a096eb8ec Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Mon, 12 Aug 2024 12:02:35 -0400
-Subject: [PATCH 1/6] Fix UBSAN errors in decompiler
+Subject: [PATCH 1/7] Fix UBSAN errors in decompiler
 
 Co-authored-by: Alex Cameron <asc@tetsuo.sh>
 ---

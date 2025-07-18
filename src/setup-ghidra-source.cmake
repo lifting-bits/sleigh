@@ -44,6 +44,7 @@ set(ghidra_patches
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0004-Ignore-floating-point-test-due-to-compilation-differ.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-Allow-positive-or-negative-NAN-in-decompiler-floatin.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0006-decompiler-Fix-strict-weak-ordering-TypePartialEnum.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0007-Backport-fix-for-datatests-retstruct.xml-tests.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
