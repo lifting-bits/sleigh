@@ -1,7 +1,7 @@
-From f3b2fd0b950221005e02d294ef665e38d7f68b12 Mon Sep 17 00:00:00 2001
+From afef7a58fc2eb987fea303fc06c6d290fe3aa8a5 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Tue, 29 Oct 2024 15:30:57 -0400
-Subject: [PATCH 3/6] Use string resize instead of reserve
+Subject: [PATCH 3/7] Use string resize instead of reserve
 
 assign will fix up the size to hold all of what's copied
 ---
@@ -32,5 +32,5 @@ index 5f5fa0c7b3..4cd77156f2 100644
    }
    data.isTruncated = (numChars >= maximumChars);
 -- 
-2.49.0
+2.50.1
 
