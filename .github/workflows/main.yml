@@ -113,7 +113,7 @@ jobs:
 
     - name: Test the project
       working-directory: build
-      run: ctest -VV -C ${{ matrix.build_type }} ${{ matrix.release == 'HEAD' && '|| true' || '' }}
+      run: ctest -VV -C ${{ matrix.build_type }}
 
     - name: Build the docs
       run: cmake
