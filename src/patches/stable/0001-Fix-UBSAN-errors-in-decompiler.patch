@@ -1,7 +1,7 @@
-From 54276cc9def6836b02a3f77471b84a7a096eb8ec Mon Sep 17 00:00:00 2001
+From 2eb1eb2999fb55204fdffb7469380dadb3e7a25a Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Mon, 12 Aug 2024 12:02:35 -0400
-Subject: [PATCH 1/7] Fix UBSAN errors in decompiler
+Subject: [PATCH 1/6] Fix UBSAN errors in decompiler
 
 Co-authored-by: Alex Cameron <asc@tetsuo.sh>
 ---
@@ -116,7 +116,7 @@ index ca9d71ab99..85d4dd281d 100644
    return res;
  }
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
-index 2b4a9474e5..aa86e740b2 100644
+index 8df64ca548..1bd96ea3df 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/ruleaction.cc
 @@ -976,7 +976,12 @@ int4 RulePullsubIndirect::applyOp(PcodeOp *op,Funcdata &data)
@@ -193,10 +193,10 @@ index 50d85e22ba..9f3b456229 100644
        msg << "   Label <" << sym->getName() << "> was placed but not used" << endl;
      else if (!sym->isPlaced())
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index 88ca8e36c8..f25b019a4f 100644
+index f00502ba65..7ff2ab7606 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-@@ -3728,8 +3728,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
+@@ -3731,8 +3731,8 @@ void TypeFactory::recalcPointerSubmeta(Datatype *base,sub_metatype sub)
    top.submeta = sub;			// Search on the incorrect submeta
    iter = tree.lower_bound(&top);
    while(iter != tree.end()) {
