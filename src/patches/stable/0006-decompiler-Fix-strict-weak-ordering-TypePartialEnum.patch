@@ -1,7 +1,7 @@
-From 3330b9d1de3370d933bf7c3063fd4ca3744d1630 Mon Sep 17 00:00:00 2001
+From 7de365659e8a4068106c43eeb7e7dd923726a9e2 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Sat, 8 Feb 2025 17:59:57 -0500
-Subject: [PATCH 6/7] decompiler: Fix strict weak ordering TypePartialEnum
+Subject: [PATCH 6/6] decompiler: Fix strict weak ordering TypePartialEnum
 
 This fixes Windows Debug error encountered in testing where it was
 complaining about lack of strict weak ordering.
@@ -10,10 +10,10 @@ complaining about lack of strict weak ordering.
  1 file changed, 1 insertion(+)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index f25b019a4f..2f1337a740 100644
+index 7ff2ab7606..aa96671bcd 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-@@ -2300,6 +2300,7 @@ int4 TypePartialEnum::compareDependency(const Datatype &op) const
+@@ -2303,6 +2303,7 @@ int4 TypePartialEnum::compareDependency(const Datatype &op) const
  
  {
    if (submeta != op.getSubMeta()) return (submeta < op.getSubMeta()) ? -1 : 1;
