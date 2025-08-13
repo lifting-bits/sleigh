@@ -10,7 +10,7 @@
 # Tests from ghidra repo
 #
 
-add_executable(sleigh_ghidra_test
+add_executable(sleigh_decomp_test
   ${sleigh_core_source_list}
   ${sleigh_deccore_source_list}
   ${sleigh_source_list}
@@ -27,31 +27,31 @@ add_executable(sleigh_ghidra_test
 )
 
 # if(sleigh_RELEASE_IS_HEAD)
-#   target_sources(sleigh_ghidra_test PRIVATE
+#   target_sources(sleigh_decomp_test PRIVATE
 #   )
 # endif()
 
-target_compile_features(sleigh_ghidra_test PRIVATE cxx_std_11)
-target_include_directories(sleigh_ghidra_test PRIVATE "${library_root}")
+target_compile_features(sleigh_decomp_test PRIVATE cxx_std_11)
+target_include_directories(sleigh_decomp_test PRIVATE "${library_root}")
 include(CheckIncludeFileCXX)
 check_include_file_cxx(termios.h HAVE_TERMIOS_H)
 if(HAVE_TERMIOS_H)
-  target_compile_definitions(sleigh_ghidra_test PRIVATE
+  target_compile_definitions(sleigh_decomp_test PRIVATE
     __TERMINAL__
   )
 endif()
-sleigh_add_optional_defines(sleigh_ghidra_test PRIVATE)
+sleigh_add_optional_defines(sleigh_decomp_test PRIVATE)
 
-target_link_libraries(sleigh_ghidra_test PRIVATE ZLIB::ZLIB)
+target_link_libraries(sleigh_decomp_test PRIVATE ZLIB::ZLIB)
 
 add_test(
-  NAME sleigh_ghidra_unittest
-  COMMAND sleigh_ghidra_test -sleighpath "${PROJECT_BINARY_DIR}" unittests
+  NAME sleigh_decomp_unittest
+  COMMAND sleigh_decomp_test -sleighpath "${PROJECT_BINARY_DIR}" unittests
 )
 
 add_test(
-  NAME sleigh_ghidra_datatest
-  COMMAND sleigh_ghidra_test -sleighpath "${PROJECT_BINARY_DIR}"
+  NAME sleigh_decomp_datatest
+  COMMAND sleigh_decomp_test -sleighpath "${PROJECT_BINARY_DIR}"
     -path "${library_root}/../datatests"
     datatests
 )
