@@ -52,7 +52,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "12.0")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "4fcc1febdd778af79a6c1ca46499fe07ec359179")
+  set(ghidra_head_git_tag "7a4100d54bff88530f11b577d4d2547d57630288")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
@@ -174,10 +174,11 @@ set(sleigh_deccore_source_list
   "${library_root}/multiprecision.cc"
   "${library_root}/constseq.cc"
 )
-#if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-#  list(APPEND sleigh_deccore_source_list
-#  )
-#endif()
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND sleigh_deccore_source_list
+    "${library_root}/expression.cc"
+  )
+endif()
 
 set(sleigh_extra_source_list
   "${library_root}/callgraph.cc"
