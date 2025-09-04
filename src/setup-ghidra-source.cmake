@@ -174,10 +174,11 @@ set(sleigh_deccore_source_list
   "${library_root}/multiprecision.cc"
   "${library_root}/constseq.cc"
 )
-#if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-#  list(APPEND sleigh_deccore_source_list
-#  )
-#endif()
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND sleigh_deccore_source_list
+    "${library_root}/expression.cc"
+  )
+endif()
 
 set(sleigh_extra_source_list
   "${library_root}/callgraph.cc"
