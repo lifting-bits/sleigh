@@ -52,7 +52,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "12.0")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "7a4100d54bff88530f11b577d4d2547d57630288")
+  set(ghidra_head_git_tag "f501ffccd2df04a7c3827a15717566a63861fbf9")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
