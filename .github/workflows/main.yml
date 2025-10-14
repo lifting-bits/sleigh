@@ -220,7 +220,7 @@ jobs:
         path: ${{ env.DEB_PACKAGE_PATH }}
 
     - name: Release DEB package artifact (RelWithDebInfo only)
-      uses: softprops/action-gh-release@v2.4.0
+      uses: softprops/action-gh-release@v2.4.1
       if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux' && startsWith(github.ref, 'refs/tags/') && matrix.release == 'stable'
       with:
         files: ${{ env.DEB_PACKAGE_PATH }}
@@ -233,7 +233,7 @@ jobs:
         name: ${{ env.RPM_PACKAGE_NAME }}
         path: ${{ env.RPM_PACKAGE_PATH }}
     - name: Release RPM package artifact (RelWithDebInfo only)
-      uses: softprops/action-gh-release@v2.4.0
+      uses: softprops/action-gh-release@v2.4.1
       if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux' && startsWith(github.ref, 'refs/tags/') && matrix.release == 'stable'
       with:
         files: ${{ env.RPM_PACKAGE_PATH }}
@@ -247,7 +247,7 @@ jobs:
         path: ${{ env.TGZ_PACKAGE_PATH }}
 
     - name: Release TGZ package artifact (RelWithDebInfo only)
-      uses: softprops/action-gh-release@v2.4.0
+      uses: softprops/action-gh-release@v2.4.1
       if: matrix.build_type == 'RelWithDebInfo' && startsWith(github.ref, 'refs/tags/') && matrix.release == 'stable'
       with:
         files: ${{ env.TGZ_PACKAGE_PATH }}
