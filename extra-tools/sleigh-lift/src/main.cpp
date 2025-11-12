@@ -123,8 +123,18 @@ static void PrintAssembly(ghidra::Sleigh &engine, uint64_t addr, size_t len) {
   ghidra::Address cur_addr(engine.getDefaultCodeSpace(), addr),
       last_addr(engine.getDefaultCodeSpace(), addr + len);
   while (cur_addr < last_addr) {
-    int32_t instr_len = engine.printAssembly(asm_emit, cur_addr);
-    cur_addr = cur_addr + instr_len;
+    try {
+      int32_t instr_len = engine.printAssembly(asm_emit, cur_addr);
+      cur_addr = cur_addr + instr_len;
+    }
+    catch(ghidra::UnimplError &err) {
+      std::cerr << "UnimplError @ " << cur_addr << " (addr 0x" << addr << ", len 0x" << len << "): " << err.explain << "\n";
+      break;
+    }
+    catch (ghidra::BadDataError &err) {
+      std::cerr << "BadDataError @ " << cur_addr << " (addr 0x" << addr << ", len 0x" << len << "): " << err.explain << "\n";
+      break;
+    }
   }
 }
 
@@ -157,8 +167,18 @@ static void PrintPcode(ghidra::Sleigh &engine, uint64_t addr, size_t len) {
   ghidra::Address cur_addr(engine.getDefaultCodeSpace(), addr),
       last_addr(engine.getDefaultCodeSpace(), addr + len);
   while (cur_addr < last_addr) {
-    int32_t instr_len = engine.oneInstruction(pcode_emit, cur_addr);
-    cur_addr = cur_addr + instr_len;
+    try {
+      int32_t instr_len = engine.oneInstruction(pcode_emit, cur_addr);
+      cur_addr = cur_addr + instr_len;
+    }
+    catch(ghidra::UnimplError &err) {
+      std::cerr << "UnimplError @ " << cur_addr << " (addr 0x" << addr << ", len 0x" << len << "): " << err.explain << "\n";
+      break;
+    }
+    catch(ghidra::BadDataError &err) {
+      std::cerr << "BadDataError @ " << cur_addr << " (addr 0x" << addr << ", len 0x" << len << "): " << err.explain << "\n";
+      break;
+    }
   }
 }
 
