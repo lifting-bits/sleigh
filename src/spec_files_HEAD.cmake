@@ -108,6 +108,7 @@ set(spec_file_list
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_64_isa_le.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_64_isa_vle_be.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PowerPC/data/languages/ppc_64_le.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/RISCV/data/languages/andestar_v5.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/RISCV/data/languages/riscv.ilp32d.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/RISCV/data/languages/riscv.lp64d.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Sparc/data/languages/SparcV9_32.slaspec"
