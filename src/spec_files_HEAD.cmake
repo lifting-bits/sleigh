@@ -76,6 +76,8 @@ set(spec_file_list
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/MIPS/data/languages/mips32le.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/MIPS/data/languages/mips64be.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/MIPS/data/languages/mips64le.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/NDS32/data/languages/nds32be.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/NDS32/data/languages/nds32le.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PA-RISC/data/languages/pa-risc32be.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PIC/data/languages/PIC24E.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/PIC/data/languages/PIC24F.slaspec"
