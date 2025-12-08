@@ -22,7 +22,7 @@ set_property(CACHE sleigh_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 find_package(Git REQUIRED)
 
 # Ghidra pinned stable version commit
-set(ghidra_version "11.4.3")
+set(ghidra_version "12.0")
 set(ghidra_git_tag "Ghidra_${ghidra_version}_build")
 set(ghidra_shallow TRUE)
 
@@ -40,10 +40,9 @@ set(ghidra_patches
   "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0001-Fix-UBSAN-errors-in-decompiler.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0003-Use-string-resize-instead-of-reserve.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0004-Ignore-floating-point-test-due-to-compilation-differ.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-Allow-positive-or-negative-NAN-in-decompiler-floatin.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0006-decompiler-Fix-strict-weak-ordering-TypePartialEnum.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0003-Ignore-floating-point-test-due-to-compilation-differ.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0004-Allow-positive-or-negative-NAN-in-decompiler-floatin.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-decompiler-Fix-strict-weak-ordering-TypePartialEnum.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
@@ -173,12 +172,12 @@ set(sleigh_deccore_source_list
   "${library_root}/signature.cc"
   "${library_root}/multiprecision.cc"
   "${library_root}/constseq.cc"
+  "${library_root}/expression.cc"
 )
-if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-  list(APPEND sleigh_deccore_source_list
-    "${library_root}/expression.cc"
-  )
-endif()
+#if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+#  list(APPEND sleigh_deccore_source_list
+#  )
+#endif()
 
 set(sleigh_extra_source_list
   "${library_root}/callgraph.cc"

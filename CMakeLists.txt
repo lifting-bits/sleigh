@@ -146,12 +146,12 @@ set(public_include_header_list
   "${library_root}/multiprecision.hh"
   "${library_root}/slaformat.hh"
   "${library_root}/constseq.hh"
+  "${library_root}/expression.hh"
 )
-if(sleigh_RELEASE_IS_HEAD)
-  list(APPEND public_include_header_list
-    "${library_root}/expression.hh"
-  )
-endif()
+#if(sleigh_RELEASE_IS_HEAD)
+#  list(APPEND public_include_header_list
+#  )
+#endif()
 # Create custom target so that IDEs know these files are part of the sources
 add_custom_target(sleigh_all_headers SOURCES ${public_include_header_list})
 set(public_headers_dir ${CMAKE_CURRENT_BINARY_DIR}/include)
