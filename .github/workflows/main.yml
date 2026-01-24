@@ -69,7 +69,7 @@ jobs:
     - name: Update the cache (ccache)
       uses: actions/cache@v5
       with:
-        path: "${{ github.workspace }}/ccache"
+        path: ${{ runner.os == 'Windows' && env.TEMP || github.workspace }}/ccache
         key: ${{ env.CACHE_KEY }}_ccache_${{ env.CACHE_TIMESTAMP }}
         restore-keys: |
           ${{ env.CACHE_KEY }}_ccache_
@@ -80,14 +80,16 @@ jobs:
       run: |
         file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ccache")
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_BASEDIR=${CMAKE_CURRENT_SOURCE_DIR}\n")
-        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/ccache\n")
+        if(WIN32)
+          file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_DIR=$ENV{TEMP}/ccache\n")
+        else()
+          file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/ccache\n")
+        endif()
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESS=true\n")
-        # Trial and error to get all files in here
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESSLEVEL=10\n")
-        # This should be multiplied by the number of compilation jobs and be no
-        # larger than 5G, which is the cache max size
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_MAXSIZE=400M\n")
-        # Tell CMake to use ccache
+        # These only work for Ninja/Makefiles, not VS generators
+        # But harmless to set for all platforms
         file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_CXX_COMPILER_LAUNCHER=ccache\n")
         file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_C_COMPILER_LAUNCHER=ccache\n")
         # Clear stats before every build
