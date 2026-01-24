@@ -34,29 +34,52 @@ jobs:
         app_id: ${{ secrets.APP_ID }}
         private_key: ${{ secrets.APP_PRIVATE_KEY }}
 
-    - name: Create PR
+    - name: Commit, push, and create PR
       if: steps.head_update.outputs.did_update
-      uses: peter-evans/create-pull-request@v8
-      with:
-        title: Update Ghidra HEAD to commit ${{ steps.head_update.outputs.short_sha }}
-        commit-message: |
-          Bump Ghidra HEAD commit ${{ steps.head_update.outputs.short_sha }}
+      env:
+        GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+      run: |
+        BRANCH="cron/update-ghidra-${{ steps.head_update.outputs.short_sha }}"
 
-          Changed files:
+        # Check if PR already exists for this branch
+        if gh pr list --head "$BRANCH" --json number --jq '.[0].number' | grep -q .; then
+          echo "PR already exists for branch $BRANCH, skipping"
+          exit 0
+        fi
 
-          ${{ steps.head_update.outputs.changed_files }}
+        # Configure git
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          Commit details:
+        # Create branch and commit
+        git checkout -b "$BRANCH"
+        git add -A
+        git commit -m "$(cat <<'EOF'
+        Bump Ghidra HEAD commit ${{ steps.head_update.outputs.short_sha }}
 
-          ${{ steps.head_update.outputs.commit_details }}
-        body: |
-          Changed files:
+        Changed files:
 
-          ${{ steps.head_update.outputs.changed_files }}
+        ${{ steps.head_update.outputs.changed_files }}
 
-          Commit details:
+        Commit details:
 
-          ${{ steps.head_update.outputs.commit_details }}
-        branch: cron/update-ghidra-${{ steps.head_update.outputs.short_sha }}
-        delete-branch: true
-        token: ${{ steps.generate-token.outputs.token }}
+        ${{ steps.head_update.outputs.commit_details }}
+        EOF
+        )"
+
+        # Push branch
+        git push -u origin "$BRANCH"
+
+        # Create PR
+        gh pr create \
+          --title "Update Ghidra HEAD to commit ${{ steps.head_update.outputs.short_sha }}" \
+          --body "$(cat <<'EOF'
+        Changed files:
+
+        ${{ steps.head_update.outputs.changed_files }}
+
+        Commit details:
+
+        ${{ steps.head_update.outputs.commit_details }}
+        EOF
+        )"
