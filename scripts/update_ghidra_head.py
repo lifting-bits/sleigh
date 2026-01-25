@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Dict, Optional, Any, Tuple
 
@@ -23,10 +24,90 @@ SLEIGH_PATHS = [
     "Ghidra/Processors",  # Sleigh files
 ]
 
+# File extensions requiring manual CMake intervention
+CPP_EXTENSIONS = {".cc", ".hh"}
+SPEC_EXTENSIONS = {".slaspec", ".cspec", ".pspec", ".ldefs", ".opinion", ".sinc"}
+
+# File extensions to ignore (in addition to .java)
+IGNORED_EXTENSIONS = {
+    ".java",
+    ".gradle",
+    ".properties",
+    ".txt",
+    ".md",
+    ".html",
+    ".xml",
+    ".png",
+    ".gif",
+    ".jpg",
+    ".ico",
+}
+
+# Paths for categorizing files
+CPP_PATH = "Ghidra/Features/Decompiler/src/decompile/cpp/"
+SPEC_PATH_PREFIX = "Ghidra/Processors/"
+
 # Regex patterns
 HEAD_COMMIT_PATTERN = r"set\(ghidra_head_git_tag \"([0-9A-Fa-f]+)\"\)"
 VERSION_PATTERN = r"set\(ghidra_head_version \"([0-9]+(\.[0-9]+)*)\"\)"
 APP_VERSION_PATTERN = r"application.version=([0-9]+(\.[0-9]+)*)"
+
+
+@dataclass
+class CategorizedChanges:
+    """Holds files categorized by change type and file type."""
+
+    added_cpp: List[str] = field(default_factory=list)
+    deleted_cpp: List[str] = field(default_factory=list)
+    added_spec: List[str] = field(default_factory=list)
+    deleted_spec: List[str] = field(default_factory=list)
+
+    def needs_manual_intervention(self) -> bool:
+        """Check if any files need manual intervention."""
+        return bool(
+            self.added_cpp or self.deleted_cpp or self.added_spec or self.deleted_spec
+        )
+
+    def format_intervention_details(self) -> str:
+        """Format the intervention details as markdown."""
+        sections = []
+
+        if self.added_cpp:
+            sections.append("### New C++ Source Files")
+            sections.append(
+                "These files need to be added to `src/setup-ghidra-source.cmake`:"
+            )
+            for f in self.added_cpp:
+                sections.append(f"- `{f}`")
+            sections.append("")
+
+        if self.deleted_cpp:
+            sections.append("### Deleted C++ Source Files")
+            sections.append(
+                "These files need to be removed from `src/setup-ghidra-source.cmake`:"
+            )
+            for f in self.deleted_cpp:
+                sections.append(f"- `{f}`")
+            sections.append("")
+
+        if self.added_spec:
+            sections.append("### New Spec Files")
+            sections.append(
+                "Review if these files need manual CMake updates (`.slaspec` files "
+                "are auto-generated; other types may need manual updates):"
+            )
+            for f in self.added_spec:
+                sections.append(f"- `{f}`")
+            sections.append("")
+
+        if self.deleted_spec:
+            sections.append("### Deleted Spec Files")
+            sections.append("Verify these files are no longer referenced:")
+            for f in self.deleted_spec:
+                sections.append(f"- `{f}`")
+            sections.append("")
+
+        return "\n".join(sections).rstrip()
 
 
 class GitHelper:
@@ -69,6 +150,60 @@ class GitHelper:
             return True
         except subprocess.CalledProcessError:
             return False
+
+    @staticmethod
+    def _should_ignore_file(file_path: str) -> bool:
+        """Check if a file should be ignored based on its extension."""
+        ext = Path(file_path).suffix.lower()
+        return ext in IGNORED_EXTENSIONS
+
+    @staticmethod
+    def _categorize_file(
+        status: str, file_path: str, categorized: CategorizedChanges
+    ) -> None:
+        """Categorize a file based on its status and type.
+
+        Args:
+            status: Git status code (A, D, M, R, etc.)
+            file_path: Path to the file
+            categorized: CategorizedChanges object to update
+        """
+        ext = Path(file_path).suffix.lower()
+
+        # Only categorize added (A) or deleted (D) files
+        if status not in ("A", "D"):
+            return
+
+        # Check if it's a C++ file in the decompiler path
+        if ext in CPP_EXTENSIONS and CPP_PATH in file_path:
+            if status == "A":
+                categorized.added_cpp.append(file_path)
+            else:  # status == "D"
+                categorized.deleted_cpp.append(file_path)
+            return
+
+        # Check if it's a spec file in the Processors path
+        if ext in SPEC_EXTENSIONS and file_path.startswith(SPEC_PATH_PREFIX):
+            if status == "A":
+                categorized.added_spec.append(file_path)
+            else:  # status == "D"
+                categorized.deleted_spec.append(file_path)
+
+    @staticmethod
+    def _parse_git_status_line(line: str) -> Tuple[str, str, Optional[str]]:
+        """Parse a git status line from --name-status output.
+
+        Returns:
+            Tuple of (status, file_path, new_path_for_rename)
+        """
+        parts = line.split("\t")
+        status = parts[0]
+
+        # Handle rename (R100 or similar)
+        if status.startswith("R"):
+            return ("R", parts[1], parts[2])
+
+        return (status, parts[1], None)
 
     def get_commit_info(
         self, repo_dir: Path, old_commit: str, new_commit: str, paths: List[str]
@@ -119,8 +254,21 @@ class GitHelper:
                 )
 
                 commit_files = files_result.stdout.strip().splitlines()
-                # Filter out Java files
-                commit_files = [f for f in commit_files if not f.endswith(".java")]
+                # Filter out ignored files
+                filtered_files = []
+                for line in commit_files:
+                    if not line.strip():
+                        continue
+                    status, file_path, new_path = self._parse_git_status_line(line)
+                    if status == "R":
+                        # For renames, check both old and new paths
+                        if not self._should_ignore_file(file_path):
+                            filtered_files.append(f"D\t{file_path}")
+                        if new_path and not self._should_ignore_file(new_path):
+                            filtered_files.append(f"A\t{new_path}")
+                    elif not self._should_ignore_file(file_path):
+                        filtered_files.append(line)
+                commit_files = filtered_files
 
                 if commit_files:
                     commits.append(
@@ -137,8 +285,12 @@ class GitHelper:
 
     def get_changed_files(
         self, repo_dir: Path, old_commit: str, new_commit: str, paths: List[str]
-    ) -> List[str]:
-        """Get list of files changed between commits"""
+    ) -> Tuple[List[str], CategorizedChanges]:
+        """Get list of files changed between commits and categorize them.
+
+        Returns:
+            Tuple of (filtered_files_list, categorized_changes)
+        """
         result = self.run(
             [
                 "diff",
@@ -151,11 +303,29 @@ class GitHelper:
             capture_output=True,
         )
 
-        changed_files = result.stdout.strip().splitlines()
-        # Filter out Java files
-        changed_files = [f for f in changed_files if not f.endswith(".java")]
+        raw_lines = result.stdout.strip().splitlines()
+        filtered_files = []
+        categorized = CategorizedChanges()
 
-        return changed_files
+        for line in raw_lines:
+            if not line.strip():
+                continue
+
+            status, file_path, new_path = self._parse_git_status_line(line)
+
+            if status == "R":
+                # For renames, treat as delete old + add new
+                if not self._should_ignore_file(file_path):
+                    filtered_files.append(f"D\t{file_path}")
+                    self._categorize_file("D", file_path, categorized)
+                if new_path and not self._should_ignore_file(new_path):
+                    filtered_files.append(f"A\t{new_path}")
+                    self._categorize_file("A", new_path, categorized)
+            elif not self._should_ignore_file(file_path):
+                filtered_files.append(line)
+                self._categorize_file(status, file_path, categorized)
+
+        return filtered_files, categorized
 
 
 class GhidraUpdater:
@@ -205,22 +375,38 @@ class GhidraUpdater:
 
     def display_changes(
         self, repo_dir: Path, start_commit: str, end_commit: str
-    ) -> Tuple[List[str], List[Dict[str, Any]]]:
-        """Display changes between two commits and return the changed files and commit info"""
-        # Get changed files
-        changed_files = self.git.get_changed_files(
+    ) -> Tuple[List[str], List[Dict[str, Any]], CategorizedChanges]:
+        """Display changes between two commits and return the changed files and commit info.
+
+        Returns:
+            Tuple of (changed_files, commit_info, categorized_changes)
+        """
+        # Get changed files and categorized changes
+        changed_files, categorized = self.git.get_changed_files(
             repo_dir, start_commit, end_commit, SLEIGH_PATHS
         )
 
         if not changed_files:
             print("No sleigh files were modified between these commits")
-            return [], []
+            return [], [], CategorizedChanges()
 
         # Output changes for logging
         num_changed = len(changed_files)
         print(f"Found {num_changed} changed sleigh files:")
         for file in changed_files:
             print(f"  {file}")
+
+        # Display manual intervention warning if needed
+        if categorized.needs_manual_intervention():
+            print("\n** Manual intervention may be required **")
+            if categorized.added_cpp:
+                print(f"  New C++ files: {len(categorized.added_cpp)}")
+            if categorized.deleted_cpp:
+                print(f"  Deleted C++ files: {len(categorized.deleted_cpp)}")
+            if categorized.added_spec:
+                print(f"  New spec files: {len(categorized.added_spec)}")
+            if categorized.deleted_spec:
+                print(f"  Deleted spec files: {len(categorized.deleted_spec)}")
 
         # Get detailed commit info for logging
         commit_info = self.git.get_commit_info(
@@ -269,7 +455,16 @@ class GhidraUpdater:
 
                 self.log_github_multiline_output("commit_details", "\n".join(details))
 
-        return changed_files, commit_info
+            # Log manual intervention outputs
+            if categorized.needs_manual_intervention():
+                self.log_github_output("needs_manual_intervention", "true")
+                self.log_github_multiline_output(
+                    "intervention_details", categorized.format_intervention_details()
+                )
+            else:
+                self.log_github_output("needs_manual_intervention", "false")
+
+        return changed_files, commit_info, categorized
 
     def update_head_commit(
         self, repo_dir: Path, setup_file: Path
@@ -298,7 +493,7 @@ class GhidraUpdater:
         print(f"Found new commit: {latest_commit}")
 
         # Check if sleigh files were updated and display changes
-        changed_files, commit_info = self.display_changes(
+        changed_files, commit_info, _ = self.display_changes(
             repo_dir, current_commit, latest_commit
         )
 
