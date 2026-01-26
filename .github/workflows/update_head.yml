@@ -70,16 +70,35 @@ jobs:
         # Push branch
         git push -u origin "$BRANCH"
 
-        # Create PR
-        gh pr create \
-          --title "Update Ghidra HEAD to commit ${{ steps.head_update.outputs.short_sha }}" \
-          --body "$(cat <<'EOF'
-        Changed files:
+        # Build PR body
+        PR_BODY="Changed files:
 
         ${{ steps.head_update.outputs.changed_files }}
 
         Commit details:
 
-        ${{ steps.head_update.outputs.commit_details }}
-        EOF
-        )"
+        ${{ steps.head_update.outputs.commit_details }}"
+
+        # Add intervention warning if needed
+        if [ "${{ steps.head_update.outputs.needs_manual_intervention }}" = "true" ]; then
+          PR_BODY="## :warning: Manual Intervention Required
+
+        The following files were added or deleted and may require manual CMake configuration updates:
+
+        ${{ steps.head_update.outputs.intervention_details }}
+
+        ### Instructions
+        - **New C++ sources**: Add to appropriate list in \`src/setup-ghidra-source.cmake\`
+        - **Deleted C++ sources**: Remove from \`src/setup-ghidra-source.cmake\`
+        - **New spec files**: Review if \`.slaspec\` files are auto-generated; other types may need manual updates
+        - **Deleted spec files**: Verify no longer referenced
+
+        ---
+
+        $PR_BODY"
+        fi
+
+        # Create PR
+        gh pr create \
+          --title "Update Ghidra HEAD to commit ${{ steps.head_update.outputs.short_sha }}" \
+          --body "$PR_BODY"
