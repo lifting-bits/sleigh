@@ -70,32 +70,43 @@ jobs:
         # Push branch
         git push -u origin "$BRANCH"
 
-        # Build PR body
-        PR_BODY="Changed files:
+        # Build PR body using heredoc with single-quoted delimiter to prevent
+        # bash from interpreting backticks in the markdown content as command
+        # substitution. GitHub Actions expressions are expanded before bash
+        # processes the script, so they still get substituted.
+        BASE_BODY=$(cat <<'PRBODY'
+        Changed files:
 
         ${{ steps.head_update.outputs.changed_files }}
 
         Commit details:
 
-        ${{ steps.head_update.outputs.commit_details }}"
+        ${{ steps.head_update.outputs.commit_details }}
+        PRBODY
+        )
 
         # Add intervention warning if needed
         if [ "${{ steps.head_update.outputs.needs_manual_intervention }}" = "true" ]; then
-          PR_BODY="## :warning: Manual Intervention Required
+          INTERVENTION=$(cat <<'PRBODY'
+        ## :warning: Manual Intervention Required
 
         The following files were added or deleted and may require manual CMake configuration updates:
 
         ${{ steps.head_update.outputs.intervention_details }}
 
         ### Instructions
-        - **New C++ sources**: Add to appropriate list in \`src/setup-ghidra-source.cmake\`
-        - **Deleted C++ sources**: Remove from \`src/setup-ghidra-source.cmake\`
-        - **New spec files**: Review if \`.slaspec\` files are auto-generated; other types may need manual updates
+        - **New C++ sources**: Add to appropriate list in `src/setup-ghidra-source.cmake`
+        - **Deleted C++ sources**: Remove from `src/setup-ghidra-source.cmake`
+        - **New spec files**: Review if `.slaspec` files are auto-generated; other types may need manual updates
         - **Deleted spec files**: Verify no longer referenced
 
         ---
 
-        $PR_BODY"
+        PRBODY
+        )
+          PR_BODY="${INTERVENTION}${BASE_BODY}"
+        else
+          PR_BODY="$BASE_BODY"
         fi
 
         # Create PR
