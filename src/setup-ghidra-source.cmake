@@ -51,7 +51,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "12.1")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "0ee235fba7645738ec34efa563dd5062ca13cd7d")
+  set(ghidra_head_git_tag "e3c1b6393becbddc4256f3d4b3cd566d3bd95903")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
@@ -63,6 +63,8 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0003-Ignore-floating-point-test-due-to-compilation-differ.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0004-Allow-positive-or-negative-NAN-in-decompiler-floatin.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-decompiler-Fix-strict-weak-ordering-TypePartialEnum.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0006-decompiler-Fix-strict-weak-ordering-PullRecord.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0007-decompiler-Fix-strict-weak-ordering-compareFinalOrde.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
@@ -174,10 +176,11 @@ set(sleigh_deccore_source_list
   "${library_root}/constseq.cc"
   "${library_root}/expression.cc"
 )
-#if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-#  list(APPEND sleigh_deccore_source_list
-#  )
-#endif()
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND sleigh_deccore_source_list
+    "${library_root}/bitfield.cc"
+  )
+endif()
 
 set(sleigh_extra_source_list
   "${library_root}/callgraph.cc"

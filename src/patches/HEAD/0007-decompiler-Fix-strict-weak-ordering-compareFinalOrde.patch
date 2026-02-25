@@ -1,0 +1,29 @@
+From a44beeb3a2569887c33d2dfd509c0d103bd6c447 Mon Sep 17 00:00:00 2001
+From: "github-actions[bot]"
+ <41898282+github-actions[bot]@users.noreply.github.com>
+Date: Wed, 25 Feb 2026 02:43:17 +0000
+Subject: [PATCH 7/7] decompiler: Fix strict weak ordering compareFinalOrder
+
+FlowBlock::compareFinalOrder returns true when both blocks have index 0,
+violating strict weak ordering (irreflexivity). This is caught by libc++
+debug mode hardening assertions during BlockGraph::orderBlocks sort.
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/block.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
+index bf7103d916..2e495d9c3f 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
+@@ -709,7 +709,7 @@ string FlowBlock::typeToName(FlowBlock::block_type bt)
+ bool FlowBlock::compareFinalOrder(const FlowBlock *bl1,const FlowBlock *bl2)
+ 
+ {
+-  if (bl1->getIndex() == 0) return true; // Make sure the entry point comes first
++  if (bl1->getIndex() == 0) return (bl2->getIndex() != 0); // Make sure the entry point comes first
+   if (bl2->getIndex() == 0) return false;
+   PcodeOp *op1 = bl1->lastOp();
+   PcodeOp *op2 = bl2->lastOp();
+-- 
+2.51.1
+
