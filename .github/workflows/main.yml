@@ -345,3 +345,71 @@ jobs:
 
     - name: ccache stats
       run: ccache -s
+
+  assertions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      CXX: clang++
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Setup Git User for Applying Patches
+      run: |
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ccache libc++-dev libc++abi-dev
+
+    - name: Generate cache key
+      shell: cmake -P {0}
+      run: |
+        string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_KEY=assertions_HEAD\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_TIMESTAMP=${current_date}\n")
+
+    - name: Update the cache (ccache)
+      uses: actions/cache@v5
+      with:
+        path: "${{ github.workspace }}/ccache"
+        key: ${{ env.CACHE_KEY }}_ccache_${{ env.CACHE_TIMESTAMP }}
+        restore-keys: |
+          ${{ env.CACHE_KEY }}_ccache_
+
+    - name: Setup ccache
+      working-directory: "${{ github.workspace }}"
+      shell: cmake -P {0}
+      run: |
+        file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ccache")
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_BASEDIR=${CMAKE_CURRENT_SOURCE_DIR}\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/ccache\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESS=true\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESSLEVEL=10\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_MAXSIZE=400M\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_CXX_COMPILER_LAUNCHER=ccache\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_C_COMPILER_LAUNCHER=ccache\n")
+        execute_process(COMMAND ccache -z)
+
+    - name: Configure the project
+      run: cmake --preset=ci-assertions
+        -Dsleigh_RELEASE_TYPE=HEAD
+        -Dsleigh_BUILD_DOCUMENTATION=OFF
+
+    - name: Build the project
+      run: cmake
+        --build build/assertions
+        -j 4
+        -v
+
+    - name: Test the project
+      working-directory: build/assertions
+      run: ctest -VV
+
+    - name: ccache stats
+      run: ccache -s
