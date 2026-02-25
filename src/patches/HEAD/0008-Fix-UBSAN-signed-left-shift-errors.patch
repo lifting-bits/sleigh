@@ -1,0 +1,57 @@
+From 8afa7d89a368b358a5493b87804985ed9ac70a2f Mon Sep 17 00:00:00 2001
+From: "github-actions[bot]"
+ <41898282+github-actions[bot]@users.noreply.github.com>
+Date: Wed, 25 Feb 2026 20:41:10 +0000
+Subject: [PATCH] Fix UBSAN signed left shift errors
+
+Cast signed values to unsigned before left shifting to avoid undefined
+behavior when the signed value is negative or when the result cannot be
+represented in the signed type.
+
+Fixes runtime errors detected by UndefinedBehaviorSanitizer:
+- address.hh sign_extend(): left shift of negative value
+- address.hh sign_extend(): left shift cannot be represented in type 'intb'
+- slghpatexpress.cc LeftShiftExpression: left shift of negative value
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/address.hh       | 2 +-
+ .../Features/Decompiler/src/decompile/cpp/slghpatexpress.cc   | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
+index 45144daf3..0e75c68b8 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
+@@ -544,7 +544,7 @@ inline intb sign_extend(intb val,int4 bit)
+
+ {
+   int4 sa = 8*sizeof(intb) - (bit+1);
+-  val = (val << sa) >> sa;
++  val = static_cast<intb>(static_cast<uintb>(val) << sa) >> sa;
+   return val;
+ }
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
+index 941097859..93cce378a 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
+@@ -969,7 +969,7 @@ intb LeftShiftExpression::getValue(ParserWalker &walker) const
+ {
+   intb leftval = getLeft()->getValue(walker);
+   intb rightval = getRight()->getValue(walker);
+-  return leftval << rightval;
++  return static_cast<intb>(static_cast<uintb>(leftval) << rightval);
+ }
+
+ intb LeftShiftExpression::getSubValue(const vector<intb> &replace,int4 &listpos) const
+@@ -977,7 +977,7 @@ intb LeftShiftExpression::getSubValue(const vector<intb> &replace,int4 &listpos)
+ {
+   intb leftval = getLeft()->getSubValue(replace,listpos); // Must be left first
+   intb rightval = getRight()->getSubValue(replace,listpos);
+-  return leftval << rightval;
++  return static_cast<intb>(static_cast<uintb>(leftval) << rightval);
+ }
+
+ void LeftShiftExpression::encode(Encoder &encoder) const
+--
+2.51.1
+

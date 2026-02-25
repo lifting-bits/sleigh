@@ -43,6 +43,7 @@ set(ghidra_patches
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0003-Ignore-floating-point-test-due-to-compilation-differ.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0004-Allow-positive-or-negative-NAN-in-decompiler-floatin.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-decompiler-Fix-strict-weak-ordering-TypePartialEnum.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0006-Fix-UBSAN-signed-left-shift-errors.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
@@ -65,6 +66,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0005-decompiler-Fix-strict-weak-ordering-TypePartialEnum.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0006-decompiler-Fix-strict-weak-ordering-PullRecord.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0007-decompiler-Fix-strict-weak-ordering-compareFinalOrde.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0008-Fix-UBSAN-signed-left-shift-errors.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
