@@ -13,6 +13,9 @@ on:
     branches:
       - "*"
 
+env:
+  LLVM_VERSION: 21
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -261,7 +264,6 @@ jobs:
       contents: read
 
     env:
-      CXX: clang++
       ASAN_OPTIONS: strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:detect_leaks=1
       UBSAN_OPTIONS: print_stacktrace=1
 
@@ -277,6 +279,13 @@ jobs:
       run: |
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
+
+    - name: Install LLVM
+      run: |
+        wget -qO /tmp/llvm.sh https://apt.llvm.org/llvm.sh
+        chmod +x /tmp/llvm.sh
+        sudo /tmp/llvm.sh $LLVM_VERSION
+        echo "CXX=clang++-$LLVM_VERSION" >> "$GITHUB_ENV"
 
     - name: Install system dependencies
       run: |
@@ -351,8 +360,10 @@ jobs:
     permissions:
       contents: read
 
-    env:
-      CXX: clang++
+    strategy:
+      fail-fast: false
+      matrix:
+        release: [stable, HEAD]
 
     steps:
     - uses: actions/checkout@v6
@@ -362,16 +373,23 @@ jobs:
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
 
+    - name: Install LLVM
+      run: |
+        wget -qO /tmp/llvm.sh https://apt.llvm.org/llvm.sh
+        chmod +x /tmp/llvm.sh
+        sudo /tmp/llvm.sh $LLVM_VERSION
+        echo "CXX=clang++-$LLVM_VERSION" >> "$GITHUB_ENV"
+
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y ccache libc++-dev libc++abi-dev
+        sudo apt-get install -y ccache libc++-$LLVM_VERSION-dev libc++abi-$LLVM_VERSION-dev
 
     - name: Generate cache key
       shell: cmake -P {0}
       run: |
         string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_KEY=assertions_HEAD\n")
+        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_KEY=assertions_${{ matrix.release }}\n")
         file(APPEND "$ENV{GITHUB_ENV}" "CACHE_TIMESTAMP=${current_date}\n")
 
     - name: Update the cache (ccache)
@@ -398,7 +416,7 @@ jobs:
 
     - name: Configure the project
       run: cmake --preset=ci-assertions
-        -Dsleigh_RELEASE_TYPE=HEAD
+        -Dsleigh_RELEASE_TYPE=${{ matrix.release }}
         -Dsleigh_BUILD_DOCUMENTATION=OFF
 
     - name: Build the project

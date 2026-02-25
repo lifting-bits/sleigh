@@ -119,7 +119,6 @@
       "binaryDir": "${sourceDir}/build/assertions",
       "inherits": ["ci-unix", "dev-mode"],
       "cacheVariables": {
-        "CMAKE_CXX_COMPILER": "clang++",
         "CMAKE_BUILD_TYPE": "Assertions",
         "CMAKE_CXX_FLAGS_ASSERTIONS": "-O0 -g -stdlib=libc++ -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG -fstack-protector-strong",
         "CMAKE_EXE_LINKER_FLAGS_ASSERTIONS": "-stdlib=libc++ -lc++abi",
