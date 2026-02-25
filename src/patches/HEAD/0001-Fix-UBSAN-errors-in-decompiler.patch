@@ -1,7 +1,7 @@
-From 9d1e7b00e8f5dca987038a78fbac400c835a78be Mon Sep 17 00:00:00 2001
+From 98769d3cd2f417a52559bf68700e2f9f3e7a0e4f Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Mon, 12 Aug 2024 12:02:35 -0400
-Subject: [PATCH 1/5] Fix UBSAN errors in decompiler
+Subject: [PATCH 1/7] Fix UBSAN errors in decompiler
 
 Co-authored-by: Alex Cameron <asc@tetsuo.sh>
 ---
@@ -13,10 +13,10 @@ Co-authored-by: Alex Cameron <asc@tetsuo.sh>
  5 files changed, 16 insertions(+), 10 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
-index ca9d71ab99..85d4dd281d 100644
+index a67a3de849..37ba4930e6 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
-@@ -621,8 +621,10 @@ vector<OpTpl *> *PcodeCompile::assignBitRange(VarnodeTpl *vn,uint4 bitoffset,uin
+@@ -618,8 +618,10 @@ vector<OpTpl *> *PcodeCompile::assignBitRange(VarnodeTpl *vn,uint4 bitoffset,uin
    uint4 smallsize = (numbits+7)/8; // Size of input (output of rhs)
    bool shiftneeded = (bitoffset != 0);
    bool zextneeded = true;
@@ -29,7 +29,7 @@ index ca9d71ab99..85d4dd281d 100644
  
    if (vn->getSize().getType()==ConstTpl::real) {
      // If we know the size of the bitranged varnode, we can
-@@ -726,9 +728,6 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
+@@ -723,9 +725,6 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
      }
    }
  
@@ -39,7 +39,7 @@ index ca9d71ab99..85d4dd281d 100644
    if (truncneeded && ((bitoffset % 8)==0)) {
      truncshift = bitoffset/8;
      bitoffset = 0;
-@@ -751,8 +750,13 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
+@@ -748,8 +747,13 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
      appendOp(CPUI_INT_RIGHT,res,bitoffset,4);
    if (truncneeded)
      appendOp(CPUI_SUBPIECE,res,truncshift,4);
@@ -56,7 +56,7 @@ index ca9d71ab99..85d4dd281d 100644
    return res;
  }
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
-index cd9b9835b1..8a4616c3b9 100644
+index 18e2ff8ba1..3bfe29f2ef 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
 @@ -22,6 +22,7 @@ ConstTpl::ConstTpl(const_type tp)
@@ -76,7 +76,7 @@ index cd9b9835b1..8a4616c3b9 100644
  
  bool ConstTpl::isConstSpace(void) const
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
-index e0b069959d..9117a45c75 100644
+index b53b18797d..b2f043e32d 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
 @@ -47,7 +47,7 @@ class ConstTpl {
@@ -89,10 +89,10 @@ index e0b069959d..9117a45c75 100644
      type=op2.type; value=op2.value; value_real=op2.value_real; select=op2.select; }
    ConstTpl(const_type tp,uintb val);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-index 50d85e22ba..9f3b456229 100644
+index 75bebffcb0..bf5e7ce681 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-@@ -2164,8 +2164,8 @@ string SleighCompile::checkSymbols(SymbolScope *scope)
+@@ -2323,8 +2323,8 @@ string SleighCompile::checkSymbols(SymbolScope *scope)
    ostringstream msg;
    SymbolTree::const_iterator iter;
    for(iter=scope->begin();iter!=scope->end();++iter) {
@@ -116,5 +116,5 @@ index 2571f55f1a..fe40e22b1b 100644
          uintb true_result = ((uintb)(int32_t)f) & 0xffffffff;
          uintb encoding = format.getEncoding(f);
 -- 
-2.50.1
+2.51.1
 

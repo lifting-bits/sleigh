@@ -1,0 +1,29 @@
+From f2fdafbd981a441c35ab243bcb74872febd6bbd4 Mon Sep 17 00:00:00 2001
+From: "github-actions[bot]"
+ <41898282+github-actions[bot]@users.noreply.github.com>
+Date: Wed, 25 Feb 2026 02:29:10 +0000
+Subject: [PATCH 6/7] decompiler: Fix strict weak ordering PullRecord
+
+When both readOp pointers are null, PullRecord::operator< incorrectly
+returns true, violating strict weak ordering (irreflexivity). This is
+caught by libc++ debug mode hardening assertions at pullList.sort().
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/bitfield.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/bitfield.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/bitfield.cc
+index add61c741b..3e01d2e045 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/bitfield.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/bitfield.cc
+@@ -1058,7 +1058,7 @@ bool BitFieldPullTransform::PullRecord::operator<(const PullRecord &op2) const
+       return (readOp->getSeqNum() < op2.readOp->getSeqNum());
+   }
+   else if (readOp == (PcodeOp *)0)
+-    return true;
++    return (op2.readOp != (PcodeOp *)0);
+   else if (op2.readOp == (PcodeOp *)0)
+     return false;
+   return false;
+-- 
+2.51.1
+

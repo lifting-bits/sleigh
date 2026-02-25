@@ -1,7 +1,7 @@
-From 729f72060849dc4f29e89b1c76a980563ffd3e2a Mon Sep 17 00:00:00 2001
+From 4e6f277eae589c4f9bceb40337d43384248d272c Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Wed, 3 Aug 2022 20:01:18 +1000
-Subject: [PATCH 2/5] Use `stroull` instead of `stroul` to parse address
+Subject: [PATCH 2/7] Use `stroull` instead of `stroul` to parse address
  offsets
 
 ---
@@ -34,5 +34,5 @@ index dbaa2e775f..72927bf379 100644
      enddata = (const char *) tmpdata;
      if (enddata - s.c_str() == s.size()) { // If no size or offset override
 -- 
-2.50.1
+2.51.1
 

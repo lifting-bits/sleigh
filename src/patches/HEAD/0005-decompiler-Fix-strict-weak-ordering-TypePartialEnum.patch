@@ -1,7 +1,7 @@
-From 2a6bd0a0ad7797160db887bba7137b77aa148ba5 Mon Sep 17 00:00:00 2001
+From d9242056b580cc994661c41344c9ad51b636b0e5 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Sat, 8 Feb 2025 17:59:57 -0500
-Subject: [PATCH 5/5] decompiler: Fix strict weak ordering TypePartialEnum
+Subject: [PATCH 5/7] decompiler: Fix strict weak ordering TypePartialEnum
 
 This fixes Windows Debug error encountered in testing where it was
 complaining about lack of strict weak ordering.
@@ -10,10 +10,10 @@ complaining about lack of strict weak ordering.
  1 file changed, 1 insertion(+)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index 962c525b7f..7db5024b54 100644
+index 2d48650e70..4a52633ebf 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-@@ -2303,6 +2303,7 @@ int4 TypePartialEnum::compareDependency(const Datatype &op) const
+@@ -2703,6 +2703,7 @@ int4 TypePartialEnum::compareDependency(const Datatype &op) const
  
  {
    if (submeta != op.getSubMeta()) return (submeta < op.getSubMeta()) ? -1 : 1;
@@ -22,5 +22,5 @@ index 962c525b7f..7db5024b54 100644
    if (parent != tp->parent) return (parent < tp->parent) ? -1 : 1;	// Compare absolute pointers
    if (offset != tp->offset) return (offset < tp->offset) ? -1 : 1;
 -- 
-2.50.1
+2.51.1
 
