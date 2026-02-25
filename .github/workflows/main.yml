@@ -26,6 +26,11 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         build_type: [RelWithDebInfo, Debug]
         release: [stable, HEAD]
+        exclude:
+          - os: ubuntu-latest
+            build_type: Debug
+          - os: macos-latest
+            build_type: Debug
 
     steps:
     - uses: actions/checkout@v6
