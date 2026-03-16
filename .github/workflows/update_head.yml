@@ -27,7 +27,7 @@ jobs:
 
     # Need this to run further Actions on the newly created PR
     # See here for more details https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#authenticating-with-github-app-generated-tokens
-    - uses: actions/create-github-app-token@v2
+    - uses: actions/create-github-app-token@v3
       if: steps.head_update.outputs.did_update
       id: generate-token
       with:
