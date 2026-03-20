@@ -58,7 +58,7 @@ jobs:
 
     - name: Install Windows system dependencies
       if: runner.os == 'Windows'
-      uses: nick-fields/retry@v3
+      uses: nick-fields/retry@v4
       with:
         timeout_minutes: 10
         max_attempts: 3
