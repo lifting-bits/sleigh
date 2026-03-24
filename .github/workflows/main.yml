@@ -233,6 +233,7 @@ jobs:
       if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux' && startsWith(github.ref, 'refs/tags/') && matrix.release == 'stable'
       with:
         files: ${{ env.DEB_PACKAGE_PATH }}
+        draft: true
 
     # RPM Package
     - name: Upload the RPM package artifact (RelWithDebInfo only)
@@ -247,6 +248,7 @@ jobs:
       if: matrix.build_type == 'RelWithDebInfo' && runner.os == 'Linux' && startsWith(github.ref, 'refs/tags/') && matrix.release == 'stable'
       with:
         files: ${{ env.RPM_PACKAGE_PATH }}
+        draft: true
 
     # TGZ Package
     - name: Upload the TGZ package artifact (RelWithDebInfo only)
@@ -262,9 +264,21 @@ jobs:
       if: matrix.build_type == 'RelWithDebInfo' && startsWith(github.ref, 'refs/tags/') && matrix.release == 'stable'
       with:
         files: ${{ env.TGZ_PACKAGE_PATH }}
+        draft: true
 
     - name: ccache stats
       run: ccache -s
+
+  publish-release:
+    needs: [build]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - run: gh release edit "${{ github.ref_name }}" --draft=false --repo "${{ github.repository }}"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   sanitizer:
     runs-on: ubuntu-latest
