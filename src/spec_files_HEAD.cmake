@@ -58,6 +58,7 @@ set(spec_file_list
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/HCS12/data/languages/HC12.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/HCS12/data/languages/HCS12.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/HCS12/data/languages/HCS12X.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Hexagon/data/languages/hexagon.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/JVM/data/languages/JVM.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Loongarch/data/languages/loongarch32_f32.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/Loongarch/data/languages/loongarch32_f64.slaspec"
