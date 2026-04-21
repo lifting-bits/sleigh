@@ -1,0 +1,49 @@
+From eee198c1cc17bfc8b10609ddc8e03e254d0bac9a Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.kilmer@trailofbits.com>
+Date: Tue, 21 Apr 2026 10:32:17 -0400
+Subject: [PATCH] Use std::stoull instead of std::stoul in scan_number for MSVC
+
+std::stoul returns `unsigned long`, which is 32 bits on MSVC (LLP64) but 64
+bits on POSIX LP64. scan_number assigns the result into a `uintb` (uint64_t),
+so on Windows any integer literal in a .slaspec file that exceeds 0xFFFFFFFF
+throws std::out_of_range, the catch-all returns BADINTEGER, and the sleigh
+compiler rejects the spec. Affected specs include 68000/PowerPC/Loongarch/
+coldfire/avr32a and others that use 64-bit immediates.
+
+std::stoull returns `unsigned long long` (64 bits on all platforms), matching
+the uintb target and the pre-GP-6608 behavior. This mirrors the earlier fix
+applied to AddrSpace::read in space.cc.
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc | 2 +-
+ Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc
+index f3c1e361..d0217389 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.cc
+@@ -1582,7 +1582,7 @@ int4 scan_number(char *numtext,SLEIGHSTYPE *lval,int4 radix,bool signednum)
+ {
+   uintb val;
+   try {
+-    val = std::stoul(numtext,(size_t *)0,radix);
++    val = std::stoull(numtext,(size_t *)0,radix);
+   }
+   catch(...) {
+     return BADINTEGER;
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l
+index 1c25962a..29db987b 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghscan.l
+@@ -461,7 +461,7 @@ int4 scan_number(char *numtext,SLEIGHSTYPE *lval,int4 radix,bool signednum)
+ {
+   uintb val;
+   try {
+-    val = std::stoul(numtext,(size_t *)0,radix);
++    val = std::stoull(numtext,(size_t *)0,radix);
+   }
+   catch(...) {
+     return BADINTEGER;
+-- 
+2.54.0
+
