@@ -37,6 +37,7 @@ set(ghidra_patch_email "41898282+github-actions[bot]@users.noreply.github.com")
 set(ghidra_patches
   PATCH_COMMAND "${GIT_EXECUTABLE}" config user.name "${ghidra_patch_user}" &&
   "${GIT_EXECUTABLE}" config user.email "${ghidra_patch_email}" &&
+  "${GIT_EXECUTABLE}" config core.longpaths true &&
   "${GIT_EXECUTABLE}" am --ignore-space-change --ignore-whitespace --no-gpg-sign
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0001-Fix-UBSAN-errors-in-decompiler.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0002-Use-stroull-instead-of-stroul-to-parse-address-offse.patch"
