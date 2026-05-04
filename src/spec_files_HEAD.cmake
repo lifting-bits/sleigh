@@ -9,6 +9,7 @@ set(spec_file_list
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/8051/data/languages/80251.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/8051/data/languages/80390.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/8051/data/languages/8051.slaspec"
+  "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/8051/data/languages/cip-51.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/8051/data/languages/mx51.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/8085/data/languages/8085.slaspec"
   "${ghidrasource_SOURCE_DIR}/Ghidra/Processors/AARCH64/data/languages/AARCH64.slaspec"
