@@ -1,8 +1,8 @@
-From 8afa7d89a368b358a5493b87804985ed9ac70a2f Mon Sep 17 00:00:00 2001
+From 7da7356c3093390b99172a4adb1422e057243903 Mon Sep 17 00:00:00 2001
 From: "github-actions[bot]"
  <41898282+github-actions[bot]@users.noreply.github.com>
 Date: Wed, 25 Feb 2026 20:41:10 +0000
-Subject: [PATCH] Fix UBSAN signed left shift errors
+Subject: [PATCH 8/8] Fix UBSAN signed left shift errors
 
 Cast signed values to unsigned before left shifting to avoid undefined
 behavior when the signed value is negative or when the result cannot be
@@ -18,10 +18,10 @@ Fixes runtime errors detected by UndefinedBehaviorSanitizer:
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
-index 45144daf3..0e75c68b8 100644
+index 510432e5a2..0aaddea035 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
-@@ -544,7 +544,7 @@ inline intb sign_extend(intb val,int4 bit)
+@@ -587,7 +587,7 @@ inline intb sign_extend(intb val,int4 bit)
  
  {
    int4 sa = 8*sizeof(intb) - (bit+1);
@@ -31,7 +31,7 @@ index 45144daf3..0e75c68b8 100644
  }
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
-index 941097859..93cce378a 100644
+index 9410978595..93cce378af 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
 @@ -969,7 +969,7 @@ intb LeftShiftExpression::getValue(ParserWalker &walker) const
@@ -53,5 +53,5 @@ index 941097859..93cce378a 100644
  
  void LeftShiftExpression::encode(Encoder &encoder) const
 -- 
-2.51.1
+2.54.0
 

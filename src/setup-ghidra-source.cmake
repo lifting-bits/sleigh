@@ -22,7 +22,7 @@ set_property(CACHE sleigh_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 find_package(Git REQUIRED)
 
 # Ghidra pinned stable version commit
-set(ghidra_version "12.0.4")
+set(ghidra_version "12.1")
 set(ghidra_git_tag "Ghidra_${ghidra_version}_build")
 set(ghidra_shallow TRUE)
 
@@ -44,8 +44,9 @@ set(ghidra_patches
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0003-Ignore-floating-point-test-due-to-compilation-differ.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0004-Allow-positive-or-negative-NAN-in-decompiler-floatin.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0005-decompiler-Fix-strict-weak-ordering-TypePartialEnum.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0006-decompiler-Fix-strict-weak-ordering-compareFinalOrde.patch"
-  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0007-Fix-UBSAN-signed-left-shift-errors.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0006-decompiler-Fix-strict-weak-ordering-PullRecord.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0007-decompiler-Fix-strict-weak-ordering-compareFinalOrde.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0008-Fix-UBSAN-signed-left-shift-errors.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit
@@ -116,10 +117,10 @@ set(sleigh_core_source_list
   "${library_root}/globalcontext.cc"
   "${library_root}/marshal.cc"
 )
-#if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-#  list(APPEND sleigh_core_source_list
-#  )
-#endif()
+# if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+#   list(APPEND sleigh_core_source_list
+#   )
+# endif()
 
 set(sleigh_deccore_source_list
   "${library_root}/capability.cc"
@@ -180,12 +181,13 @@ set(sleigh_deccore_source_list
   "${library_root}/multiprecision.cc"
   "${library_root}/constseq.cc"
   "${library_root}/expression.cc"
+  "${library_root}/bitfield.cc"
 )
-if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-  list(APPEND sleigh_deccore_source_list
-    "${library_root}/bitfield.cc"
-  )
-endif()
+# if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+#   list(APPEND sleigh_deccore_source_list
+#   )
+# endif()
+
 
 set(sleigh_extra_source_list
   "${library_root}/callgraph.cc"
@@ -202,6 +204,10 @@ set(sleigh_extra_source_list
   "${library_root}/unify.cc"
   "${library_root}/xml_arch.cc"
 )
+# if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+#   list(APPEND sleigh_extra_source_list
+#   )
+# endif()
 
 set(sleigh_source_list
   "${library_root}/sleigh.cc"
