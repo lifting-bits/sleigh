@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sleigh Ghidra Release"
+  short_description: "Update Sleigh for new Ghidra releases"
+  default_prompt: "Use $sleigh-ghidra-release to update this repo for a new upstream Ghidra release."
