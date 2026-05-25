@@ -26,10 +26,11 @@ add_executable(sleigh_decomp_test
   "${library_root}/../unittests/testparamstore.cc"
 )
 
-# if(sleigh_RELEASE_IS_HEAD)
-#   target_sources(sleigh_decomp_test PRIVATE
-#   )
-# endif()
+if(sleigh_RELEASE_IS_HEAD)
+  target_sources(sleigh_decomp_test PRIVATE
+    "${library_root}/../unittests/testmultiprec.cc"
+  )
+endif()
 
 target_compile_features(sleigh_decomp_test PRIVATE cxx_std_11)
 target_include_directories(sleigh_decomp_test PRIVATE "${library_root}")
