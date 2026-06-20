@@ -33,7 +33,7 @@ jobs:
             build_type: Debug
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Setup Git User for Applying Patches
       # See this thread for more details https://github.community/t/github-actions-bot-email-address/17204/5
@@ -295,7 +295,7 @@ jobs:
         release: [stable, HEAD]
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Setup Git User for Applying Patches
       run: |
@@ -388,7 +388,7 @@ jobs:
         release: [stable, HEAD]
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Setup Git User for Applying Patches
       run: |
