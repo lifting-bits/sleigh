@@ -1,4 +1,4 @@
-From 98769d3cd2f417a52559bf68700e2f9f3e7a0e4f Mon Sep 17 00:00:00 2001
+From b51cd30957ce9e5dafae0497a13a0e3a0cec8bc0 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Mon, 12 Aug 2024 12:02:35 -0400
 Subject: [PATCH 1/7] Fix UBSAN errors in decompiler
@@ -13,10 +13,10 @@ Co-authored-by: Alex Cameron <asc@tetsuo.sh>
  5 files changed, 16 insertions(+), 10 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
-index a67a3de849..37ba4930e6 100644
+index de3ec1af20..0274060de1 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/pcodecompile.cc
-@@ -618,8 +618,10 @@ vector<OpTpl *> *PcodeCompile::assignBitRange(VarnodeTpl *vn,uint4 bitoffset,uin
+@@ -772,8 +772,10 @@ vector<OpTpl *> *PcodeCompile::assignBitRange(VarnodeTpl *vn,uint4 bitoffset,uin
    uint4 smallsize = (numbits+7)/8; // Size of input (output of rhs)
    bool shiftneeded = (bitoffset != 0);
    bool zextneeded = true;
@@ -29,7 +29,7 @@ index a67a3de849..37ba4930e6 100644
  
    if (vn->getSize().getType()==ConstTpl::real) {
      // If we know the size of the bitranged varnode, we can
-@@ -723,9 +725,6 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
+@@ -884,9 +886,6 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
      }
    }
  
@@ -39,7 +39,7 @@ index a67a3de849..37ba4930e6 100644
    if (truncneeded && ((bitoffset % 8)==0)) {
      truncshift = bitoffset/8;
      bitoffset = 0;
-@@ -748,8 +747,13 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
+@@ -909,8 +908,13 @@ ExprTree *PcodeCompile::createBitRange(SpecificSymbol *sym,uint4 bitoffset,uint4
      appendOp(CPUI_INT_RIGHT,res,bitoffset,4);
    if (truncneeded)
      appendOp(CPUI_SUBPIECE,res,truncshift,4);
@@ -56,18 +56,18 @@ index a67a3de849..37ba4930e6 100644
    return res;
  }
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
-index 18e2ff8ba1..3bfe29f2ef 100644
+index c729073918..9ec58e18d3 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
-@@ -22,6 +22,7 @@ ConstTpl::ConstTpl(const_type tp)
+@@ -23,6 +23,7 @@ ConstTpl::ConstTpl(const_type tp)
  
- {				// Constructor for relative jump constants and uniques
+ {
    type = tp;
 +  select = v_space;
  }
  
- ConstTpl::ConstTpl(const_type tp,uintb val)
-@@ -56,6 +57,7 @@ ConstTpl::ConstTpl(AddrSpace *sid)
+ /// \param tp is constant type: either \b real or \b j_relative
+@@ -67,6 +68,7 @@ ConstTpl::ConstTpl(AddrSpace *sid)
  {
    type = spaceid;
    value.spaceid = sid;
@@ -76,23 +76,23 @@ index 18e2ff8ba1..3bfe29f2ef 100644
  
  bool ConstTpl::isConstSpace(void) const
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
-index b53b18797d..b2f043e32d 100644
+index b878b840e6..12df5e548c 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
-@@ -47,7 +47,7 @@ class ConstTpl {
-   uintb value_real;
-   v_field select;		// Which part of handle to use as constant
+@@ -83,7 +83,7 @@ class ConstTpl {
+   uintb value_real;		///< An immediate constant value or other constant offset a ConstTpl represents
+   v_field select;		///< Assuming ConstTpl is a \b handle, the part of the \b handle to use as constant
  public:
--  ConstTpl(void) { type = real; value_real = 0; }
-+  ConstTpl(void) { type = real; value_real = 0; select = v_space; }
+-  ConstTpl(void) { type = real; value_real = 0; }	///< Construct a zero constant
++  ConstTpl(void) { type = real; value_real = 0; select = v_space; }	///< Construct a zero constant
    ConstTpl(const ConstTpl &op2) {
-     type=op2.type; value=op2.value; value_real=op2.value_real; select=op2.select; }
-   ConstTpl(const_type tp,uintb val);
+     type=op2.type; value=op2.value; value_real=op2.value_real; select=op2.select; }	///< Copy constructor
+   ConstTpl(const_type tp,uintb val);					///< Constructor for real constants or relative offsets
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-index 75bebffcb0..bf5e7ce681 100644
+index 9c57c9e44d..aa9bce0433 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-@@ -2323,8 +2323,8 @@ string SleighCompile::checkSymbols(SymbolScope *scope)
+@@ -2337,8 +2337,8 @@ string SleighCompile::checkSymbols(SymbolScope *scope)
    ostringstream msg;
    SymbolTree::const_iterator iter;
    for(iter=scope->begin();iter!=scope->end();++iter) {
@@ -116,5 +116,5 @@ index 2571f55f1a..fe40e22b1b 100644
          uintb true_result = ((uintb)(int32_t)f) & 0xffffffff;
          uintb encoding = format.getEncoding(f);
 -- 
-2.51.1
+2.54.0
 
