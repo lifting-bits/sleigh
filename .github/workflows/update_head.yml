@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v7
 
-    - uses: actions/setup-python@v6
+    - uses: actions/setup-python@v7
       with:
         # Use oldest supported version for maximum script compatibility
         python-version: '3.10'
