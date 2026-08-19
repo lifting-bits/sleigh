@@ -13,12 +13,39 @@ on:
     branches:
       - "*"
 
+permissions:
+  contents: read
+
 env:
   LLVM_VERSION: 21
 
 jobs:
+  # Create the draft release before any build job finishes so that the
+  # per-OS asset-upload steps in 'build' never race to create it. GitHub
+  # releases are immutable once published, so assets accumulate on a draft
+  # and 'publish-release' flips it to published at the end.
+  draft-release:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Create the draft release
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TAG: ${{ github.ref_name }}
+      run: |
+        if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" \
+            --draft --verify-tag --generate-notes --title "Sleigh $TAG"
+        fi
+
   build:
     runs-on: ${{ matrix.os }}
+
+    permissions:
+      # Upload release assets to the draft release on tag pushes
+      contents: write
 
     strategy:
       fail-fast: false
@@ -276,9 +303,23 @@ jobs:
     permissions:
       contents: write
     steps:
-    - run: gh release edit "${{ github.ref_name }}" --draft=false --repo "${{ github.repository }}"
+    - name: Verify draft assets and publish the release
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TAG: ${{ github.ref_name }}
+        # Linux/macOS/Windows .tar.gz + .deb + .rpm
+        EXPECTED_ASSET_COUNT: 5
+      run: |
+        # Publishing makes the release immutable: assets can never be added
+        # or replaced afterwards, and a deleted release permanently retires
+        # its tag name. Refuse to publish an incomplete draft.
+        count=$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets | length')
+        if [ "$count" -ne "$EXPECTED_ASSET_COUNT" ]; then
+          echo "Draft release has $count assets; expected $EXPECTED_ASSET_COUNT. Refusing to publish." >&2
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' >&2
+          exit 1
+        fi
+        gh release edit "$TAG" --draft=false --repo "$GITHUB_REPOSITORY"
 
   sanitizer:
     runs-on: ubuntu-latest

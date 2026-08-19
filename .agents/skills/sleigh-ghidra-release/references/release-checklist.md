@@ -76,3 +76,8 @@ ctest --test-dir build/ghidra-<version>-local --output-on-failure
 ```
 
 If tests matter for the update, use a developer-mode preset or option. A plain configure may not register tests.
+
+## Cutting The Release
+
+After the update PR merges to `master`, follow `RELEASING.md` in the repo
+root to tag the release and let CI build, verify, and publish it.
