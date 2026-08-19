@@ -1,4 +1,4 @@
-From 60f88f2a93a5b9c7a5a2d6b73b100cf353a6982c Mon Sep 17 00:00:00 2001
+From c7091cc21e19020158596e063c2bf83f73940cba Mon Sep 17 00:00:00 2001
 From: "github-actions[bot]"
  <41898282+github-actions[bot]@users.noreply.github.com>
 Date: Wed, 25 Feb 2026 02:43:17 +0000
@@ -12,7 +12,7 @@ debug mode hardening assertions during BlockGraph::orderBlocks sort.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
-index bf7103d916..2e495d9c3f 100644
+index 615057605d..4fa81f34f4 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
 @@ -709,7 +709,7 @@ string FlowBlock::typeToName(FlowBlock::block_type bt)
@@ -25,5 +25,5 @@ index bf7103d916..2e495d9c3f 100644
    PcodeOp *op1 = bl1->lastOp();
    PcodeOp *op2 = bl2->lastOp();
 -- 
-2.54.0
+2.55.0
 

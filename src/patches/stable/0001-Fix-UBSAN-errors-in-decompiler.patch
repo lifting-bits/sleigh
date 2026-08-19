@@ -1,4 +1,4 @@
-From 31a52c1f29a0fe67956bbefc1b1b01d6c0ccd5b1 Mon Sep 17 00:00:00 2001
+From 34b250b0b301f4ee09c99660951a9197a83dfc04 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Mon, 12 Aug 2024 12:02:35 -0400
 Subject: [PATCH 1/8] Fix UBSAN errors in decompiler
@@ -56,7 +56,7 @@ index a67a3de849..37ba4930e6 100644
    return res;
  }
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
-index 18e2ff8ba1..3bfe29f2ef 100644
+index 7b06da8e0b..032c6d69e5 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.cc
 @@ -22,6 +22,7 @@ ConstTpl::ConstTpl(const_type tp)
@@ -76,7 +76,7 @@ index 18e2ff8ba1..3bfe29f2ef 100644
  
  bool ConstTpl::isConstSpace(void) const
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
-index b53b18797d..b2f043e32d 100644
+index 2a768a7bef..c33a4f7d3c 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/semantics.hh
 @@ -47,7 +47,7 @@ class ConstTpl {
@@ -89,10 +89,10 @@ index b53b18797d..b2f043e32d 100644
      type=op2.type; value=op2.value; value_real=op2.value_real; select=op2.select; }
    ConstTpl(const_type tp,uintb val);
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-index 75bebffcb0..bf5e7ce681 100644
+index 02866ccd72..aa907a0e7a 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slgh_compile.cc
-@@ -2323,8 +2323,8 @@ string SleighCompile::checkSymbols(SymbolScope *scope)
+@@ -2354,8 +2354,8 @@ string SleighCompile::checkSymbols(SymbolScope *scope)
    ostringstream msg;
    SymbolTree::const_iterator iter;
    for(iter=scope->begin();iter!=scope->end();++iter) {
@@ -116,5 +116,5 @@ index 2571f55f1a..fe40e22b1b 100644
          uintb true_result = ((uintb)(int32_t)f) & 0xffffffff;
          uintb encoding = format.getEncoding(f);
 -- 
-2.54.0
+2.55.0
 

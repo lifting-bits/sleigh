@@ -1,4 +1,4 @@
-From 6d5dbe6ffcfc31468ebbf2299ea72f5ef8abcf15 Mon Sep 17 00:00:00 2001
+From 90888ac54549711983a5f7e46d472e28fd11f443 Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Sat, 8 Feb 2025 17:59:57 -0500
 Subject: [PATCH 5/8] decompiler: Fix strict weak ordering TypePartialEnum
@@ -10,10 +10,10 @@ complaining about lack of strict weak ordering.
  1 file changed, 1 insertion(+)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-index e3601d3a99..fcc7b3f250 100644
+index e8c7f511e2..eb7c88a337 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/type.cc
-@@ -2704,6 +2704,7 @@ int4 TypePartialEnum::compareDependency(const Datatype &op) const
+@@ -2724,6 +2724,7 @@ int4 TypePartialEnum::compareDependency(const Datatype &op) const
  
  {
    if (submeta != op.getSubMeta()) return (submeta < op.getSubMeta()) ? -1 : 1;
@@ -22,5 +22,5 @@ index e3601d3a99..fcc7b3f250 100644
    if (parent != tp->parent) return (parent < tp->parent) ? -1 : 1;	// Compare absolute pointers
    if (offset != tp->offset) return (offset < tp->offset) ? -1 : 1;
 -- 
-2.54.0
+2.55.0
 

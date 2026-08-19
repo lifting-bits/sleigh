@@ -1,4 +1,4 @@
-From 7da7356c3093390b99172a4adb1422e057243903 Mon Sep 17 00:00:00 2001
+From 1dfc376274f72d131bbcf658f01e5a258e64d003 Mon Sep 17 00:00:00 2001
 From: "github-actions[bot]"
  <41898282+github-actions[bot]@users.noreply.github.com>
 Date: Wed, 25 Feb 2026 20:41:10 +0000
@@ -18,10 +18,10 @@ Fixes runtime errors detected by UndefinedBehaviorSanitizer:
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
-index 510432e5a2..0aaddea035 100644
+index 6fdc9a5478..6fb84c996f 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
-@@ -587,7 +587,7 @@ inline intb sign_extend(intb val,int4 bit)
+@@ -596,7 +596,7 @@ inline intb sign_extend(intb val,int4 bit)
  
  {
    int4 sa = 8*sizeof(intb) - (bit+1);
@@ -31,10 +31,10 @@ index 510432e5a2..0aaddea035 100644
  }
  
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
-index 9410978595..93cce378af 100644
+index a724f3013f..b7ccedeeb2 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/slghpatexpress.cc
-@@ -969,7 +969,7 @@ intb LeftShiftExpression::getValue(ParserWalker &walker) const
+@@ -976,7 +976,7 @@ intb LeftShiftExpression::getValue(ParserWalker &walker) const
  {
    intb leftval = getLeft()->getValue(walker);
    intb rightval = getRight()->getValue(walker);
@@ -43,7 +43,7 @@ index 9410978595..93cce378af 100644
  }
  
  intb LeftShiftExpression::getSubValue(const vector<intb> &replace,int4 &listpos) const
-@@ -977,7 +977,7 @@ intb LeftShiftExpression::getSubValue(const vector<intb> &replace,int4 &listpos)
+@@ -984,7 +984,7 @@ intb LeftShiftExpression::getSubValue(const vector<intb> &replace,int4 &listpos)
  {
    intb leftval = getLeft()->getSubValue(replace,listpos); // Must be left first
    intb rightval = getRight()->getSubValue(replace,listpos);
@@ -53,5 +53,5 @@ index 9410978595..93cce378af 100644
  
  void LeftShiftExpression::encode(Encoder &encoder) const
 -- 
-2.54.0
+2.55.0
 
