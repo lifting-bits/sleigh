@@ -1,4 +1,4 @@
-From 34b250b0b301f4ee09c99660951a9197a83dfc04 Mon Sep 17 00:00:00 2001
+From 0a73bf28abee06ccc349db45cc220d221fac875e Mon Sep 17 00:00:00 2001
 From: Eric Kilmer <eric.d.kilmer@gmail.com>
 Date: Mon, 12 Aug 2024 12:02:35 -0400
 Subject: [PATCH 1/8] Fix UBSAN errors in decompiler

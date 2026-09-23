@@ -1,4 +1,4 @@
-From 31c134b6cee752b7d919b67200ecb3d05c001dda Mon Sep 17 00:00:00 2001
+From 6bd6e00f3518915a59d79f4757f2829b745c6476 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Wed, 3 Aug 2022 20:01:18 +1000
 Subject: [PATCH 2/8] Use `stroull` instead of `stroul` to parse address
