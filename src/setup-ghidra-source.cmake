@@ -71,6 +71,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0007-decompiler-Fix-strict-weak-ordering-compareFinalOrde.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0008-Fix-UBSAN-signed-left-shift-errors.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0009-Use-std-stoull-instead-of-std-stoul-in-scan_number-f.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0010-decompiler-Own-and-clone-prototype-shared-actions.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()

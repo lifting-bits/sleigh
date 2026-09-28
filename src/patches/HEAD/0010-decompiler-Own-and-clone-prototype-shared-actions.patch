@@ -1,0 +1,37 @@
+From dcd40c1883531caeec5e37e81650e5f849f973d3 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Mon, 28 Sep 2026 14:13:38 -0400
+Subject: [PATCH] decompiler: Own and clone prototype shared actions
+
+Prototype decoding allocates a HiddenReturnAction (and may allocate a ShareStackAction), but ProtoModel never deletes the actions. Its copy constructor also iterates over the empty destination vector, so aliases lose those actions. Clone from the source model and delete the owned actions during destruction.
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
+index 4668b2ca89..2f3216906b 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
+@@ -2357,8 +2357,8 @@ ProtoModel::ProtoModel(const string &nm,const ProtoModel &op2)
+     output = op2.output->clone();
+   else
+     output = (ParamList *)0;
+-  for (int4 i=0;i <sharedActions.size(); ++i)
+-    sharedActions[i] = op2.sharedActions[i]->clone(this);
++  for (const SharedAction *action : op2.sharedActions)
++    sharedActions.push_back(action->clone(this));
+ 
+   effectlist = op2.effectlist;
+   likelytrash = op2.likelytrash;
+@@ -2379,6 +2379,8 @@ ProtoModel::ProtoModel(const string &nm,const ProtoModel &op2)
+ ProtoModel::~ProtoModel(void)
+ 
+ {
++  for (const SharedAction *action : sharedActions)
++    delete action;
+   if (input != (ParamList *)0)
+     delete input;
+   if (output != (ParamList *)0)
+-- 
+2.54.0 (Apple Git-157)
+
