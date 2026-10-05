@@ -118,10 +118,11 @@ set(sleigh_core_source_list
   "${library_root}/globalcontext.cc"
   "${library_root}/marshal.cc"
 )
-# if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-#   list(APPEND sleigh_core_source_list
-#   )
-# endif()
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND sleigh_core_source_list
+    "${library_root}/metatype.cc"
+  )
+endif()
 
 set(sleigh_deccore_source_list
   "${library_root}/capability.cc"
