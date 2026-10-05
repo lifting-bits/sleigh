@@ -55,7 +55,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "12.3")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "c4273522017788fb67c30058ffd5bbdf291fcc40")
+  set(ghidra_head_git_tag "a462673d2f1543d153c61d10bcd6c68f85555194")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
@@ -118,10 +118,11 @@ set(sleigh_core_source_list
   "${library_root}/globalcontext.cc"
   "${library_root}/marshal.cc"
 )
-# if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
-#   list(APPEND sleigh_core_source_list
-#   )
-# endif()
+if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
+  list(APPEND sleigh_core_source_list
+    "${library_root}/metatype.cc"
+  )
+endif()
 
 set(sleigh_deccore_source_list
   "${library_root}/capability.cc"
