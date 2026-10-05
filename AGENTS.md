@@ -1,8 +1,4 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## Project Overview
+# Sleigh Project Overview
 
 Sleigh is a CMake-based build system for Ghidra's Sleigh/decompiler C++ libraries (by Trail of Bits). It wraps NSA's Ghidra source code — fetched via CMake FetchContent during configure — so the Sleigh disassembly and decompilation engines can be built as standalone C++ libraries for reuse outside Ghidra.
 
