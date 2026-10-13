@@ -1,0 +1,28 @@
+From 690cdafdb2b319f326868e3a5849cd81087296a2 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Mon, 28 Sep 2026 14:13:38 -0400
+Subject: [PATCH] decompiler: Clone prototype shared actions
+
+The ProtoModel copy constructor iterates over its empty destination vector, so aliases lose the shared actions. Clone from the source model and append each owned action to the destination. The pinned upstream revision already deletes shared actions during destruction.
+---
+ Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
+index 9fb9bccaa1..8959b251b5 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/fspec.cc
+@@ -2357,8 +2357,8 @@ ProtoModel::ProtoModel(const string &nm,const ProtoModel &op2)
+     output = op2.output->clone();
+   else
+     output = (ParamList *)0;
+-  for (int4 i=0;i <sharedActions.size(); ++i)
+-    sharedActions[i] = op2.sharedActions[i]->clone(this);
++  for (const SharedAction *action : op2.sharedActions)
++    sharedActions.push_back(action->clone(this));
+ 
+   effectlist = op2.effectlist;
+   likelytrash = op2.likelytrash;
+-- 
+2.56.0
+
