@@ -90,9 +90,12 @@ jobs:
         timeout_minutes: 10
         max_attempts: 3
         command: |
+          $ErrorActionPreference = 'Stop'
           choco install ccache doxygen.install graphviz
-          Add-Content -Path $env:GITHUB_ENV -Value "CCACHE_EXE=$(Resolve-Path C:\ProgramData\chocolatey\lib\ccache\tools\*\ccache.exe)" 
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Add-Content -Path $env:GITHUB_ENV -Value "CCACHE_EXE=$(Resolve-Path C:\ProgramData\chocolatey\lib\ccache\tools\*\ccache.exe)"
           vcpkg install zlib:x64-windows-static
+          exit $LASTEXITCODE
 
     - name: Generate cache key
       shell: cmake -P {0}
