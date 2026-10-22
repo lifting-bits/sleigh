@@ -22,7 +22,7 @@ set_property(CACHE sleigh_RELEASE_TYPE PROPERTY STRINGS "stable" "HEAD")
 find_package(Git REQUIRED)
 
 # Ghidra pinned stable version commit
-set(ghidra_version "12.1.4")
+set(ghidra_version "12.2")
 set(ghidra_git_tag "Ghidra_${ghidra_version}_build")
 set(ghidra_shallow TRUE)
 
@@ -47,6 +47,7 @@ set(ghidra_patches
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0006-decompiler-Fix-strict-weak-ordering-PullRecord.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0007-decompiler-Fix-strict-weak-ordering-compareFinalOrde.patch"
   "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0008-Fix-UBSAN-signed-left-shift-errors.patch"
+  "${CMAKE_CURRENT_LIST_DIR}/patches/stable/0009-Use-std-stoull-instead-of-std-stoul-in-scan_number-f.patch"
 )
 
 # Ghidra pinned commits used for pinning last known working HEAD commit

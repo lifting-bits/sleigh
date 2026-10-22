@@ -1,7 +1,7 @@
-From 6bd6e00f3518915a59d79f4757f2829b745c6476 Mon Sep 17 00:00:00 2001
+From 8a93034bbd5d2554b30258e851e7db6499511718 Mon Sep 17 00:00:00 2001
 From: Alex Cameron <asc@tetsuo.sh>
 Date: Wed, 3 Aug 2022 20:01:18 +1000
-Subject: [PATCH 2/8] Use `stroull` instead of `stroul` to parse address
+Subject: [PATCH 2/9] Use `stroull` instead of `stroul` to parse address
  offsets
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 2/8] Use `stroull` instead of `stroul` to parse address
  1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
-index dbaa2e775f..72927bf379 100644
+index 6a8cc94d63..4f2dd6a518 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/space.cc
 @@ -16,6 +16,8 @@
@@ -21,7 +21,7 @@ index dbaa2e775f..72927bf379 100644
  namespace ghidra {
  
  AttributeId ATTRIB_BASE = AttributeId("base",89);
-@@ -277,7 +279,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
+@@ -290,7 +292,10 @@ uintb AddrSpace::read(const string &s,int4 &size) const
      }
    }
    catch(LowlevelError &err) {	// Name doesn't exist
@@ -34,5 +34,5 @@ index dbaa2e775f..72927bf379 100644
      enddata = (const char *) tmpdata;
      if (enddata - s.c_str() == s.size()) { // If no size or offset override
 -- 
-2.55.0
+2.54.0 (Apple Git-157)
 
