@@ -1,8 +1,8 @@
-From 0a62e2dd4ba2a53ade5a4261efaad4dcea565e69 Mon Sep 17 00:00:00 2001
+From dc2e178a34983f06fb55227195239d2451aad81c Mon Sep 17 00:00:00 2001
 From: "github-actions[bot]"
  <41898282+github-actions[bot]@users.noreply.github.com>
 Date: Wed, 25 Feb 2026 20:41:10 +0000
-Subject: [PATCH 8/8] Fix UBSAN signed left shift errors
+Subject: [PATCH 8/9] Fix UBSAN signed left shift errors
 
 Cast signed values to unsigned before left shifting to avoid undefined
 behavior when the signed value is negative or when the result cannot be
@@ -18,10 +18,10 @@ Fixes runtime errors detected by UndefinedBehaviorSanitizer:
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh b/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
-index 6fdc9a5478..6fb84c996f 100644
+index f2ef7a9ae9..db9493a557 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/address.hh
-@@ -596,7 +596,7 @@ inline intb sign_extend(intb val,int4 bit)
+@@ -601,7 +601,7 @@ inline intb sign_extend(intb val,int4 bit)
  
  {
    int4 sa = 8*sizeof(intb) - (bit+1);
@@ -53,5 +53,5 @@ index a724f3013f..b7ccedeeb2 100644
  
  void LeftShiftExpression::encode(Encoder &encoder) const
 -- 
-2.55.0
+2.54.0 (Apple Git-157)
 

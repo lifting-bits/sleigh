@@ -1,8 +1,8 @@
-From 12542df689c3dd04fba8de48bc37c7946c258e97 Mon Sep 17 00:00:00 2001
+From 43409d7997998eff320e86276cbb6e6b7cb5744f Mon Sep 17 00:00:00 2001
 From: "github-actions[bot]"
  <41898282+github-actions[bot]@users.noreply.github.com>
 Date: Wed, 25 Feb 2026 02:43:17 +0000
-Subject: [PATCH 7/8] decompiler: Fix strict weak ordering compareFinalOrder
+Subject: [PATCH 7/9] decompiler: Fix strict weak ordering compareFinalOrder
 
 FlowBlock::compareFinalOrder returns true when both blocks have index 0,
 violating strict weak ordering (irreflexivity). This is caught by libc++
@@ -12,10 +12,10 @@ debug mode hardening assertions during BlockGraph::orderBlocks sort.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
-index 615057605d..4fa81f34f4 100644
+index 55fc9264ea..c713f0c42f 100644
 --- a/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
 +++ b/Ghidra/Features/Decompiler/src/decompile/cpp/block.cc
-@@ -709,7 +709,7 @@ string FlowBlock::typeToName(FlowBlock::block_type bt)
+@@ -718,7 +718,7 @@ string FlowBlock::typeToName(FlowBlock::block_type bt)
  bool FlowBlock::compareFinalOrder(const FlowBlock *bl1,const FlowBlock *bl2)
  
  {
@@ -25,5 +25,5 @@ index 615057605d..4fa81f34f4 100644
    PcodeOp *op1 = bl1->lastOp();
    PcodeOp *op2 = bl2->lastOp();
 -- 
-2.55.0
+2.54.0 (Apple Git-157)
 

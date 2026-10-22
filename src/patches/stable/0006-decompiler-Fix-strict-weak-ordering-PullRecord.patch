@@ -1,8 +1,8 @@
-From ea9505a0ee94b582704801bad7976495ea0b1be8 Mon Sep 17 00:00:00 2001
+From 685f245d0758b270a821ff1865b4506c98e7090b Mon Sep 17 00:00:00 2001
 From: "github-actions[bot]"
  <41898282+github-actions[bot]@users.noreply.github.com>
 Date: Wed, 25 Feb 2026 02:29:10 +0000
-Subject: [PATCH 6/8] decompiler: Fix strict weak ordering PullRecord
+Subject: [PATCH 6/9] decompiler: Fix strict weak ordering PullRecord
 
 When both readOp pointers are null, PullRecord::operator< incorrectly
 returns true, violating strict weak ordering (irreflexivity). This is
@@ -25,5 +25,5 @@ index 5d7d650365..22109c7b9c 100644
      return false;
    return false;
 -- 
-2.55.0
+2.54.0 (Apple Git-157)
 
