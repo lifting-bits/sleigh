@@ -1,0 +1,42 @@
+From 1ab1235759e14e5daf5a918b9f88bc503211d9d3 Mon Sep 17 00:00:00 2001
+From: "github-actions[bot]"
+ <41898282+github-actions[bot]@users.noreply.github.com>
+Date: Tue, 10 Nov 2026 11:39:34 -0500
+Subject: [PATCH] decompiler: Avoid INT_MIN macro collision
+
+Rename the local minimum intb constants used by signed division and
+remainder. INT_MIN is a standard macro exposed by system headers on
+macOS, MSVC, and libc++, so those builds fail when it is used as a local
+variable name. Preserve the existing signed-overflow handling.
+---
+ .../Features/Decompiler/src/decompile/cpp/opbehavior.cc   | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
+index 6c7b3bee25..7d429d1952 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/opbehavior.cc
+@@ -512,9 +512,9 @@ uintb OpBehaviorIntSdiv::evaluateBinary(int4 sizeout,int4 sizein,uintb in1,uintb
+   intb denom = sign_extend(in2,8*sizein-1);
+   if (denom == 0)
+     throw EvaluationError("Divide by 0");
+-  constexpr intb INT_MIN = (intb)1 << (sizeof(intb) * 8 - 1);
++  constexpr intb minVal = (intb)1 << (sizeof(intb) * 8 - 1);
+   intb sres;
+-  if (num == INT_MIN && denom == -1)	// INT_MIN divided by -1 produces a signed overflow
++  if (num == minVal && denom == -1)	// minVal divided by -1 produces a signed overflow
+     sres = num;			// Set an explicit result to avoid a possible hardware exception
+   else
+     sres = num/denom;		// Do the signed division
+@@ -539,9 +539,9 @@ uintb OpBehaviorIntSrem::evaluateBinary(int4 sizeout,int4 sizein,uintb in1,uintb
+   intb mod = sign_extend(in2,8*sizein-1);
+   if (mod == 0)
+     throw EvaluationError("Remainder by 0");
+-  constexpr intb INT_MIN = (intb)1 << (sizeof(intb) * 8 - 1);
++  constexpr intb minVal = (intb)1 << (sizeof(intb) * 8 - 1);
+   intb sres;
+-  if (val == INT_MIN && mod == -1)
++  if (val == minVal && mod == -1)
+     sres = 0;		// Set an explicit result to avoid a possible hardware exception
+   else
+     sres = val % mod;	// Do the remainder
