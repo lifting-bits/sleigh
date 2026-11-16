@@ -56,7 +56,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
   # TODO: CMake only likes numeric characters in the version string....
   set(ghidra_head_version "12.3")
   set(ghidra_version "${ghidra_head_version}")
-  set(ghidra_head_git_tag "4718f50d9941b9d7b7ebd1febc2982f055560a73")
+  set(ghidra_head_git_tag "e45e5a62fd66c2e48514931f6e356aff33a79fcb")
   set(ghidra_git_tag "${ghidra_head_git_tag}")
   set(ghidra_shallow FALSE)
   set(ghidra_patches
@@ -72,6 +72,7 @@ if("${sleigh_RELEASE_TYPE}" STREQUAL "HEAD")
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0007-decompiler-Fix-strict-weak-ordering-compareFinalOrde.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0008-Fix-UBSAN-signed-left-shift-errors.patch"
     "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0009-Use-std-stoull-instead-of-std-stoul-in-scan_number-f.patch"
+    "${CMAKE_CURRENT_LIST_DIR}/patches/HEAD/0010-decompiler-Avoid-INT_MIN-macro-collision.patch"
   )
   string(SUBSTRING "${ghidra_git_tag}" 0 7 ghidra_short_commit)
 else()
