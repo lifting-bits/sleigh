@@ -27,9 +27,9 @@ after all assets are verified present.
 2. Watch the `Build` workflow run for the tag. It will:
    - create a draft release titled `Sleigh v<version>` with auto-generated
      notes (`draft-release` job);
-   - build on Linux/macOS/Windows and upload the five release assets to the
-     draft (`.tar.gz` per OS, plus `.deb` and `.rpm` from Linux);
-   - verify the draft has all five assets, then publish it
+   - upload four `.tar.gz` archives (Linux, macOS arm64, macOS x86_64, and
+     Windows) plus the Linux `.deb` and `.rpm` packages to the draft;
+   - verify the draft has all six assets, then publish it
      (`publish-release` job). Publishing is what makes the release
      immutable.
 
