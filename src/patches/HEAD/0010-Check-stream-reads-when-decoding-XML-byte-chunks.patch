@@ -1,0 +1,34 @@
+From 4785825bbf52e7ba25f954000d797dbf046b8032 Mon Sep 17 00:00:00 2001
+From: Eric Kilmer <eric.kilmer@trailofbits.com>
+Date: Mon, 23 Nov 2026 14:04:23 -0500
+Subject: [PATCH] Check stream reads when decoding XML byte chunks
+
+Keep EOF in the stream state. Converting the result of get() to an unsigned plain char loses the EOF sentinel and prevents the loop from terminating on Linux arm64.
+---
+ .../Features/Decompiler/src/decompile/cpp/loadimage_xml.cc  | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.cc b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.cc
+index 6847a5ebcb..5f77a04c03 100644
+--- a/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.cc
++++ b/Ghidra/Features/Decompiler/src/decompile/cpp/loadimage_xml.cc
+@@ -112,9 +112,7 @@ void LoadImageXml::open(const AddrSpaceManager *m)
+       int4 val;
+       char c1,c2;
+       is >> ws;
+-      c1 = is.get();
+-      c2 = is.get();
+-      while((c1>0)&&(c2>0)) {
++      while(is.get(c1) && is.get(c2) && (c1>0) && (c2>0)) {
+ 	if (c1 <= '9')
+ 	  c1 = c1 - '0';
+ 	else if (c1 <= 'F')
+@@ -130,8 +128,6 @@ void LoadImageXml::open(const AddrSpaceManager *m)
+ 	val = c1*16 + c2;
+ 	vec.push_back((uint1)val);
+ 	is >> ws;
+-	c1 = is.get();
+-	c2 = is.get();
+       }
+     }
+     else
