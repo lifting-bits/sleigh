@@ -18,6 +18,7 @@ permissions:
 
 env:
   LLVM_VERSION: 21
+  CCACHE_MAXSIZE: 400M
 
 jobs:
   # Create the draft release before any build job finishes so that the
@@ -42,6 +43,9 @@ jobs:
 
   build:
     runs-on: ${{ matrix.os }}
+
+    env:
+      CACHE_PREFIX: build_${{ matrix.os }}_type-${{ matrix.build_type }}-${{ matrix.release }}_ccache_
 
     permissions:
       # Upload release assets to the draft release on tag pushes
@@ -101,20 +105,14 @@ jobs:
           vcpkg install zlib:x64-windows-static
           exit $LASTEXITCODE
 
-    - name: Generate cache key
-      shell: cmake -P {0}
-      run: |
-        string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_KEY=build_${{ matrix.os }}_type-${{ matrix.build_type }}-${{ matrix.release }}\n")
-        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_TIMESTAMP=${current_date}\n")
-
-    - name: Update the cache (ccache)
-      uses: actions/cache@v6
+    - &restore-ccache
+      name: Restore ccache
+      id: ccache
+      uses: actions/cache/restore@v6
       with:
         path: "${{ github.workspace }}/ccache"
-        key: ${{ env.CACHE_KEY }}_ccache_${{ env.CACHE_TIMESTAMP }}
-        restore-keys: |
-          ${{ env.CACHE_KEY }}_ccache_
+        key: ${{ env.CACHE_PREFIX }}${{ github.sha }}
+        restore-keys: ${{ env.CACHE_PREFIX }}
 
     - name: Setup ccache
       working-directory: "${{ github.workspace }}"
@@ -126,9 +124,6 @@ jobs:
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESS=true\n")
         # Trial and error to get all files in here
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESSLEVEL=10\n")
-        # This should be multiplied by the number of compilation jobs and be no
-        # larger than 5G, which is the cache max size
-        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_MAXSIZE=400M\n")
         # Tell CMake to use ccache
         file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_CXX_COMPILER_LAUNCHER=ccache\n")
         file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_C_COMPILER_LAUNCHER=ccache\n")
@@ -305,6 +300,14 @@ jobs:
     - name: ccache stats
       run: ccache -s
 
+    - &save-ccache
+      name: Save ccache
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.ccache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v6
+      with:
+        path: "${{ github.workspace }}/ccache"
+        key: ${{ steps.ccache.outputs.cache-primary-key }}
+
   publish-release:
     needs: [build]
     if: startsWith(github.ref, 'refs/tags/')
@@ -336,6 +339,7 @@ jobs:
       contents: read
 
     env:
+      CACHE_PREFIX: sanitizer_${{ matrix.release }}_ccache_
       ASAN_OPTIONS: strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:detect_leaks=1
       UBSAN_OPTIONS: print_stacktrace=1
 
@@ -364,20 +368,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y ccache
 
-    - name: Generate cache key
-      shell: cmake -P {0}
-      run: |
-        string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_KEY=sanitizer_${{ matrix.release }}\n")
-        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_TIMESTAMP=${current_date}\n")
-
-    - name: Update the cache (ccache)
-      uses: actions/cache@v6
-      with:
-        path: "${{ github.workspace }}/ccache"
-        key: ${{ env.CACHE_KEY }}_ccache_${{ env.CACHE_TIMESTAMP }}
-        restore-keys: |
-          ${{ env.CACHE_KEY }}_ccache_
+    - *restore-ccache
 
     - name: Setup ccache
       working-directory: "${{ github.workspace }}"
@@ -388,7 +379,6 @@ jobs:
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/ccache\n")
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESS=true\n")
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESSLEVEL=10\n")
-        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_MAXSIZE=400M\n")
         file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_CXX_COMPILER_LAUNCHER=ccache\n")
         file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_C_COMPILER_LAUNCHER=ccache\n")
         execute_process(COMMAND ccache -z)
@@ -427,10 +417,15 @@ jobs:
     - name: ccache stats
       run: ccache -s
 
+    - *save-ccache
+
   assertions:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+
+    env:
+      CACHE_PREFIX: assertions_${{ matrix.release }}_ccache_
 
     strategy:
       fail-fast: false
@@ -457,20 +452,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y ccache libc++-$LLVM_VERSION-dev libc++abi-$LLVM_VERSION-dev
 
-    - name: Generate cache key
-      shell: cmake -P {0}
-      run: |
-        string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_KEY=assertions_${{ matrix.release }}\n")
-        file(APPEND "$ENV{GITHUB_ENV}" "CACHE_TIMESTAMP=${current_date}\n")
-
-    - name: Update the cache (ccache)
-      uses: actions/cache@v6
-      with:
-        path: "${{ github.workspace }}/ccache"
-        key: ${{ env.CACHE_KEY }}_ccache_${{ env.CACHE_TIMESTAMP }}
-        restore-keys: |
-          ${{ env.CACHE_KEY }}_ccache_
+    - *restore-ccache
 
     - name: Setup ccache
       working-directory: "${{ github.workspace }}"
@@ -481,7 +463,6 @@ jobs:
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/ccache\n")
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESS=true\n")
         file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_COMPRESSLEVEL=10\n")
-        file(APPEND "$ENV{GITHUB_ENV}" "CCACHE_MAXSIZE=400M\n")
         file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_CXX_COMPILER_LAUNCHER=ccache\n")
         file(APPEND "$ENV{GITHUB_ENV}" "CMAKE_C_COMPILER_LAUNCHER=ccache\n")
         execute_process(COMMAND ccache -z)
@@ -503,3 +484,5 @@ jobs:
 
     - name: ccache stats
       run: ccache -s
+
+    - *save-ccache
