@@ -54,11 +54,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
         build_type: [RelWithDebInfo, Debug]
         release: [stable, HEAD]
         exclude:
           - os: ubuntu-latest
+            build_type: Debug
+          - os: ubuntu-24.04-arm
             build_type: Debug
           - os: macos-latest
             build_type: Debug
@@ -319,8 +321,8 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAG: ${{ github.ref_name }}
-        # Four .tar.gz archives (Linux, macOS arm64 and x86_64, Windows), plus .deb and .rpm
-        EXPECTED_ASSET_COUNT: 6
+        # Five .tar.gz archives, plus .deb and .rpm for each Linux architecture
+        EXPECTED_ASSET_COUNT: 9
       run: |
         # Publishing makes the release immutable: assets can never be added
         # or replaced afterwards, and a deleted release permanently retires
