@@ -109,7 +109,6 @@ jobs:
         file(APPEND "$ENV{GITHUB_ENV}" "CACHE_TIMESTAMP=${current_date}\n")
 
     - name: Update the cache (ccache)
-      if: matrix.os != 'macos-26-intel'
       uses: actions/cache@v6
       with:
         path: "${{ github.workspace }}/ccache"
