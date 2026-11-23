@@ -50,7 +50,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, macos-26-intel, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         build_type: [RelWithDebInfo, Debug]
         release: [stable, HEAD]
         exclude:
@@ -58,8 +58,11 @@ jobs:
             build_type: Debug
           - os: macos-latest
             build_type: Debug
-          - os: macos-26-intel
-            build_type: Debug
+        # Build the Intel macOS archive only for tagged releases.
+        include: >-
+          ${{ fromJSON(startsWith(github.ref, 'refs/tags/v')
+              && '[{"os":"macos-26-intel","build_type":"RelWithDebInfo","release":"stable"}]'
+              || '[]') }}
 
     steps:
     - uses: actions/checkout@v7
@@ -80,10 +83,10 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         echo "MACOSX_DEPLOYMENT_TARGET=10.15" >> ${GITHUB_ENV}
-        brew install --formula \
-          ccache \
-          doxygen \
-          graphviz
+        brew install --formula ccache
+        if [[ "${{ matrix.os }}" != "macos-26-intel" ]]; then
+          brew install --formula doxygen graphviz
+        fi
 
     - name: Install Windows system dependencies
       if: runner.os == 'Windows'
@@ -107,6 +110,7 @@ jobs:
         file(APPEND "$ENV{GITHUB_ENV}" "CACHE_TIMESTAMP=${current_date}\n")
 
     - name: Update the cache (ccache)
+      if: matrix.os != 'macos-26-intel'
       uses: actions/cache@v6
       with:
         path: "${{ github.workspace }}/ccache"
@@ -141,6 +145,7 @@ jobs:
       run: cmake "--preset=ci-$("${{ matrix.os }}".split("-")[0])"
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -Dsleigh_RELEASE_TYPE=${{ matrix.release }}
+        -Dsleigh_BUILD_DOCUMENTATION=${{ matrix.os != 'macos-26-intel' }}
         "-DCMAKE_PROJECT_INCLUDE:FILEPATH=${{ github.workspace }}/cmake/ccache-msvc.cmake"
         -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded
 
@@ -156,6 +161,7 @@ jobs:
       run: ctest -VV -C ${{ matrix.build_type }}
 
     - name: Build the docs
+      if: matrix.os != 'macos-26-intel'
       run: cmake
         --build build
         --config ${{ matrix.build_type }}
