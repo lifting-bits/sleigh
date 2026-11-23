@@ -58,6 +58,10 @@ jobs:
             build_type: Debug
           - os: macos-latest
             build_type: Debug
+        include:
+          - os: macos-26-intel
+            build_type: RelWithDebInfo
+            release: stable
 
     steps:
     - uses: actions/checkout@v7
@@ -78,10 +82,10 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         echo "MACOSX_DEPLOYMENT_TARGET=10.15" >> ${GITHUB_ENV}
-        brew install --formula \
-          ccache \
-          doxygen \
-          graphviz
+        brew install --formula ccache
+        if [[ "${{ matrix.os }}" != "macos-26-intel" ]]; then
+          brew install --formula doxygen graphviz
+        fi
 
     - name: Install Windows system dependencies
       if: runner.os == 'Windows'
@@ -139,6 +143,7 @@ jobs:
       run: cmake "--preset=ci-$("${{ matrix.os }}".split("-")[0])"
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -Dsleigh_RELEASE_TYPE=${{ matrix.release }}
+        -Dsleigh_BUILD_DOCUMENTATION=${{ matrix.os != 'macos-26-intel' }}
         "-DCMAKE_PROJECT_INCLUDE:FILEPATH=${{ github.workspace }}/cmake/ccache-msvc.cmake"
         -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded
 
@@ -154,6 +159,7 @@ jobs:
       run: ctest -VV -C ${{ matrix.build_type }}
 
     - name: Build the docs
+      if: matrix.os != 'macos-26-intel'
       run: cmake
         --build build
         --config ${{ matrix.build_type }}
@@ -310,8 +316,8 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAG: ${{ github.ref_name }}
-        # Linux/macOS/Windows .tar.gz + .deb + .rpm
-        EXPECTED_ASSET_COUNT: 5
+        # Four .tar.gz archives (Linux, macOS arm64 and x86_64, Windows), plus .deb and .rpm
+        EXPECTED_ASSET_COUNT: 6
       run: |
         # Publishing makes the release immutable: assets can never be added
         # or replaced afterwards, and a deleted release permanently retires
