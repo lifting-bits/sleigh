@@ -58,11 +58,10 @@ jobs:
             build_type: Debug
           - os: macos-latest
             build_type: Debug
-        # Build the Intel macOS archive only for tagged releases.
-        include: >-
-          ${{ fromJSON(startsWith(github.ref, 'refs/tags/v')
-              && '[{"os":"macos-26-intel","build_type":"RelWithDebInfo","release":"stable"}]'
-              || '[]') }}
+        include:
+          - os: macos-26-intel
+            build_type: RelWithDebInfo
+            release: stable
 
     steps:
     - uses: actions/checkout@v7
